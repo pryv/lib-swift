@@ -10,6 +10,7 @@
 		B396EDA6248669F7004BADD7 /* PryvApiSwiftKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B396ED9C248669F7004BADD7 /* PryvApiSwiftKit.framework */; };
 		B396EDAB248669F7004BADD7 /* PryvApiSwiftKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396EDAA248669F7004BADD7 /* PryvApiSwiftKitTests.swift */; };
 		B396EDAD248669F7004BADD7 /* PryvApiSwiftKit.h in Headers */ = {isa = PBXBuildFile; fileRef = B396ED9F248669F7004BADD7 /* PryvApiSwiftKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B396EDB724866C51004BADD7 /* PryvApiSwiftKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396EDB624866C51004BADD7 /* PryvApiSwiftKit.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +30,7 @@
 		B396EDA5248669F7004BADD7 /* PryvApiSwiftKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PryvApiSwiftKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B396EDAA248669F7004BADD7 /* PryvApiSwiftKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PryvApiSwiftKitTests.swift; sourceTree = "<group>"; };
 		B396EDAC248669F7004BADD7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B396EDB624866C51004BADD7 /* PryvApiSwiftKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PryvApiSwiftKit.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 			children = (
 				B396ED9F248669F7004BADD7 /* PryvApiSwiftKit.h */,
 				B396EDA0248669F7004BADD7 /* Info.plist */,
+				B396EDB624866C51004BADD7 /* PryvApiSwiftKit.swift */,
 			);
 			path = PryvApiSwiftKit;
 			sourceTree = "<group>";
@@ -148,6 +151,7 @@
 				TargetAttributes = {
 					B396ED9B248669F7004BADD7 = {
 						CreatedOnToolsVersion = 11.5;
+						LastSwiftMigration = 1150;
 					};
 					B396EDA4248669F7004BADD7 = {
 						CreatedOnToolsVersion = 11.5;
@@ -195,6 +199,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B396EDB724866C51004BADD7 /* PryvApiSwiftKit.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +345,7 @@
 		B396EDB1248669F7004BADD7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -355,6 +361,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = pryv.PryvApiSwiftKit;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -363,6 +370,7 @@
 		B396EDB2248669F7004BADD7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -386,6 +394,7 @@
 		B396EDB4248669F7004BADD7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = PryvApiSwiftKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -403,6 +412,7 @@
 		B396EDB5248669F7004BADD7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = PryvApiSwiftKitTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
