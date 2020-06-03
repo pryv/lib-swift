@@ -8,33 +8,30 @@
 
 import Foundation
 
-// TODO: add token + username
+// TODO: add token + username to get api end point
 // TODO: assets ?
 // TODO: test
 class Service {
-    private let serviceInfoPath = "/service/info"
-    private let serviceInfoPayload = "{}"
-    
-    private var apiEndpoint: String
+    private var pryvServiceInfoUrl: String
     private var serviceCustomization: [String: Any]
     
     private var pryvServiceInfo: PryvServiceInfo? = nil
     
     // MARK: - public library
     
-    /// Inits a service with the apiEndPoint and no custom element
-    /// - Parameter apiEndpoint: any valid URL endpoint
-    init(apiEndpoint: String) {
-        self.apiEndpoint = apiEndpoint
+    /// Inits a service with the service info url and no custom element
+    /// - Parameter pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: `https://access.{domain}/service/info`
+    init(pryvServiceInfoUrl: String) {
+        self.pryvServiceInfoUrl = pryvServiceInfoUrl
         self.serviceCustomization = [String: Any]()
     }
     
-    /// Inits a service with the apiEndPoint and custom elements
+    /// Inits a service with the service info url and custom elements
     /// - Parameters:
-    ///   - apiEndpoint: any valid URL endpoint
+    ///   - pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: `https://access.{domain}/service/info`
     ///   - serviceCustomization: a json formatted dictionary corresponding to the customizations of the service
-    init(apiEndpoint: String, serviceCustomization: [String: Any]) {
-        self.apiEndpoint = apiEndpoint
+    init(pryvServiceInfoUrl: String, serviceCustomization: [String: Any]) {
+        self.pryvServiceInfoUrl = pryvServiceInfoUrl
         self.serviceCustomization = serviceCustomization
     }
     
@@ -72,16 +69,15 @@ class Service {
         }
     }
     
-    /// Fetches the service info from the apiEndpoint
-    /// - Parameter completion: closure containing the parsed data, if any, from the response of the request to apiEndpoint
+    /// Fetches the service info from the service info url
+    /// - Parameter completion: closure containing the parsed data, if any, from the response of the request to the service info url
     /// - Returns: the closure `completion` is called after the function returns to access the service info
     private func sendServiceInfoRequest(completion: @escaping (PryvServiceInfo?) -> ()) {
-        guard let url = URL(string: apiEndpoint) else { print("Cannot access url: \(apiEndpoint)") ; return completion(nil) }
-        let httpBody = Data(serviceInfoPayload.utf8)
+        guard let url = URL(string: pryvServiceInfoUrl) else { print("Cannot access url: \(pryvServiceInfoUrl)") ; return completion(nil) }
+        let httpBody = Data("{}".utf8)
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.setValue(serviceInfoPath, forHTTPHeaderField: "Content-Type")
         request.httpBody = httpBody
         
         let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
