@@ -11,10 +11,10 @@ import Foundation
 class Connection {
     private let utils = Utils()
     
-    private var endpoint: String
-    private var token: String?
+//    private var endpoint: String
+//    private var token: String?
     
     init(apiEndpoint: String) {
-        (self.endpoint, self.token) = utils.extractTokenAndEndpoint(apiEndpoint: apiEndpoint)
+//        (self.endpoint, self.token) = utils.extractTokenAndEndpoint(apiEndpoint: apiEndpoint) // TODO 
     }
 }

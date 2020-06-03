@@ -9,6 +9,8 @@
 import Foundation
 
 class Service {
+    private let utils = Utils()
+    
     private var pryvServiceInfoUrl: String
     private var serviceCustomization: [String: Any]
     
@@ -56,18 +58,9 @@ class Service {
     /// - Returns: API Endpoint from a username and token and the PryvServiceInfo
     public func apiEndpointFor(username: String, token: String? = nil) -> String? {
         let serviceInfo = pryvServiceInfo ?? info()
-        let apiEndpoint = serviceInfo?.api.replacingOccurrences(of: "{username}", with: username)
+        guard let apiEndpoint = serviceInfo?.api.replacingOccurrences(of: "{username}", with: username) else { print("problem encountered when building the service info api") ; return nil}
         
-        if let token = token, var apiEndpoint = apiEndpoint {
-            if apiEndpoint.hasPrefix("https://") {
-                apiEndpoint = String(apiEndpoint.dropFirst(8))
-            }
-            
-            return "https://" + token + "@" + apiEndpoint
-        }
-        
-        if apiEndpoint == nil { print("problem encountered when fetching the service info api") }
-        return apiEndpoint
+        return utils.buildPryvApiEndPoint(endpoint: apiEndpoint, token: token)
     }
     
     /// Issue a "login call on the Service" return a Connection on success
@@ -115,14 +108,14 @@ class Service {
     /// Decodes json data into a PryvServiceInfo object
     /// - Parameter json: json encoded data structured as a service info object
     /// - Returns: the PryvServiceInfo object corresponding to the json or nil if problem is encountered
-    private func decodeInfo(from json: Data) -> PryvServiceInfo? {
+    private func decodeServiceInfo(from json: Data) -> PryvServiceInfo? {
         let decoder = JSONDecoder()
         
         do {
             let service = try decoder.decode(PryvServiceInfo.self, from: json)
             return service
         } catch {
-            print("Error when parsing the service info response: " + error.localizedDescription)
+            print("problem encountered when parsing the service info response: " + error.localizedDescription)
             return nil
         }
     }
@@ -131,7 +124,7 @@ class Service {
     /// - Parameter completion: closure containing the parsed data, if any, from the response of the request to the service info url
     /// - Returns: the closure `completion` is called after the function returns to access the service info
     private func sendServiceInfoRequest(completion: @escaping (PryvServiceInfo?) -> ()) {
-        guard let url = URL(string: pryvServiceInfoUrl) else { print("Cannot access url: \(pryvServiceInfoUrl)") ; return completion(nil) }
+        guard let url = URL(string: pryvServiceInfoUrl) else { print("problem encountered: cannot access url \(pryvServiceInfoUrl)") ; return completion(nil) }
         let httpBody = Data("{}".utf8)
         
         var request = URLRequest(url: url)
@@ -139,14 +132,13 @@ class Service {
         request.httpBody = httpBody
         
         let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            if let _ = error, data == nil { print("error upon request for service info") ; return completion(nil) }
-            let service = self.decodeInfo(from: data!)
+            if let _ = error, data == nil { print("problem encountered when requesting the service info") ; return completion(nil) }
+            let service = self.decodeServiceInfo(from: data!)
             return completion(service)
         }
         
         task.resume()
     }
-    
     
     /// Sends a login request to the register url from the service info and returns the response token
     /// - Parameters:
@@ -155,7 +147,7 @@ class Service {
     ///   - endpoint: the api endpoint given by the service info
     /// - Returns: the closure `completion` is called after the function returns to access the token
     private func sendLoginRequest(endpoint: String, payload: [String: Any], completion: @escaping (String?) -> ()) {
-        guard let url = URL(string: endpoint) else { print("Cannot access register url \(endpoint)") ; return completion(nil) }
+        guard let url = URL(string: endpoint) else { print("problem encountered: cannot access register url \(endpoint)") ; return completion(nil) }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -163,10 +155,10 @@ class Service {
         request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
 
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let _ = error, data == nil { print("error upon request for login") ; return completion(nil) }
+            if let _ = error, data == nil { print("problem encountered when requesting login") ; return completion(nil) }
 
             guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? [String: Any] else {
-                print("error upon parsing the login response")
+                print("problem encountered when parsing the login response")
                 return completion(nil)
             }
             
