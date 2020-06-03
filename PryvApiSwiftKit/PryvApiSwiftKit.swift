@@ -9,11 +9,6 @@
 import Foundation
 
 public final class PryvApiSwiftKit {
-
+    
     let name = "PryvApiSwiftKit"
-    
-    public func function() {
-        // TODO
-    }
-    
 }
