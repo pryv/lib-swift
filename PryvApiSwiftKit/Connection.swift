@@ -15,6 +15,6 @@ class Connection {
     private var token: String?
     
     init(apiEndpoint: String) {
-        (self.endpoint, self.token) = utils.extractTokenAndEndpoint(apiEndpoint: apiEndpoint) 
+        (self.endpoint, self.token) = utils.extractTokenAndEndpoint(apiEndpoint: apiEndpoint) ?? ("", nil)
     }
 }

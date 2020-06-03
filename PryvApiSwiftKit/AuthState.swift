@@ -10,7 +10,7 @@ import Foundation
 
 /// Three possible states for the authentication response 
 enum AuthState {
-    case in_progress
+    case need_signin
     case accepted
     case refused
 }

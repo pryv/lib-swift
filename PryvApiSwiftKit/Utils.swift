@@ -9,8 +9,8 @@
 import Foundation
 
 class Utils {
-    private let regexAPIandToken = "/(.+):\\/\\/(.+)@(.+)/gm"
-    private let regexSchemaAndPath = "/(.+):\\/\\/(.+)/gm"
+    private let regexAPIandToken = "https?:\\/\\/(.+)@(.+)"
+    private let regexSchemaAndPath = "https?:\\/\\/(.+)"
     
     init() {
         
@@ -19,7 +19,7 @@ class Utils {
     /// Returns the token and the endpoint from an API endpoint
     /// - Parameter apiEndpoint
     /// - Returns: a tuple containing the endpoint and the token (optionnal)
-    public func extractTokenAndEndpoint(apiEndpoint: String) -> (String, String?) {
+    public func extractTokenAndEndpoint(apiEndpoint: String) -> (String, String?)? {
         var apiEp = apiEndpoint
         if !apiEp.hasSuffix("/") {
             apiEp += "/" // add a trailing '/' to end point if missing
@@ -27,15 +27,16 @@ class Utils {
         
         let res = regexExec(pattern: regexAPIandToken, string: apiEp)
         if !res.isEmpty { // has token
-            return (endpoint: res[1] + "://" + res[3], token: res[2])
+            return (endpoint: "https://" + res[1], token: res[0])
         }
         
         let res2 = regexExec(pattern: regexSchemaAndPath, string: apiEp)
         if res2.isEmpty {
-          print("Problem occurred when extracting the endpoint: cannot find endpoint, invalid URL format")
+            print("Problem occurred when extracting the endpoint: cannot find endpoint, invalid URL format")
+            return nil
         }
 
-        return (endpoint: res2[1] + "://" + res2[2], token: nil)
+        return (endpoint: "https://" + res2[0], token: nil)
     }
     
     /// Constructs the API endpoint from the endpoint and the token
@@ -50,11 +51,8 @@ class Utils {
         }
         
         if let token = token {
-            var res = regexExec(pattern: regexSchemaAndPath, string: ep)
-            if !res[2].hasSuffix("/") {
-              res[2] += "/"
-            }
-            return res[1] + "://" + token + "@" + res[2]
+            let res = regexExec(pattern: regexSchemaAndPath, string: ep)
+            return "https://" + token + "@" + res[0]
         }
         
         return ep
