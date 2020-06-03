@@ -8,9 +8,6 @@
 
 import Foundation
 
-// TODO: add token + username to get api end point
-// TODO: assets ?
-// TODO: test
 class Service {
     private var pryvServiceInfoUrl: String
     private var serviceCustomization: [String: Any]
@@ -50,6 +47,27 @@ class Service {
         customizeService()
         
         return pryvServiceInfo
+    }
+    
+    /// Constructs the API endpoint from this service and the username and token
+    /// - Parameters:
+    ///   - username
+    ///   - token (optionnal)
+    /// - Returns: API Endpoint from a username and token and the PryvServiceInfo
+    public func apiEndpointFor(username: String, token: String? = nil) -> String? {
+        let serviceInfo = pryvServiceInfo ?? info()
+        let apiEndpoint = serviceInfo?.api.replacingOccurrences(of: "{username}", with: username)
+        
+        if let token = token, var apiEndpoint = apiEndpoint {
+            if apiEndpoint.hasPrefix("https://") {
+                apiEndpoint = String(apiEndpoint.dropFirst(8))
+            }
+            
+            return "https://" + token + "@" + apiEndpoint
+        }
+        
+        if apiEndpoint == nil { print("problem encountered when fetching the service info api") ; return nil }
+        return apiEndpoint
     }
     
     // MARK: - private helpers functions for the library
