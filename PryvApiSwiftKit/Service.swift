@@ -77,37 +77,38 @@ class Service {
     ///   - username
     ///   - password
     ///   - appId
-    /// - Returns: the user's connection to the appId
+    /// - Returns: the user's connection to the appId or nil if problem is encountered
     public func login(username: String, password: String, appId: String) -> Connection? {
-        let apiEndpoint = apiEndpointFor(username: username)
-        
-        guard let registerStringUrl = pryvServiceInfo?.register, let registerUrl = URL(string: registerStringUrl) else { return nil }
-        
+        var connection: Connection? = nil
         let loginPayload = ["username": username, "password": password, "appId": appId]
-        let loginHttpBody: Data? = nil // TODO: loginPayload to data
         
-        var request = URLRequest(url: registerUrl)
-        request.httpMethod = "POST"
-        request.setValue("/auth/login", forHTTPHeaderField: "Content-Type")
-        request.httpBody = loginHttpBody
-        
-        sendRequest(request: request) { data in // TODO: implement sendLoginRequest
-             if let data = data {
-                // TODO: receive token
+        sendLoginRequest(payload: loginPayload) { data in
+             if let token = data, let apiEndpoint = self.apiEndpointFor(username: username, token: token) {
+                connection = Connection(apiEndpoint: apiEndpoint)
              }
         }
         
-        // TODO: return Connection(apiEndpoint: buildendpoint(username, token))
-        
-        return Connection(apiEndpoint: "") // TODO: remove
+        return connection
     }
     
     // MARK: - private helpers functions for the library
     
+    /// Customizes the service info parameters
+    private func customizeService() {
+        if let register = serviceCustomization["register"] as? String { pryvServiceInfo?.register = register }
+        if let access = serviceCustomization["access"] as? String { pryvServiceInfo?.access = access }
+        if let api = serviceCustomization["api"] as? String { pryvServiceInfo?.api = api }
+        if let name = serviceCustomization["name"] as? String { pryvServiceInfo?.name = name }
+        if let home = serviceCustomization["home"] as? String { pryvServiceInfo?.home = home }
+        if let support = serviceCustomization["support"] as? String { pryvServiceInfo?.support = support }
+        if let terms = serviceCustomization["terms"] as? String { pryvServiceInfo?.terms = terms }
+        if let eventTypes = serviceCustomization["eventTypes"] as? String { pryvServiceInfo?.eventTypes = eventTypes }
+    }
+    
     /// Decodes json data into a PryvServiceInfo object
     /// - Parameter json: json encoded data structured as a service info object
     /// - Returns: the PryvServiceInfo object corresponding to the json or nil if problem is encountered
-    private func decodeData(from json: Data) -> PryvServiceInfo? {
+    private func decodeInfo(from json: Data) -> PryvServiceInfo? {
         let decoder = JSONDecoder()
         
         do {
@@ -132,23 +133,42 @@ class Service {
         
         let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
             if let _ = error, data == nil { print("error upon request for service info") ; return completion(nil) }
-            let service = self.decodeData(from: data!)
+            let service = self.decodeInfo(from: data!)
             return completion(service)
         }
         
         task.resume()
     }
     
-    /// Customizes the service info parameters
-    private func customizeService() {
-        if let register = serviceCustomization["register"] as? String { pryvServiceInfo?.register = register }
-        if let access = serviceCustomization["access"] as? String { pryvServiceInfo?.access = access }
-        if let api = serviceCustomization["api"] as? String { pryvServiceInfo?.api = api }
-        if let name = serviceCustomization["name"] as? String { pryvServiceInfo?.name = name }
-        if let home = serviceCustomization["home"] as? String { pryvServiceInfo?.home = home }
-        if let support = serviceCustomization["support"] as? String { pryvServiceInfo?.support = support }
-        if let terms = serviceCustomization["terms"] as? String { pryvServiceInfo?.terms = terms }
-        if let eventTypes = serviceCustomization["eventTypes"] as? String { pryvServiceInfo?.eventTypes = eventTypes }
+    
+    /// Sends a login request to the register url from the service info and returns the response token
+    /// - Parameters:
+    ///   - payload: the json formatted payload for the request: username, password and app id
+    ///   - completion: closure containing the parsed data, if any, from the response of the request
+    /// - Returns: the closure `completion` is called after the function returns to access the token
+    private func sendLoginRequest(payload: [String: Any], completion: @escaping (String?) -> ()) {
+        let serviceInfo = pryvServiceInfo ?? info()
+        
+        guard let register = serviceInfo?.register, let url = URL(string: register) else { print("Cannot access register url") ; return completion(nil) }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("/auth/login", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let _ = error, data == nil { print("error upon request for login") ; return completion(nil) }
+
+            guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? [String: Any] else {
+                print("error upon parsing the login response")
+                return completion(nil)
+            }
+            
+            let token = dictionary["token"] as? String
+            return completion(token)
+        }
+
+        task.resume()
     }
 
 }
