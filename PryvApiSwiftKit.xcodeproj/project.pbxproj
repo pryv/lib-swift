@@ -11,8 +11,9 @@
 		B3419E332487C1AF00FB4492 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3419E322487C1AF00FB4492 /* Utils.swift */; };
 		B38CDCF02487DF5B00EB91D6 /* AuthState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38CDCEF2487DF5B00EB91D6 /* AuthState.swift */; };
 		B38CDCF22487EC4D00EB91D6 /* UtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38CDCF12487EC4D00EB91D6 /* UtilsTests.swift */; };
+		B38CDCF42487F73400EB91D6 /* ConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38CDCF32487F73400EB91D6 /* ConnectionTests.swift */; };
+		B38CDCF62487F7D800EB91D6 /* ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38CDCF52487F7D800EB91D6 /* ServiceTests.swift */; };
 		B396EDA6248669F7004BADD7 /* PryvApiSwiftKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B396ED9C248669F7004BADD7 /* PryvApiSwiftKit.framework */; };
-		B396EDAB248669F7004BADD7 /* PryvApiSwiftKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396EDAA248669F7004BADD7 /* PryvApiSwiftKitTests.swift */; };
 		B396EDAD248669F7004BADD7 /* PryvApiSwiftKit.h in Headers */ = {isa = PBXBuildFile; fileRef = B396ED9F248669F7004BADD7 /* PryvApiSwiftKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B396EDB724866C51004BADD7 /* PryvApiSwiftKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396EDB624866C51004BADD7 /* PryvApiSwiftKit.swift */; };
 		B396EDB924867095004BADD7 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396EDB824867095004BADD7 /* Service.swift */; };
@@ -34,11 +35,12 @@
 		B3419E322487C1AF00FB4492 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		B38CDCEF2487DF5B00EB91D6 /* AuthState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthState.swift; sourceTree = "<group>"; };
 		B38CDCF12487EC4D00EB91D6 /* UtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilsTests.swift; sourceTree = "<group>"; };
+		B38CDCF32487F73400EB91D6 /* ConnectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionTests.swift; sourceTree = "<group>"; };
+		B38CDCF52487F7D800EB91D6 /* ServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceTests.swift; sourceTree = "<group>"; };
 		B396ED9C248669F7004BADD7 /* PryvApiSwiftKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PryvApiSwiftKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B396ED9F248669F7004BADD7 /* PryvApiSwiftKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PryvApiSwiftKit.h; sourceTree = "<group>"; };
 		B396EDA0248669F7004BADD7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B396EDA5248669F7004BADD7 /* PryvApiSwiftKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PryvApiSwiftKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B396EDAA248669F7004BADD7 /* PryvApiSwiftKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PryvApiSwiftKitTests.swift; sourceTree = "<group>"; };
 		B396EDAC248669F7004BADD7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B396EDB624866C51004BADD7 /* PryvApiSwiftKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PryvApiSwiftKit.swift; sourceTree = "<group>"; };
 		B396EDB824867095004BADD7 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
@@ -100,9 +102,10 @@
 		B396EDA9248669F7004BADD7 /* PryvApiSwiftKitTests */ = {
 			isa = PBXGroup;
 			children = (
-				B396EDAA248669F7004BADD7 /* PryvApiSwiftKitTests.swift */,
 				B396EDAC248669F7004BADD7 /* Info.plist */,
 				B38CDCF12487EC4D00EB91D6 /* UtilsTests.swift */,
+				B38CDCF32487F73400EB91D6 /* ConnectionTests.swift */,
+				B38CDCF52487F7D800EB91D6 /* ServiceTests.swift */,
 			);
 			path = PryvApiSwiftKitTests;
 			sourceTree = "<group>";
@@ -230,8 +233,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B396EDAB248669F7004BADD7 /* PryvApiSwiftKitTests.swift in Sources */,
 				B38CDCF22487EC4D00EB91D6 /* UtilsTests.swift in Sources */,
+				B38CDCF62487F7D800EB91D6 /* ServiceTests.swift in Sources */,
+				B38CDCF42487F73400EB91D6 /* ConnectionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

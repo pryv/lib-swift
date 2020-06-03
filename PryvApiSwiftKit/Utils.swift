@@ -9,8 +9,8 @@
 import Foundation
 
 class Utils {
-    private let regexAPIandToken = "https?:\\/\\/(.+)@(.+)"
-    private let regexSchemaAndPath = "https?:\\/\\/(.+)"
+    private let regexAPIandToken = "(?i)https?:\\/\\/(.+)@(.+)"
+    private let regexSchemaAndPath = "(?i)https?:\\/\\/(.+)"
     
     init() {
         

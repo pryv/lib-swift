@@ -174,11 +174,10 @@ class Service {
     /// - Returns: the closure `completion` is called after the function returns to access the service info
     private func sendServiceInfoRequest(completion: @escaping (PryvServiceInfo?) -> ()) {
         guard let url = URL(string: pryvServiceInfoUrl) else { print("problem encountered: cannot access url \(pryvServiceInfoUrl)") ; return completion(nil) }
-        let httpBody = Data("{}".utf8)
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.httpBody = httpBody
+        request.httpBody = try? JSONSerialization.data(withJSONObject: [String: Any]())
         
         let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
             if let _ = error, data == nil { print("problem encountered when requesting the service info") ; return completion(nil) }

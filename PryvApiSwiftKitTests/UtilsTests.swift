@@ -18,7 +18,7 @@ class UtilsTests: XCTestCase {
     }
 
     func testExtractTokenAndEndpointWithToken() {
-        let apiEndpoint = "https://token@username.pryv.me"
+        let apiEndpoint = "HTTps://token@username.pryv.me" // volonteer to have uppercase to check the regex
         let endpoint = "https://username.pryv.me/"
         let token = "token"
         
