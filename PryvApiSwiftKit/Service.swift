@@ -70,6 +70,38 @@ class Service {
         return apiEndpoint
     }
     
+    /// Issue a "login call on the Service" return a Connection on success
+    /// **Warning !**: the token of the connection will be a "Personal" token that expires
+    /// See [the API](https://api.pryv.com/reference-full/#login-user)
+    /// - Parameters:
+    ///   - username
+    ///   - password
+    ///   - appId
+    /// - Returns: the user's connection to the appId
+    public func login(username: String, password: String, appId: String) -> Connection? {
+        let apiEndpoint = apiEndpointFor(username: username)
+        
+        guard let registerStringUrl = pryvServiceInfo?.register, let registerUrl = URL(string: registerStringUrl) else { return nil }
+        
+        let loginPayload = ["username": username, "password": password, "appId": appId]
+        let loginHttpBody: Data? = nil // TODO: loginPayload to data
+        
+        var request = URLRequest(url: registerUrl)
+        request.httpMethod = "POST"
+        request.setValue("/auth/login", forHTTPHeaderField: "Content-Type")
+        request.httpBody = loginHttpBody
+        
+        sendRequest(request: request) { data in // TODO: implement sendLoginRequest
+             if let data = data {
+                // TODO: receive token
+             }
+        }
+        
+        // TODO: return Connection(apiEndpoint: buildendpoint(username, token))
+        
+        return Connection(apiEndpoint: "") // TODO: remove
+    }
+    
     // MARK: - private helpers functions for the library
     
     /// Decodes json data into a PryvServiceInfo object

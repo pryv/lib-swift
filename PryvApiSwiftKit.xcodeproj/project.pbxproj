@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B3419E312487A8B400FB4492 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3419E302487A8B400FB4492 /* Connection.swift */; };
 		B396EDA6248669F7004BADD7 /* PryvApiSwiftKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B396ED9C248669F7004BADD7 /* PryvApiSwiftKit.framework */; };
 		B396EDAB248669F7004BADD7 /* PryvApiSwiftKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396EDAA248669F7004BADD7 /* PryvApiSwiftKitTests.swift */; };
 		B396EDAD248669F7004BADD7 /* PryvApiSwiftKit.h in Headers */ = {isa = PBXBuildFile; fileRef = B396ED9F248669F7004BADD7 /* PryvApiSwiftKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -26,6 +27,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B3419E302487A8B400FB4492 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		B396ED9C248669F7004BADD7 /* PryvApiSwiftKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PryvApiSwiftKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B396ED9F248669F7004BADD7 /* PryvApiSwiftKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PryvApiSwiftKit.h; sourceTree = "<group>"; };
 		B396EDA0248669F7004BADD7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 				B396EDA0248669F7004BADD7 /* Info.plist */,
 				B396EDB624866C51004BADD7 /* PryvApiSwiftKit.swift */,
 				B396EDB824867095004BADD7 /* Service.swift */,
+				B3419E302487A8B400FB4492 /* Connection.swift */,
 				B396EDBE2486A9EB004BADD7 /* PryvServiceInfo.swift */,
 			);
 			path = PryvApiSwiftKit;
@@ -208,6 +211,7 @@
 				B396EDBF2486A9EB004BADD7 /* PryvServiceInfo.swift in Sources */,
 				B396EDB724866C51004BADD7 /* PryvApiSwiftKit.swift in Sources */,
 				B396EDB924867095004BADD7 /* Service.swift in Sources */,
+				B3419E312487A8B400FB4492 /* Connection.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
