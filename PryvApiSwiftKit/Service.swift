@@ -66,7 +66,7 @@ class Service {
             return "https://" + token + "@" + apiEndpoint
         }
         
-        if apiEndpoint == nil { print("problem encountered when fetching the service info api") ; return nil }
+        if apiEndpoint == nil { print("problem encountered when fetching the service info api") }
         return apiEndpoint
     }
     
@@ -81,8 +81,9 @@ class Service {
     public func login(username: String, password: String, appId: String) -> Connection? {
         var connection: Connection? = nil
         let loginPayload = ["username": username, "password": password, "appId": appId]
+        guard let apiEndpoint = apiEndpointFor(username: username) else { return nil }
         
-        sendLoginRequest(payload: loginPayload) { data in
+        sendLoginRequest(endpoint: apiEndpoint, payload: loginPayload) { data in
              if let token = data, let apiEndpoint = self.apiEndpointFor(username: username, token: token) {
                 connection = Connection(apiEndpoint: apiEndpoint)
              }
@@ -145,11 +146,10 @@ class Service {
     /// - Parameters:
     ///   - payload: the json formatted payload for the request: username, password and app id
     ///   - completion: closure containing the parsed data, if any, from the response of the request
+    ///   - endpoint: the api endpoint given by the service info
     /// - Returns: the closure `completion` is called after the function returns to access the token
-    private func sendLoginRequest(payload: [String: Any], completion: @escaping (String?) -> ()) {
-        let serviceInfo = pryvServiceInfo ?? info()
-        
-        guard let register = serviceInfo?.register, let url = URL(string: register) else { print("Cannot access register url") ; return completion(nil) }
+    private func sendLoginRequest(endpoint: String, payload: [String: Any], completion: @escaping (String?) -> ()) {
+        guard let url = URL(string: endpoint) else { print("Cannot access register url \(endpoint)") ; return completion(nil) }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
