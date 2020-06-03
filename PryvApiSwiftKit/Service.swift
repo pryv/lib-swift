@@ -85,6 +85,55 @@ class Service {
         return connection
     }
     
+    // TODO: add doc 
+    public func setUpAuth(authPayload: [String: Any], stateChangedCallback: (AuthState) -> ()) {
+        /** EXPLICATION
+            Cette fonction va envoyer une auth request au champs « access » du service info.
+            Le développeur implémentera un callback selon l’état du login (in progress, accepted ou refused)
+            Tu peux te baser sur l'exercice de l'entretien pour l'app exemple.
+            Par contre, la lib doit implémenter le polling et appeler le callback fourni en argument selon le state.authPayload
+         
+            Le développeur devra donc implémenter sa première page avec un bouton, instancier un objet Service, appeler service.setupAuth() lorsqu'il est cliqué avec le callback en argument qui (par exemple) affichera soit une page de compte authentifié, soit un retour au bouton en cas d'échec.
+         
+            # Example
+         
+            ```
+            service = new Pryv.Service('https://reg.pryv.me/service/info');
+            await service.init();
+            // fetched serviceInfo.access so you know where to perform auth request
+
+            // Service is initialized
+            service.setupAuth({
+              authRequestParams: {
+                // https://api.pryv.com/reference/#auth-request
+              },
+              stateChangedCallback: callback
+            });
+
+            function callback(state) {
+              if (state.id === Pryv.AuthStates.AUTHORIZED) {
+                connection = new Pryv.Connection(state.apiEndpoint);
+                // open new Activity, initialized with this connection object
+              }
+              if (state.id === Pryv.AuthStates.LOGOUT) {
+                connection = null;
+                logToConsole('# Logout');
+              }
+            }
+            ```
+         */
+        
+        /** TODO
+         
+            1. Envoyer une auth request à info().access
+            2. Recevoir les champs: `authUrl`, `poll` et `poll_rate_ms`
+            3. *Ouvrir une vue pour le login* - NON => COMMENT ?
+            4. Garder une variable `state` pour détecter le changement pour le callback
+            5. Set un timer à `poll_rate_ms`
+            6. À chaque interruption du timer, lancer une GET request à l'url `poll`
+            7. Si la réponse de la requête change, invalider le timer et appeler le callback sur le nouveau `state`
+         */
+    }
     
     /// This function will be implemented later, according to the documentation on [lib-js](https://github.com/pryv/lib-js#pryvbrowser--visual-assets)
     public func assets() {
