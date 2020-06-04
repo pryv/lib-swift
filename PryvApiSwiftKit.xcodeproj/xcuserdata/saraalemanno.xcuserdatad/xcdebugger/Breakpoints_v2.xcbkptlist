@@ -18,70 +18,38 @@
             endingLineNumber = "68"
             landmarkName = "Service"
             landmarkType = "3">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "89658AB5-02A5-4DA3-ABD9-8E3815F5EE7F"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PryvApiSwiftKit/Service.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "52"
-            endingLineNumber = "52"
-            landmarkName = "info()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F70711FF-AB5B-48BC-8605-6604A8BABA99"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PryvApiSwiftKit/Service.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
-            landmarkName = "info()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "2AF19FF0-DADF-4349-9C4B-065296218540"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PryvApiSwiftKit/Service.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "180"
-            endingLineNumber = "180"
-            landmarkName = "sendServiceInfoRequest(completion:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "AB6A94E7-73A2-487B-800B-275B6EC1CE88"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PryvApiSwiftKit/Service.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "185"
-            endingLineNumber = "185"
-            landmarkName = "sendServiceInfoRequest(completion:)"
-            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "07AC32ED-67BC-454C-BE07-B775848691FE - 6b3793b5f4afca9d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "default argument 1 of PryvApiSwiftKit.Service.apiEndpointFor(username: Swift.String, token: Swift.Optional&lt;Swift.String&gt;) -&gt; Swift.Optional&lt;Swift.String&gt;"
+                  moduleName = "PryvApiSwiftKit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/saraalemanno/Documents/GitHub/lib-swift/PryvApiSwiftKit/Service.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "69"
+                  endingLineNumber = "69"
+                  offsetFromSymbolStart = "8">
+               </Location>
+               <Location
+                  uuid = "07AC32ED-67BC-454C-BE07-B775848691FE - d52b4bbbe374ae2a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "PryvApiSwiftKit.Service.apiEndpointFor(username: Swift.String, token: Swift.Optional&lt;Swift.String&gt;) -&gt; Swift.Optional&lt;Swift.String&gt;"
+                  moduleName = "PryvApiSwiftKit"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/saraalemanno/Documents/GitHub/lib-swift/PryvApiSwiftKit/Service.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "70"
+                  endingLineNumber = "70"
+                  offsetFromSymbolStart = "286">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -97,22 +65,6 @@
             startingLineNumber = "188"
             endingLineNumber = "188"
             landmarkName = "sendServiceInfoRequest(completion:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "975D80F5-E1F5-4899-8CD3-9832482BFA1D"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PryvApiSwiftKit/Service.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "164"
-            endingLineNumber = "164"
-            landmarkName = "decodeServiceInfo(from:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

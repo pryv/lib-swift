@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import Mocker
 @testable import PryvApiSwiftKit
 
 class ServiceTests: XCTestCase {
@@ -14,17 +15,6 @@ class ServiceTests: XCTestCase {
     private let username = "username"
     private let token = "token"
     private let password = "password"
-    private let apiEndpoint = "https://token@username.pryv.me/"
-    private let expectedServiceInfo = [
-        "register": "https://reg.pryv.me",
-        "access": "https://access.pryv.me/access",
-        "api": "https://{username}.pryv.me/",
-        "name": "Pryv Lab",
-        "home": "https://www.pryv.com",
-        "support": "https://pryv.com/helpdesk",
-        "terms": "https://pryv.com/pryv-lab-terms-of-use/",
-        "eventTypes": "https://api.pryv.com/event-types/flat.json"
-    ]
     private let serviceCustomization = [
         "register": "https://reg.pryv2.me",
         "access": "https://access.pryv2.me/access",
@@ -42,12 +32,14 @@ class ServiceTests: XCTestCase {
     override func setUp() {
         service = Service(pryvServiceInfoUrl: pryvServiceInfoUrl)
         customService = Service(pryvServiceInfoUrl: pryvServiceInfoUrl, serviceCustomization: serviceCustomization)
+        
+        mockResponses()
     }
-    
-    // FIXME: no test pass => use mocking
     
     func testApiEndpoint() {
         let builtApiEndpoint = service?.apiEndpointFor(username: username, token: token)
+        let apiEndpoint = "https://token@username.pryv.me/"
+        
         XCTAssertEqual(builtApiEndpoint, apiEndpoint)
     }
     
@@ -55,14 +47,14 @@ class ServiceTests: XCTestCase {
         let serviceInfo = service?.info()
         XCTAssertNotNil(serviceInfo)
         
-        XCTAssertEqual(serviceInfo?.register, expectedServiceInfo["register"])
-        XCTAssertEqual(serviceInfo?.access, expectedServiceInfo["access"])
-        XCTAssertEqual(serviceInfo?.api, expectedServiceInfo["api"])
-        XCTAssertEqual(serviceInfo?.name, expectedServiceInfo["name"])
-        XCTAssertEqual(serviceInfo?.home, expectedServiceInfo["home"])
-        XCTAssertEqual(serviceInfo?.support, expectedServiceInfo["support"])
-        XCTAssertEqual(serviceInfo?.terms, expectedServiceInfo["terms"])
-        XCTAssertEqual(serviceInfo?.eventTypes, expectedServiceInfo["eventTypes"])
+        XCTAssertEqual(serviceInfo?.register, "https://reg.pryv.me")
+        XCTAssertEqual(serviceInfo?.access, "https://access.pryv.me/access")
+        XCTAssertEqual(serviceInfo?.api, "https://{username}.pryv.me/")
+        XCTAssertEqual(serviceInfo?.name, "Pryv Lab")
+        XCTAssertEqual(serviceInfo?.home, "https://www.pryv.com")
+        XCTAssertEqual(serviceInfo?.support, "https://pryv.com/helpdesk")
+        XCTAssertEqual(serviceInfo?.terms, "https://pryv.com/pryv-lab-terms-of-use/")
+        XCTAssertEqual(serviceInfo?.eventTypes, "https://api.pryv.com/event-types/flat.json")
     }
     
     func testInfoCustomized() {
@@ -108,14 +100,28 @@ class ServiceTests: XCTestCase {
         """
     
         let authUrl = service?.setUpAuth(authPayload: authPayload, stateChangedCallback: stateChangeCallback)
-        XCTAssertEqual(authUrl, "https://reg.pryv.me/access")
+        XCTAssertEqual(authUrl, "https://sw.pryv.me/access/access.html?poll=https://reg.pryv.me/access/6CInm4R2TLaoqtl4")
+        
+        // The test for the callback function is done in the app example
     }
     
-    func stateChangeCallback(authResult: AuthResult) {
+    private func stateChangeCallback(authResult: AuthResult) {
         switch authResult.state {
         case .accepted: return
         case .need_signin: return
         case .refused: return
         }
+    }
+    
+    private func mockResponses() {
+        let mockServiceInfo = Mock(url: URL(string: pryvServiceInfoUrl)!, contentType: .json, statusCode: 200, data: [
+            .get : MockedData.serviceInfoResponse
+        ])
+        let mockAccessEndpoint = Mock(url: URL(string: "https://reg.pryv.me")!, contentType: .json, statusCode: 200, data: [
+            .post : MockedData.authResponse
+        ])
+        
+        Mocker.register(mockServiceInfo)
+        Mocker.register(mockAccessEndpoint)
     }
 }
