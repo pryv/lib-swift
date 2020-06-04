@@ -11,10 +11,16 @@ import Foundation
 class Connection {
     private let utils = Utils()
     
+    private var apiEndpoint: String
     private var endpoint: String
     private var token: String?
     
     init(apiEndpoint: String) {
+        self.apiEndpoint = apiEndpoint
         (self.endpoint, self.token) = utils.extractTokenAndEndpoint(apiEndpoint: apiEndpoint) ?? ("", nil)
+    }
+    
+    public func getApiEndpoint() -> String {
+        return apiEndpoint
     }
 }
