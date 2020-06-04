@@ -19,6 +19,14 @@ class Service {
     
     private var pryvServiceInfo: PryvServiceInfo? = nil
     
+    private var pollingInfo: (poll: String, poll_ms: Double, callback: (AuthResult) -> ())? {
+        didSet {
+            DispatchQueue.global(qos: .background).async {
+                self.poll(poll: self.pollingInfo!.poll, poll_ms: self.pollingInfo!.poll_ms, stateChangedCallback: self.pollingInfo!.callback)
+            }
+        }
+    }
+    
     // MARK: - public library
     
     /// Inits a service with the service info url and no custom element
@@ -121,13 +129,10 @@ class Service {
         var result: String?
         sendAuthRequest(string: accessUrl, payload: authPayload) { tuple in
             if let (authUrl, poll, poll_ms) = tuple {
+                self.pollingInfo?.poll = poll
+                self.pollingInfo?.poll_ms = poll_ms
+                self.pollingInfo?.callback = stateChangedCallback
                 result = authUrl
-                var currentState: AuthStates = .need_signin
-                
-                // Library doc: TimeInteval is in seconds, whereas poll_rate_ms is in milliseconds
-                self.timer = Timer.scheduledTimer(withTimeInterval: poll_ms * 0.001, repeats: true) { _ in
-                    currentState = self.poll(url: URL(string: poll)!, currentState: currentState, stateChangedCallback: stateChangedCallback)
-                }
             }
         }
         
@@ -268,51 +273,59 @@ class Service {
     
     /// Sends a request to the polling url and calls the callback function from the setUpAuth function if the state changes
     /// - Parameters:
-    ///   - url: the url containing the `poll` field from the auth response
-    ///   - currentState
-    ///   - stateChangedCallback
-    /// - Returns: the new state of the authentication, if it changes; the same as `currentState` if it does not change
-    private func poll(url: URL, currentState: AuthStates, stateChangedCallback: @escaping (AuthResult) -> ()) -> AuthStates {
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
+    ///   - poll: the url for the polling request
+    ///   - poll_ms: the rate for the polling
+    ///   - stateChangedCallback: callback function to call upon a state change
+    private func poll(poll: String, poll_ms: Double, stateChangedCallback: @escaping (AuthResult) -> ()) {
+        var currentState: AuthStates = .need_signin
         
-        var nextState: AuthStates = currentState
-        
-        self.sendPollingRequest(request: request) { tuple in
-             if let (status, pryvApiEndpoint) = tuple {
-                switch status {
-                    
-                case "REFUSED":
-                    self.timer?.invalidate()
-                    let result = AuthResult(state: .refused, endpoint: nil)
-                    if (currentState != .refused) {
-                        nextState = .refused
-                        stateChangedCallback(result)
+        // Library doc: TimeInteval is in seconds, whereas poll_rate_ms is in milliseconds
+        self.timer = Timer.scheduledTimer(withTimeInterval: poll_ms * 0.001, repeats: true) { _ in
+            var request = URLRequest(url: URL(string: poll)!)
+            request.httpMethod = "GET"
+            
+            self.sendPollingRequest(request: request) { tuple in
+                 if let (status, pryvApiEndpoint) = tuple {
+                    switch status {
+                        
+                    case "REFUSED":
+                        self.timer?.invalidate()
+                        
+                        if (currentState != .refused) {
+                            currentState = .refused
+                            let result = AuthResult(state: currentState, endpoint: nil)
+                            DispatchQueue.main.async {
+                                stateChangedCallback(result)
+                            }
+                        }
+                        
+                    case "NEED_SIGNIN":
+                        if (currentState != .need_signin) {
+                            currentState = .need_signin
+                            let result = AuthResult(state: currentState, endpoint: nil)
+                            DispatchQueue.main.async {
+                                stateChangedCallback(result)
+                            }
+                        }
+                        
+                    case "ACCEPTED":
+                        self.timer?.invalidate()
+                        guard let pryvApiEndpoint = pryvApiEndpoint else { print("Cannot get field \"apiEndpoint\" from response") ; return }
+                        
+                        if currentState != .accepted {
+                            currentState = .accepted
+                            let result = AuthResult(state: currentState, endpoint: pryvApiEndpoint)
+                            DispatchQueue.main.async {
+                                stateChangedCallback(result)
+                            }
+                        }
+                        
+                    default:
+                        print("problem encountered when polling: unexpected status")
                     }
-                    
-                case "NEED_SIGNIN":
-                    let result = AuthResult(state: .need_signin, endpoint: nil)
-                    if (currentState != .need_signin) {
-                        nextState = .need_signin
-                       stateChangedCallback(result)
-                    }
-                    
-                case "ACCEPTED":
-                    self.timer?.invalidate()
-                    guard let pryvApiEndpoint = pryvApiEndpoint else { print("Cannot get field \"apiEndpoint\" from response") ; return }
-                    let result = AuthResult(state: .accepted, endpoint: pryvApiEndpoint)
-                    if currentState != .accepted {
-                        nextState = .accepted
-                        stateChangedCallback(result)
-                    }
-                    
-                default:
-                    print("problem encountered when polling: unexpected status")
-                }
-             }
+                 }
+            }
         }
-        
-        return nextState
     }
 
 }
