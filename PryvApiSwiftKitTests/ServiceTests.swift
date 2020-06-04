@@ -36,13 +36,6 @@ class ServiceTests: XCTestCase {
         mockResponses()
     }
     
-    func testApiEndpoint() {
-        let builtApiEndpoint = service?.apiEndpointFor(username: username, token: token)
-        let apiEndpoint = "https://token@username.pryv.me/"
-        
-        XCTAssertEqual(builtApiEndpoint, apiEndpoint)
-    }
-    
     func testInfoNoCustomization() {
         let serviceInfo = service?.info()
         XCTAssertNotNil(serviceInfo)
@@ -69,6 +62,13 @@ class ServiceTests: XCTestCase {
         XCTAssertEqual(serviceInfo?.support, serviceCustomization["support"])
         XCTAssertEqual(serviceInfo?.terms, serviceCustomization["terms"])
         XCTAssertEqual(serviceInfo?.eventTypes, serviceCustomization["eventTypes"])
+    }
+    
+    func testApiEndpoint() {
+        let builtApiEndpoint = service?.apiEndpointFor(username: username, token: token)
+        let apiEndpoint = "https://token@username.pryv.me/"
+        
+        XCTAssertEqual(builtApiEndpoint, apiEndpoint)
     }
     
     func testLogin() {

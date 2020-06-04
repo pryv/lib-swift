@@ -50,12 +50,7 @@ class Service {
     /// See `PryvServiceInfo` for details on available properties
     /// - Returns: the fetched service info object, customized if needed, or nil if problem is encountered while fetching
     public func info() -> PryvServiceInfo? {
-        sendServiceInfoRequest() { data in
-            if let data = data {
-                self.pryvServiceInfo = data
-            }
-        }
-        
+        pryvServiceInfo = sendServiceInfoRequest()
         customizeService()
         
         return pryvServiceInfo
@@ -175,20 +170,26 @@ class Service {
     /// Fetches the service info from the service info url
     /// - Parameter completion: closure containing the parsed data, if any, from the response of the request to the service info url
     /// - Returns: the closure `completion` is called after the function returns to access the service info
-    private func sendServiceInfoRequest(completion: @escaping (PryvServiceInfo?) -> ()) {
-        guard let url = URL(string: pryvServiceInfoUrl) else { print("problem encountered: cannot access url \(pryvServiceInfoUrl)") ; return completion(nil) }
+    private func sendServiceInfoRequest() -> PryvServiceInfo? {
+        guard let url = URL(string: pryvServiceInfoUrl) else { print("problem encountered: cannot access url \(pryvServiceInfoUrl)") ; return nil }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.httpBody = try? JSONSerialization.data(withJSONObject: [String: Any]())
         
+        var result: PryvServiceInfo? = nil
+        let group = DispatchGroup()
         let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            if let _ = error, data == nil { print("problem encountered when requesting the service info") ; return completion(nil) }
-            let service = self.decodeServiceInfo(from: data!)
-            return completion(service)
+            if let _ = error, data == nil { print("problem encountered when requesting the service info") ; result = nil ; return }
+            result = self.decodeServiceInfo(from: data!)
+            group.leave()
         }
         
+        group.enter()
         task.resume()
+        group.wait()
+        
+        return result
     }
     
     /// Sends a login request to the login url from the service info and returns the response token
