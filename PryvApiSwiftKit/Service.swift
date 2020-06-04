@@ -8,8 +8,11 @@
 
 import Foundation
 
+// TODO: check background vs main tasks
 class Service {
     private let utils = Utils()
+    
+    private var timer: Timer?
     
     private var pryvServiceInfoUrl: String
     private var serviceCustomization: [String: Any]
@@ -91,7 +94,7 @@ class Service {
     ///   - authPayload: the auth request json formatted data according to [the API reference](https://api.pryv.com/reference/#auth-request)
     ///   - stateChangedCallback: function that will be called as soon as the state of the authentication changes
     /// - Returns: the `authUrl` field from the response to the service info
-    /// 
+    ///
     ///  # Use case example
     ///    ```
     ///    let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
@@ -111,18 +114,24 @@ class Service {
     ///            }
     ///    }
     ///    ```
-    public func setUpAuth(authPayload: [String: Any], stateChangedCallback: (AuthState) -> ()) -> String {
-        /** TODO
-         
-            1. Envoyer une auth request à info().access
-            2. Recevoir les champs: `authUrl`, `poll` et `poll_rate_ms`
-            3. Retourner le champs `authUrl`
-            4. Set un timer à `poll_rate_ms`
-            5. À chaque interruption du timer, lancer une GET request à l'url `poll`
-            6. Garder une variable `state` pour détecter le changement pour le callback
-            7. Si la réponse de la requête change, invalider le timer et appeler le callback sur le nouveau `state`
-         */
-        return ""
+    public func setUpAuth(authPayload: [String: Any], stateChangedCallback: @escaping (AuthResult) -> ()) -> String? {
+        let serviceInfo = pryvServiceInfo ?? info()
+        guard let accessUrl = serviceInfo?.access else { print("problem encountered when getting the access url") ; return nil }
+        
+        var result: String?
+        sendAuthRequest(string: accessUrl, payload: authPayload) { tuple in
+            if let (authUrl, poll, poll_ms) = tuple {
+                result = authUrl
+                var currentState: AuthStates = .need_signin
+                
+                // Library doc: TimeInteval is in seconds, whereas poll_rate_ms is in milliseconds
+                self.timer = Timer.scheduledTimer(withTimeInterval: poll_ms * 0.001, repeats: true) { _ in
+                    currentState = self.poll(url: URL(string: poll)!, currentState: currentState, stateChangedCallback: stateChangedCallback)
+                }
+            }
+        }
+        
+        return result
     }
     
     /// This function will be implemented later, according to the documentation on [lib-js](https://github.com/pryv/lib-js#pryvbrowser--visual-assets)
@@ -178,7 +187,7 @@ class Service {
         task.resume()
     }
     
-    /// Sends a login request to the register url from the service info and returns the response token
+    /// Sends a login request to the login url from the service info and returns the response token
     /// - Parameters:
     ///   - payload: the json formatted payload for the request: username, password and app id
     ///   - completion: closure containing the parsed data, if any, from the response of the request
@@ -195,16 +204,115 @@ class Service {
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let _ = error, data == nil { print("problem encountered when requesting login") ; return completion(nil) }
 
-            guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? [String: Any] else {
-                print("problem encountered when parsing the login response")
-                return completion(nil)
-            }
+            guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when parsing the login response") ; return completion(nil) }
             
             let token = dictionary["token"] as? String
             return completion(token)
         }
 
         task.resume()
+    }
+    
+    /// Sends an authentication request to the access url from the service info and returns the `authUrl`, `poll` and `poll_ms` fields
+    /// - Parameters:
+    ///   - string: the field `access` of the service info
+    ///   - payload: the json formatted payload for the request according to [the API reference](https://api.pryv.com/reference/#auth-request)
+    ///   - completion: closure containing the parsed data, if any, from the response of the request
+    /// - Returns: the closure `completion` is called after the function returns to access the fields `authUrl`, `poll` and `poll_ms`
+    private func sendAuthRequest(string: String, payload: [String: Any], completion: @escaping ((String, String, Double)?) -> ()) {
+        guard let url = URL(string: string) else { print("Cannot access url: \(string)") ; return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let _ = error, data == nil { print("problem encountered when sending the auth request") ; return completion(nil) }
+
+            guard let authResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: authResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when decoding the auth response") ; return completion(nil) }
+            
+            let authURL = dictionary["authUrl"] as? String
+            let poll = dictionary["poll"] as? String
+            let poll_rate_ms = dictionary["poll_rate_ms"] as? Double
+            
+            if let authURL = authURL, let poll = poll, let poll_rate_ms = poll_rate_ms {
+                return completion((authURL, poll, poll_rate_ms))
+            }
+            
+            return completion(nil)
+        }
+
+        task.resume()
+    }
+    
+    /// Sends a polling request to the `poll` field from the auth request and returns the status and, if any, the api endpoint
+    /// - Parameters:
+    ///   - request: the request containing the poll url
+    ///   - completion: closure containing the parsed data, if any, from the response of the request
+    /// - Returns: the closure `completion` is called after the function returns to access the fields `status` and `apiEndpoint`
+    private func sendPollingRequest(request: URLRequest, completion: @escaping ((String, String?)?) -> ()) {
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let _ = error, data == nil { print("problem encountered when polling") ; return completion(nil) }
+
+            guard let pollResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: pollResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when decoding the poll response") ; return completion(nil) }
+            
+            guard let status = dictionary["status"] as? String else { return completion(nil) }
+            let pryvApiEndpoint = dictionary["apiEndpoint"] as? String
+            
+            return completion((status, pryvApiEndpoint))
+        }
+
+        task.resume()
+    }
+    
+    /// Sends a request to the polling url and calls the callback function from the setUpAuth function if the state changes
+    /// - Parameters:
+    ///   - url: the url containing the `poll` field from the auth response
+    ///   - currentState
+    ///   - stateChangedCallback
+    /// - Returns: the new state of the authentication, if it changes; the same as `currentState` if it does not change
+    private func poll(url: URL, currentState: AuthStates, stateChangedCallback: @escaping (AuthResult) -> ()) -> AuthStates {
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        var nextState: AuthStates = currentState
+        
+        self.sendPollingRequest(request: request) { tuple in
+             if let (status, pryvApiEndpoint) = tuple {
+                switch status {
+                    
+                case "REFUSED":
+                    self.timer?.invalidate()
+                    let result = AuthResult(state: .refused, endpoint: nil)
+                    if (currentState != .refused) {
+                        nextState = .refused
+                        stateChangedCallback(result)
+                    }
+                    
+                case "NEED_SIGNIN":
+                    let result = AuthResult(state: .need_signin, endpoint: nil)
+                    if (currentState != .need_signin) {
+                        nextState = .need_signin
+                       stateChangedCallback(result)
+                    }
+                    
+                case "ACCEPTED":
+                    self.timer?.invalidate()
+                    guard let pryvApiEndpoint = pryvApiEndpoint else { print("Cannot get field \"apiEndpoint\" from response") ; return }
+                    let result = AuthResult(state: .accepted, endpoint: pryvApiEndpoint)
+                    if currentState != .accepted {
+                        nextState = .accepted
+                        stateChangedCallback(result)
+                    }
+                    
+                default:
+                    print("problem encountered when polling: unexpected status")
+                }
+             }
+        }
+        
+        return nextState
     }
 
 }

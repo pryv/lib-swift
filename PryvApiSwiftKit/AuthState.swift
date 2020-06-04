@@ -9,8 +9,13 @@
 import Foundation
 
 /// Three possible states for the authentication response 
-enum AuthState {
+enum AuthStates {
     case need_signin
     case accepted
     case refused
+}
+
+struct AuthResult {
+    var state: AuthStates
+    var endpoint: String?
 }
