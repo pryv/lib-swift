@@ -8,7 +8,6 @@
 
 import Foundation
 
-// TODO: check background vs main tasks
 class Service {
     private let utils = Utils()
     

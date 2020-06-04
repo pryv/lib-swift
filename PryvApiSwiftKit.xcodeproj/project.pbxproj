@@ -17,6 +17,8 @@
 		B396EDB724866C51004BADD7 /* PryvApiSwiftKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396EDB624866C51004BADD7 /* PryvApiSwiftKit.swift */; };
 		B396EDB924867095004BADD7 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396EDB824867095004BADD7 /* Service.swift */; };
 		B396EDBF2486A9EB004BADD7 /* PryvServiceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396EDBE2486A9EB004BADD7 /* PryvServiceInfo.swift */; };
+		BB2AE045FA89E690F9377DFC /* Pods_PryvApiSwiftKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 631A136077DEA04384B2CAA5 /* Pods_PryvApiSwiftKit.framework */; };
+		C436450F5D6EEAE96888F294 /* Pods_PryvApiSwiftKit_PryvApiSwiftKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2263F0F9BE21074B49B8479A /* Pods_PryvApiSwiftKit_PryvApiSwiftKitTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +32,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0DFAA629863B2C926FA97E80 /* Pods-PryvApiSwiftKit-PryvApiSwiftKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PryvApiSwiftKit-PryvApiSwiftKitTests.release.xcconfig"; path = "Target Support Files/Pods-PryvApiSwiftKit-PryvApiSwiftKitTests/Pods-PryvApiSwiftKit-PryvApiSwiftKitTests.release.xcconfig"; sourceTree = "<group>"; };
+		2263F0F9BE21074B49B8479A /* Pods_PryvApiSwiftKit_PryvApiSwiftKitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PryvApiSwiftKit_PryvApiSwiftKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		56F4DA67DD6EB9A838379A23 /* Pods-PryvApiSwiftKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PryvApiSwiftKit.release.xcconfig"; path = "Target Support Files/Pods-PryvApiSwiftKit/Pods-PryvApiSwiftKit.release.xcconfig"; sourceTree = "<group>"; };
+		631A136077DEA04384B2CAA5 /* Pods_PryvApiSwiftKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PryvApiSwiftKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6BDF891C743DF8DAFD8B7A25 /* Pods-PryvApiSwiftKit-PryvApiSwiftKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PryvApiSwiftKit-PryvApiSwiftKitTests.debug.xcconfig"; path = "Target Support Files/Pods-PryvApiSwiftKit-PryvApiSwiftKitTests/Pods-PryvApiSwiftKit-PryvApiSwiftKitTests.debug.xcconfig"; sourceTree = "<group>"; };
+		9515A3C437B43B514E8992D4 /* Pods-PryvApiSwiftKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PryvApiSwiftKit.debug.xcconfig"; path = "Target Support Files/Pods-PryvApiSwiftKit/Pods-PryvApiSwiftKit.debug.xcconfig"; sourceTree = "<group>"; };
 		B3419E302487A8B400FB4492 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		B3419E322487C1AF00FB4492 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		B38CDCEF2487DF5B00EB91D6 /* AuthState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthState.swift; sourceTree = "<group>"; };
@@ -50,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB2AE045FA89E690F9377DFC /* Pods_PryvApiSwiftKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,18 +67,42 @@
 			buildActionMask = 2147483647;
 			files = (
 				B396EDA6248669F7004BADD7 /* PryvApiSwiftKit.framework in Frameworks */,
+				C436450F5D6EEAE96888F294 /* Pods_PryvApiSwiftKit_PryvApiSwiftKitTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0D5A23EFDBCE4D9500C8697F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9515A3C437B43B514E8992D4 /* Pods-PryvApiSwiftKit.debug.xcconfig */,
+				56F4DA67DD6EB9A838379A23 /* Pods-PryvApiSwiftKit.release.xcconfig */,
+				6BDF891C743DF8DAFD8B7A25 /* Pods-PryvApiSwiftKit-PryvApiSwiftKitTests.debug.xcconfig */,
+				0DFAA629863B2C926FA97E80 /* Pods-PryvApiSwiftKit-PryvApiSwiftKitTests.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		983FF2EE2F9D7C01041024D2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				631A136077DEA04384B2CAA5 /* Pods_PryvApiSwiftKit.framework */,
+				2263F0F9BE21074B49B8479A /* Pods_PryvApiSwiftKit_PryvApiSwiftKitTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B396ED92248669F7004BADD7 = {
 			isa = PBXGroup;
 			children = (
 				B396ED9E248669F7004BADD7 /* PryvApiSwiftKit */,
 				B396EDA9248669F7004BADD7 /* PryvApiSwiftKitTests */,
 				B396ED9D248669F7004BADD7 /* Products */,
+				0D5A23EFDBCE4D9500C8697F /* Pods */,
+				983FF2EE2F9D7C01041024D2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -125,6 +158,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B396EDB0248669F7004BADD7 /* Build configuration list for PBXNativeTarget "PryvApiSwiftKit" */;
 			buildPhases = (
+				5AFE7B30F199DF6E9A68000B /* [CP] Check Pods Manifest.lock */,
 				B396ED97248669F7004BADD7 /* Headers */,
 				B396ED98248669F7004BADD7 /* Sources */,
 				B396ED99248669F7004BADD7 /* Frameworks */,
@@ -143,9 +177,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B396EDB3248669F7004BADD7 /* Build configuration list for PBXNativeTarget "PryvApiSwiftKitTests" */;
 			buildPhases = (
+				6AF62A429319380F3DE6D2DA /* [CP] Check Pods Manifest.lock */,
 				B396EDA1248669F7004BADD7 /* Sources */,
 				B396EDA2248669F7004BADD7 /* Frameworks */,
 				B396EDA3248669F7004BADD7 /* Resources */,
+				D65FC75CA4ADA1EBE9AA434F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -211,6 +247,70 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5AFE7B30F199DF6E9A68000B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PryvApiSwiftKit-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6AF62A429319380F3DE6D2DA /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PryvApiSwiftKit-PryvApiSwiftKitTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D65FC75CA4ADA1EBE9AA434F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PryvApiSwiftKit-PryvApiSwiftKitTests/Pods-PryvApiSwiftKit-PryvApiSwiftKitTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PryvApiSwiftKit-PryvApiSwiftKitTests/Pods-PryvApiSwiftKit-PryvApiSwiftKitTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PryvApiSwiftKit-PryvApiSwiftKitTests/Pods-PryvApiSwiftKit-PryvApiSwiftKitTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B396ED98248669F7004BADD7 /* Sources */ = {
@@ -368,6 +468,7 @@
 		};
 		B396EDB1248669F7004BADD7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9515A3C437B43B514E8992D4 /* Pods-PryvApiSwiftKit.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -393,6 +494,7 @@
 		};
 		B396EDB2248669F7004BADD7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 56F4DA67DD6EB9A838379A23 /* Pods-PryvApiSwiftKit.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -417,6 +519,7 @@
 		};
 		B396EDB4248669F7004BADD7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6BDF891C743DF8DAFD8B7A25 /* Pods-PryvApiSwiftKit-PryvApiSwiftKitTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -435,6 +538,7 @@
 		};
 		B396EDB5248669F7004BADD7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0DFAA629863B2C926FA97E80 /* Pods-PryvApiSwiftKit-PryvApiSwiftKitTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
