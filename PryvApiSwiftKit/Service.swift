@@ -231,7 +231,7 @@ class Service {
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let _ = error, data == nil { print("problem encountered when sending the auth request") ; group.leave() ; return }
 
-            guard let authResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: authResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when decoding the auth response") ; group.leave() ; return } // FIXME
+            guard let authResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: authResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when decoding the auth response") ; group.leave() ; return }
             
             let authURL = dictionary["authUrl"] as? String
             let poll = dictionary["poll"] as? String
