@@ -86,4 +86,36 @@ class ServiceTests: XCTestCase {
         XCTAssertNotNil(apiEndpoint)
         XCTAssertEqual(apiEndpoint, "https://token@username.pryv.me/")
     }
+    
+    func testSetUpAuth() {
+        let authPayload = """
+        {
+            "requestingAppId": "test-app-id",
+            "requestedPermissions": [
+                {
+                    "streamId": "diary",
+                    "level": "read",
+                    "defaultName": "Journal"
+                },
+                {
+                    "streamId": "position",
+                    "level": "contribute",
+                    "defaultName": "Position"
+                }
+            ],
+            "languageCode": "fr"
+        }
+        """
+    
+        let authUrl = service?.setUpAuth(authPayload: authPayload, stateChangedCallback: stateChangeCallback)
+        XCTAssertEqual(authUrl, "https://reg.pryv.me/access")
+    }
+    
+    func stateChangeCallback(authResult: AuthResult) {
+        switch authResult.state {
+        case .accepted: return
+        case .need_signin: return
+        case .refused: return
+        }
+    }
 }

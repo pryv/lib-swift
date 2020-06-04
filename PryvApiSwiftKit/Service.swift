@@ -99,7 +99,7 @@ class Service {
     /// Sends an auth request to the `access` field of the service info and polls the received url
     /// such that the callback function is called when the state of the connection is changed
     /// - Parameters:
-    ///   - authPayload: the auth request json formatted data according to [the API reference](https://api.pryv.com/reference/#auth-request)
+    ///   - authPayload: the auth request json formatted string according to [the API reference](https://api.pryv.com/reference/#auth-request)
     ///   - stateChangedCallback: function that will be called as soon as the state of the authentication changes
     /// - Returns: the `authUrl` field from the response to the service info
     ///
@@ -122,7 +122,7 @@ class Service {
     ///            }
     ///    }
     ///    ```
-    public func setUpAuth(authPayload: [String: Any], stateChangedCallback: @escaping (AuthResult) -> ()) -> String? {
+    public func setUpAuth(authPayload: String, stateChangedCallback: @escaping (AuthResult) -> ()) -> String? {
         let serviceInfo = pryvServiceInfo ?? info()
         guard let accessUrl = serviceInfo?.access else { print("problem encountered when getting the access url") ; return nil }
         
@@ -224,13 +224,13 @@ class Service {
     ///   - payload: the json formatted payload for the request according to [the API reference](https://api.pryv.com/reference/#auth-request)
     ///   - completion: closure containing the parsed data, if any, from the response of the request
     /// - Returns: the closure `completion` is called after the function returns to access the fields `authUrl`, `poll` and `poll_ms`
-    private func sendAuthRequest(string: String, payload: [String: Any], completion: @escaping ((String, String, Double)?) -> ()) {
+    private func sendAuthRequest(string: String, payload: String, completion: @escaping ((String, String, Double)?) -> ()) {
         guard let url = URL(string: string) else { print("Cannot access url: \(string)") ; return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+        request.httpBody = Data(payload.utf8)
         
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let _ = error, data == nil { print("problem encountered when sending the auth request") ; return completion(nil) }
