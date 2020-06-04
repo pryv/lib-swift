@@ -81,10 +81,9 @@ class Service {
         let loginPayload = ["username": username, "password": password, "appId": appId]
         guard let apiEndpoint = apiEndpointFor(username: username) else { return nil }
         
-        sendLoginRequest(endpoint: apiEndpoint, payload: loginPayload) { data in
-             if let token = data, let apiEndpoint = self.apiEndpointFor(username: username, token: token) {
-                connection = Connection(apiEndpoint: apiEndpoint)
-             }
+        let token = sendLoginRequest(endpoint: apiEndpoint + "auth/login", payload: loginPayload)
+        if let apiEndpoint = self.apiEndpointFor(username: username, token: token) {
+           connection = Connection(apiEndpoint: apiEndpoint)
         }
         
         return connection
@@ -168,8 +167,7 @@ class Service {
     }
     
     /// Fetches the service info from the service info url
-    /// - Parameter completion: closure containing the parsed data, if any, from the response of the request to the service info url
-    /// - Returns: the closure `completion` is called after the function returns to access the service info
+    /// - Returns: the service info received from the request
     private func sendServiceInfoRequest() -> PryvServiceInfo? {
         guard let url = URL(string: pryvServiceInfoUrl) else { print("problem encountered: cannot access url \(pryvServiceInfoUrl)") ; return nil }
         
@@ -194,28 +192,32 @@ class Service {
     
     /// Sends a login request to the login url from the service info and returns the response token
     /// - Parameters:
-    ///   - payload: the json formatted payload for the request: username, password and app id
-    ///   - completion: closure containing the parsed data, if any, from the response of the request
     ///   - endpoint: the api endpoint given by the service info
-    /// - Returns: the closure `completion` is called after the function returns to access the token
-    private func sendLoginRequest(endpoint: String, payload: [String: Any], completion: @escaping (String?) -> ()) {
-        guard let url = URL(string: endpoint) else { print("problem encountered: cannot access register url \(endpoint)") ; return completion(nil) }
+    ///   - payload: the json formatted payload for the request: username, password and app id
+    /// - Returns: the token received from the request
+    private func sendLoginRequest(endpoint: String, payload: [String: Any]) -> String? {
+        guard let url = URL(string: endpoint) else { print("problem encountered: cannot access register url \(endpoint)") ; return nil }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("/auth/login", forHTTPHeaderField: "Content-Type")
         request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
 
+        var token: String? = nil
+        let group = DispatchGroup()
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let _ = error, data == nil { print("problem encountered when requesting login") ; return completion(nil) }
+            if let _ = error, data == nil { print("problem encountered when requesting login") ; return }
 
-            guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when parsing the login response") ; return completion(nil) }
+            guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when parsing the login response") ; return }
             
-            let token = dictionary["token"] as? String
-            return completion(token)
+            token = dictionary["token"] as? String
+            group.leave()
         }
 
+        group.enter()
         task.resume()
+        group.wait()
+        
+        return token
     }
     
     /// Sends an authentication request to the access url from the service info and returns the `authUrl`, `poll` and `poll_ms` fields

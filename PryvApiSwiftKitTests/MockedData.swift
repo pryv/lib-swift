@@ -49,4 +49,11 @@ public final class MockedData {
             "serviceInfo": {...}
         }
     """.data(using: .utf8)!
+    
+    public static let loginResponse = """
+        {
+          "token": "ckay3nllh0002lkpv36t1pkyk",
+          "preferredLanguage": "zh"
+        }
+    """.data(using: .utf8)!
 }

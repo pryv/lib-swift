@@ -76,7 +76,7 @@ class ServiceTests: XCTestCase {
         let apiEndpoint = connection?.getApiEndpoint()
         
         XCTAssertNotNil(apiEndpoint)
-        XCTAssertEqual(apiEndpoint, "https://token@username.pryv.me/")
+        XCTAssertEqual(apiEndpoint, "https://ckay3nllh0002lkpv36t1pkyk@username.pryv.me/")
     }
     
     func testSetUpAuth() {
@@ -115,13 +115,17 @@ class ServiceTests: XCTestCase {
     
     private func mockResponses() {
         let mockServiceInfo = Mock(url: URL(string: pryvServiceInfoUrl)!, contentType: .json, statusCode: 200, data: [
-            .get : MockedData.serviceInfoResponse
+            .get: MockedData.serviceInfoResponse
+        ])
+        let mockLoginEndpoint = Mock(url: URL(string: "https://username.pryv.me/auth/login")!, contentType: .json, statusCode: 200, data: [
+            .post: MockedData.loginResponse
         ])
         let mockAccessEndpoint = Mock(url: URL(string: "https://reg.pryv.me")!, contentType: .json, statusCode: 200, data: [
-            .post : MockedData.authResponse
+            .post: MockedData.authResponse
         ])
         
         Mocker.register(mockServiceInfo)
+        Mocker.register(mockLoginEndpoint)
         Mocker.register(mockAccessEndpoint)
     }
 }
