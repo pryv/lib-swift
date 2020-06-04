@@ -102,7 +102,7 @@ class ServiceTests: XCTestCase {
         let authUrl = service?.setUpAuth(authPayload: authPayload, stateChangedCallback: stateChangeCallback)
         XCTAssertEqual(authUrl, "https://sw.pryv.me/access/access.html?poll=https://reg.pryv.me/access/6CInm4R2TLaoqtl4")
         
-        // The test for the callback function is done in the app example
+        // The test for the callback function is done in the [app example](https://github.com/pryv/app-swift-example)
     }
     
     private func stateChangeCallback(authResult: AuthResult) {
@@ -120,7 +120,7 @@ class ServiceTests: XCTestCase {
         let mockLoginEndpoint = Mock(url: URL(string: "https://username.pryv.me/auth/login")!, contentType: .json, statusCode: 200, data: [
             .post: MockedData.loginResponse
         ])
-        let mockAccessEndpoint = Mock(url: URL(string: "https://reg.pryv.me")!, contentType: .json, statusCode: 200, data: [
+        let mockAccessEndpoint = Mock(url: URL(string: "https://reg.pryv.me/access")!, contentType: .json, statusCode: 200, data: [
             .post: MockedData.authResponse
         ])
         

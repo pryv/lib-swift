@@ -117,19 +117,12 @@ class Service {
     ///    ```
     public func setUpAuth(authPayload: String, stateChangedCallback: @escaping (AuthResult) -> ()) -> String? {
         let serviceInfo = pryvServiceInfo ?? info()
-        guard let accessUrl = serviceInfo?.access else { print("problem encountered when getting the access url") ; return nil }
+        guard let registerUrl = serviceInfo?.register else { print("problem encountered when getting the register url") ; return nil }
         
-        var result: String?
-        sendAuthRequest(string: accessUrl, payload: authPayload) { tuple in
-            if let (authUrl, poll, poll_ms) = tuple {
-                self.pollingInfo?.poll = poll
-                self.pollingInfo?.poll_ms = poll_ms
-                self.pollingInfo?.callback = stateChangedCallback
-                result = authUrl
-            }
-        }
+        guard let (authUrl, poll, poll_ms) = sendAuthRequest(string: registerUrl + "/access", payload: authPayload) else { print("problem encountered when getting the result for auth request") ; return nil }
+        self.pollingInfo = (poll: poll, poll_ms: poll_ms, callback: stateChangedCallback)
         
-        return result
+        return authUrl
     }
     
     /// This function will be implemented later, according to the documentation on [lib-js](https://github.com/pryv/lib-js#pryvbrowser--visual-assets)
@@ -178,7 +171,7 @@ class Service {
         var result: PryvServiceInfo? = nil
         let group = DispatchGroup()
         let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            if let _ = error, data == nil { print("problem encountered when requesting the service info") ; result = nil ; return }
+            if let _ = error, data == nil { print("problem encountered when requesting the service info") ; group.leave() ; return }
             result = self.decodeServiceInfo(from: data!)
             group.leave()
         }
@@ -205,9 +198,9 @@ class Service {
         var token: String? = nil
         let group = DispatchGroup()
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let _ = error, data == nil { print("problem encountered when requesting login") ; return }
+            if let _ = error, data == nil { print("problem encountered when requesting login") ; group.leave() ; return }
 
-            guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when parsing the login response") ; return }
+            guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when parsing the login response") ; group.leave() ; return }
             
             token = dictionary["token"] as? String
             group.leave()
@@ -222,35 +215,40 @@ class Service {
     
     /// Sends an authentication request to the access url from the service info and returns the `authUrl`, `poll` and `poll_ms` fields
     /// - Parameters:
-    ///   - string: the field `access` of the service info
+    ///   - string: the field `register` of the service info concatenated with "/access"
     ///   - payload: the json formatted payload for the request according to [the API reference](https://api.pryv.com/reference/#auth-request)
-    ///   - completion: closure containing the parsed data, if any, from the response of the request
-    /// - Returns: the closure `completion` is called after the function returns to access the fields `authUrl`, `poll` and `poll_ms`
-    private func sendAuthRequest(string: String, payload: String, completion: @escaping ((String, String, Double)?) -> ()) {
-        guard let url = URL(string: string) else { print("Cannot access url: \(string)") ; return }
+    /// - Returns: the fields `authUrl`, `poll` and `poll_ms`
+    private func sendAuthRequest(string: String, payload: String) -> (String, String, Double)? {
+        guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return nil }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = Data(payload.utf8)
         
+        var result: (String, String, Double)? = nil
+        let group = DispatchGroup()
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let _ = error, data == nil { print("problem encountered when sending the auth request") ; return completion(nil) }
+            if let _ = error, data == nil { print("problem encountered when sending the auth request") ; group.leave() ; return }
 
-            guard let authResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: authResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when decoding the auth response") ; return completion(nil) }
+            guard let authResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: authResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when decoding the auth response") ; group.leave() ; return } // FIXME
             
             let authURL = dictionary["authUrl"] as? String
             let poll = dictionary["poll"] as? String
             let poll_rate_ms = dictionary["poll_rate_ms"] as? Double
             
             if let authURL = authURL, let poll = poll, let poll_rate_ms = poll_rate_ms {
-                return completion((authURL, poll, poll_rate_ms))
+                result = (authURL, poll, poll_rate_ms)
             }
             
-            return completion(nil)
+            group.leave()
         }
 
+        group.enter()
         task.resume()
+        group.wait()
+        
+        return result
     }
     
     /// Sends a polling request to the `poll` field from the auth request and returns the status and, if any, the api endpoint

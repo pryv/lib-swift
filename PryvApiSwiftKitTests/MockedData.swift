@@ -46,7 +46,16 @@ public final class MockedData {
             "oauthState": null,
             "poll_rate_ms": 1000,
             "lang": "fr",
-            "serviceInfo": {...}
+            "serviceInfo": {
+              "register": "https://reg.pryv.me",
+              "access": "https://access.pryv.me/access",
+              "api": "https://{username}.pryv.me/",
+              "name": "Pryv Lab",
+              "home": "https://www.pryv.com",
+              "support": "https://pryv.com/helpdesk",
+              "terms": "https://pryv.com/pryv-lab-terms-of-use/",
+              "eventTypes": "https://api.pryv.com/event-types/flat.json"
+            }
         }
     """.data(using: .utf8)!
     
