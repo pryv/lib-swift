@@ -20,9 +20,11 @@ class Service {
     
     private var pollingInfo: (poll: String, poll_ms: Double, callback: (AuthResult) -> ())? {
         didSet {
-            // FIXME: does not poll 
-            DispatchQueue.global(qos: .background).async {
-                self.poll(poll: self.pollingInfo!.poll, poll_ms: self.pollingInfo!.poll_ms, stateChangedCallback: self.pollingInfo!.callback)
+            var currentState: AuthStates = .need_signin
+            
+            // Library doc: TimeInteval is in seconds, whereas poll_rate_ms is in milliseconds
+            timer = Timer.scheduledTimer(withTimeInterval: self.pollingInfo!.poll_ms * 0.001, repeats: true) { _ in
+                currentState = self.poll(currentState: currentState, poll: self.pollingInfo!.poll, stateChangedCallback: self.pollingInfo!.callback)
             }
         }
     }
@@ -270,14 +272,13 @@ class Service {
     
     /// Sends a request to the polling url and calls the callback function from the setUpAuth function if the state changes
     /// - Parameters:
+    ///   - currentState: the current state of the response
     ///   - poll: the url for the polling request
-    ///   - poll_ms: the rate for the polling
     ///   - stateChangedCallback: callback function to call upon a state change
-    private func poll(poll: String, poll_ms: Double, stateChangedCallback: @escaping (AuthResult) -> ()) {
-        var currentState: AuthStates = .need_signin
+    private func poll(currentState: AuthStates, poll: String, stateChangedCallback: @escaping (AuthResult) -> ()) -> AuthStates {
+        var newState = currentState
         
-        // Library doc: TimeInteval is in seconds, whereas poll_rate_ms is in milliseconds
-        self.timer = Timer.scheduledTimer(withTimeInterval: poll_ms * 0.001, repeats: true) { _ in
+        DispatchQueue.global(qos: .background).async {
             var request = URLRequest(url: URL(string: poll)!)
             request.httpMethod = "GET"
             
@@ -288,18 +289,18 @@ class Service {
                     case "REFUSED":
                         self.timer?.invalidate()
                         
-                        if (currentState != .refused) {
-                            currentState = .refused
-                            let result = AuthResult(state: currentState, endpoint: nil)
+                        if newState != .refused {
+                            newState = .refused
+                            let result = AuthResult(state: newState, endpoint: nil)
                             DispatchQueue.main.async {
                                 stateChangedCallback(result)
                             }
                         }
                         
                     case "NEED_SIGNIN":
-                        if (currentState != .need_signin) {
-                            currentState = .need_signin
-                            let result = AuthResult(state: currentState, endpoint: nil)
+                        if newState != .need_signin {
+                            newState = .need_signin
+                            let result = AuthResult(state: newState, endpoint: nil)
                             DispatchQueue.main.async {
                                 stateChangedCallback(result)
                             }
@@ -309,9 +310,9 @@ class Service {
                         self.timer?.invalidate()
                         guard let pryvApiEndpoint = pryvApiEndpoint else { print("Cannot get field \"apiEndpoint\" from response") ; return }
                         
-                        if currentState != .accepted {
-                            currentState = .accepted
-                            let result = AuthResult(state: currentState, endpoint: pryvApiEndpoint)
+                        if newState != .accepted {
+                            newState = .accepted
+                            let result = AuthResult(state: newState, endpoint: pryvApiEndpoint)
                             DispatchQueue.main.async {
                                 stateChangedCallback(result)
                             }
@@ -323,6 +324,8 @@ class Service {
                  }
             }
         }
+        
+        return newState
     }
 
 }
