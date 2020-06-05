@@ -9,7 +9,7 @@
 import Foundation
 
 /// Possible states for the authentication response
-enum AuthState {
+public enum AuthState {
     case need_signin
     case accepted
     case refused
@@ -17,7 +17,7 @@ enum AuthState {
 }
 
 /// State of the authentication response with corresponding endpoint, if `.accepted`
-struct AuthResult {
-    var state: AuthState
-    var endpoint: String?
+public struct AuthResult {
+    public var state: AuthState
+    public var endpoint: String?
 }

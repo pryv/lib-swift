@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Connection {
+public class Connection {
     private let utils = Utils()
     
     private var apiEndpoint: String

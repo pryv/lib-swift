@@ -9,7 +9,7 @@
 import Foundation
 
 @available(iOS 10.0, *)
-class Service {
+public class Service {
     private let utils = Utils()
     private let loginPath = "auth/login"
     private let authPath = "access"
@@ -51,7 +51,7 @@ class Service {
     
     /// Inits a service with the service info url and no custom element
     /// - Parameter pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: `https://access.{domain}/service/info`
-    init(pryvServiceInfoUrl: String) {
+    public init(pryvServiceInfoUrl: String) {
         self.pryvServiceInfoUrl = pryvServiceInfoUrl
         self.serviceCustomization = [String: Any]()
     }
@@ -60,7 +60,7 @@ class Service {
     /// - Parameters:
     ///   - pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: [https://access.{domain}/service/info](https://access.{domain}/service/info)
     ///   - serviceCustomization: a json formatted dictionary corresponding to the customizations of the service
-    init(pryvServiceInfoUrl: String, serviceCustomization: [String: Any]) {
+    public init(pryvServiceInfoUrl: String, serviceCustomization: [String: Any]) {
         self.pryvServiceInfoUrl = pryvServiceInfoUrl
         self.serviceCustomization = serviceCustomization
     }
