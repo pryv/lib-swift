@@ -1,0 +1,24 @@
+PODS:
+  - Mocker (1.0.0)
+  - PryvApiSwiftKit (0.1.0):
+    - Mocker (~> 1.0.0)
+
+DEPENDENCIES:
+  - Mocker (~> 1.0.0)
+  - PryvApiSwiftKit (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - Mocker
+
+EXTERNAL SOURCES:
+  PryvApiSwiftKit:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Mocker: 58560cc516f6240e92492dad66f295e7cdd7cdb2
+  PryvApiSwiftKit: 5bab7631b8479ca3a5dd45167e28274902becad0
+
+PODFILE CHECKSUM: da22073876a785084297327221fc062fa493fe07
+
+COCOAPODS: 1.8.4
