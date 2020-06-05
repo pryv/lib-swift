@@ -40,7 +40,7 @@ class ServiceTests: XCTestCase {
         let serviceInfo = service?.info()
         XCTAssertNotNil(serviceInfo)
         
-        XCTAssertEqual(serviceInfo?.register, "https://reg.pryv.me")
+        XCTAssertEqual(serviceInfo?.register, "https://reg.pryv.me/")
         XCTAssertEqual(serviceInfo?.access, "https://access.pryv.me/access")
         XCTAssertEqual(serviceInfo?.api, "https://{username}.pryv.me/")
         XCTAssertEqual(serviceInfo?.name, "Pryv Lab")

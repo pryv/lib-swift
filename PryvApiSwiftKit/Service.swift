@@ -20,6 +20,7 @@ class Service {
     
     private var pollingInfo: (poll: String, poll_ms: Double, callback: (AuthResult) -> ())? {
         didSet {
+            // FIXME: does not poll 
             DispatchQueue.global(qos: .background).async {
                 self.poll(poll: self.pollingInfo!.poll, poll_ms: self.pollingInfo!.poll_ms, stateChangedCallback: self.pollingInfo!.callback)
             }
@@ -99,7 +100,7 @@ class Service {
     ///  # Use case example
     ///    ```
     ///    let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
-    ///    let authUrl = service.setupAuth(
+    ///    let authUrl = service.setUpAuth(
     ///      authRequestParams: [see [the API reference](https://api.pryv.com/reference/#auth-request) for the elements],
     ///      stateChangedCallback: callback
     ///    )
@@ -119,7 +120,7 @@ class Service {
         let serviceInfo = pryvServiceInfo ?? info()
         guard let registerUrl = serviceInfo?.register else { print("problem encountered when getting the register url") ; return nil }
         
-        guard let (authUrl, poll, poll_ms) = sendAuthRequest(string: registerUrl + "/access", payload: authPayload) else { print("problem encountered when getting the result for auth request") ; return nil }
+        guard let (authUrl, poll, poll_ms) = sendAuthRequest(string: registerUrl + "access", payload: authPayload) else { print("problem encountered when getting the result for auth request") ; return nil }
         self.pollingInfo = (poll: poll, poll_ms: poll_ms, callback: stateChangedCallback)
         
         return authUrl

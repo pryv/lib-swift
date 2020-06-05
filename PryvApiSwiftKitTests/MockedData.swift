@@ -11,7 +11,7 @@ import Foundation
 public final class MockedData {
     public static let serviceInfoResponse: Data = """
         {
-          "register": "https://reg.pryv.me",
+          "register": "https://reg.pryv.me/",
           "access": "https://access.pryv.me/access",
           "api": "https://{username}.pryv.me/",
           "name": "Pryv Lab",

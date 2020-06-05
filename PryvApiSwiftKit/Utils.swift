@@ -19,7 +19,7 @@ class Utils {
     /// Returns the token and the endpoint from an API endpoint
     /// - Parameter apiEndpoint
     /// - Returns: a tuple containing the endpoint and the token (optionnal)
-    public func extractTokenAndEndpoint(apiEndpoint: String) -> (String, String?)? {
+    public func extractTokenAndEndpoint(apiEndpoint: String) -> (endpoint: String, token: String?)? {
         var apiEp = apiEndpoint
         if !apiEp.hasSuffix("/") {
             apiEp += "/" // add a trailing '/' to end point if missing
