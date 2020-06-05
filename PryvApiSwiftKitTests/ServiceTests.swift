@@ -106,11 +106,7 @@ class ServiceTests: XCTestCase {
     }
     
     private func stateChangeCallback(authResult: AuthResult) {
-        switch authResult.state {
-        case .accepted: return
-        case .need_signin: return
-        case .refused: return
-        }
+        return
     }
     
     private func mockResponses() {

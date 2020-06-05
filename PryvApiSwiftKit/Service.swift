@@ -21,10 +21,20 @@ class Service {
     private var pollingInfo: (poll: String, poll_ms: Double, callback: (AuthResult) -> ())? {
         didSet {
             var currentState: AuthStates = .need_signin
+            var elapsedTime = 0.0
+            let poll_s = self.pollingInfo!.poll_ms * 0.001
             
             // Library doc: TimeInteval is in seconds, whereas poll_rate_ms is in milliseconds
-            timer = Timer.scheduledTimer(withTimeInterval: self.pollingInfo!.poll_ms * 0.001, repeats: true) { _ in
-                currentState = self.poll(currentState: currentState, poll: self.pollingInfo!.poll, stateChangedCallback: self.pollingInfo!.callback)
+            timer = Timer.scheduledTimer(withTimeInterval: poll_s, repeats: true) { _ in
+                elapsedTime += poll_s
+                if elapsedTime >= 90.0 {
+                    currentState = .timeout
+                    self.timer?.invalidate()
+                    print("The auth request timed out and was invalidated.")
+                    self.pollingInfo!.callback(AuthResult(state: currentState, endpoint: nil))
+                } else {
+                    currentState = self.poll(currentState: currentState, poll: self.pollingInfo!.poll, stateChangedCallback: self.pollingInfo!.callback)
+                }
             }
         }
     }
