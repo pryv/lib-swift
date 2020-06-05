@@ -20,7 +20,7 @@ class Service {
     
     private var pollingInfo: (poll: String, poll_ms: Double, callback: (AuthResult) -> ())? {
         didSet {
-            var currentState: AuthStates = .need_signin
+            var currentState: AuthStates? = nil
             var elapsedTime = 0.0
             let poll_s = self.pollingInfo!.poll_ms * 0.001
             
@@ -31,7 +31,7 @@ class Service {
                     currentState = .timeout
                     self.timer?.invalidate()
                     print("The auth request timed out and was invalidated.")
-                    self.pollingInfo!.callback(AuthResult(state: currentState, endpoint: nil))
+                    self.pollingInfo!.callback(AuthResult(state: currentState!, endpoint: nil))
                 } else {
                     currentState = self.poll(currentState: currentState, poll: self.pollingInfo!.poll, stateChangedCallback: self.pollingInfo!.callback)
                 }
@@ -136,6 +136,11 @@ class Service {
         self.pollingInfo = (poll: poll, poll_ms: poll_ms, callback: stateChangedCallback)
         
         return authUrl
+    }
+    
+    /// Interrupts the timer and stops the polling for the authentication request
+    public func interruptAuth() {
+        timer?.invalidate()
     }
     
     /// This function will be implemented later, according to the documentation on [lib-js](https://github.com/pryv/lib-js#pryvbrowser--visual-assets)
@@ -285,7 +290,8 @@ class Service {
     ///   - currentState: the current state of the response
     ///   - poll: the url for the polling request
     ///   - stateChangedCallback: callback function to call upon a state change
-    private func poll(currentState: AuthStates, poll: String, stateChangedCallback: @escaping (AuthResult) -> ()) -> AuthStates {
+    /// - Returns: the new authentication state according to the polling response
+    private func poll(currentState: AuthStates?, poll: String, stateChangedCallback: @escaping (AuthResult) -> ()) -> AuthStates? {
         var newState = currentState
         
         DispatchQueue.global(qos: .background).async {
@@ -301,7 +307,7 @@ class Service {
                         
                         if newState != .refused {
                             newState = .refused
-                            let result = AuthResult(state: newState, endpoint: nil)
+                            let result = AuthResult(state: newState!, endpoint: nil)
                             DispatchQueue.main.async {
                                 stateChangedCallback(result)
                             }
@@ -310,7 +316,7 @@ class Service {
                     case "NEED_SIGNIN":
                         if newState != .need_signin {
                             newState = .need_signin
-                            let result = AuthResult(state: newState, endpoint: nil)
+                            let result = AuthResult(state: newState!, endpoint: nil)
                             DispatchQueue.main.async {
                                 stateChangedCallback(result)
                             }
@@ -322,7 +328,7 @@ class Service {
                         
                         if newState != .accepted {
                             newState = .accepted
-                            let result = AuthResult(state: newState, endpoint: pryvApiEndpoint)
+                            let result = AuthResult(state: newState!, endpoint: pryvApiEndpoint)
                             DispatchQueue.main.async {
                                 stateChangedCallback(result)
                             }
