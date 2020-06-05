@@ -21,11 +21,11 @@ Pod::Spec.new do |s|
   An SDK to connect and interact with the Pryv API from any iOS application.
                        DESC
 
-  s.homepage         = 'https://github.com/pryv/PryvApiSwiftKit'
+  s.homepage         = 'https://github.com/pryv/lib-swift'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'alemannosara' => 'sara.alemanno@epfl.ch' }
-  s.source           = { :git => 'https://github.com/pryv/PryvApiSwiftKit.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/pryv/lib-swift.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '10.0'
