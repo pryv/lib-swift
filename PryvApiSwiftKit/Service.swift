@@ -164,13 +164,9 @@ class Service {
     private func sendServiceInfoRequest() -> PryvServiceInfo? {
         guard let url = URL(string: pryvServiceInfoUrl) else { print("problem encountered: cannot access url \(pryvServiceInfoUrl)") ; return nil }
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.httpBody = try? JSONSerialization.data(withJSONObject: [String: Any]())
-        
         var result: PryvServiceInfo? = nil
         let group = DispatchGroup()
-        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
+        let task = URLSession.shared.dataTask(with: url) { (data, _, error) in
             if let _ = error, data == nil { print("problem encountered when requesting the service info") ; group.leave() ; return }
             result = self.decodeServiceInfo(from: data!)
             group.leave()
