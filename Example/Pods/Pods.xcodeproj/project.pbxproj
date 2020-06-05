@@ -1,0 +1,837 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0B2670644FC05514D2DBBE373CAB4C91 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD24C3BBD787B16B0B337616E654F153 /* Service.swift */; };
+		25E270DB498F3A3486ECCB7A76FA80C8 /* Mocker-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9C5B26FAC88D14CC0515795E8EC57C3B /* Mocker-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		26102C252C4B4535F2C3713C8220C64F /* Mocker-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B66B206E497229A4EEA7009B76D4F73C /* Mocker-dummy.m */; };
+		282F51A66E3BA64CC32308727AFF92E3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FB19258878E428BF7E54A7821880B0C /* Foundation.framework */; };
+		28D8B6EE6D00F0B86A369ACF70F89C42 /* PryvApiSwiftKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AF6BA82E9FB66F1D9A9A7342E5F90D /* PryvApiSwiftKit.swift */; };
+		3FA7FFEA091A1145AAD5BBE5A32BF4DD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FB19258878E428BF7E54A7821880B0C /* Foundation.framework */; };
+		456C3F02E8280336ADFE09FFFCE19973 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B91FDA3CAD768C07E806B0406DE2312 /* Utils.swift */; };
+		4B7134695F9DA87333394B5C0F98BC97 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FB19258878E428BF7E54A7821880B0C /* Foundation.framework */; };
+		4F443EA5D2A825F1EECD17ACEE56C3A0 /* PryvServiceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18AC0077C12CB36CB1A6E48143B1691B /* PryvServiceInfo.swift */; };
+		92A157EE24D469B8696594355A620C47 /* PryvApiSwiftKit.h in Headers */ = {isa = PBXBuildFile; fileRef = D02097A3B2A432F52AD07E4B119B208F /* PryvApiSwiftKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A06E7BE7BC6A89C4E6906CB50AB4DA68 /* Mocker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97CCDB8FA2C5F4235CAD0FDA6BC11794 /* Mocker.swift */; };
+		A55C017819DDF7485A9CFB5519550FF1 /* Pods-PryvApiSwiftKit_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E4266BBBDBF79AE97FED94EA4580234 /* Pods-PryvApiSwiftKit_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		ADC95E6BBDF4921C4DD03983168200E8 /* Pods-PryvApiSwiftKit_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C6B0E10DB8AC595191334ECE12F8E7 /* Pods-PryvApiSwiftKit_Tests-dummy.m */; };
+		B3FFD789F20A1B77B822C39599CFA679 /* Mocker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73B50B13A56DE2E6FCE7983E2B5720BD /* Mocker.framework */; };
+		BFCF23361F9CCDB464BFB0C65E0ABB34 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFCA6CFF3B1710EA7ADE35935FD7B07 /* Connection.swift */; };
+		CA1DA0807021D7A5A18546C9DA507B96 /* PryvApiSwiftKit-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A04B1AB4376200D544DF3FDB400CD15 /* PryvApiSwiftKit-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D1C3065E4C2FC2C218D05DDE18F07ECD /* PryvApiSwiftKit-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 69EDF4083A723B00B30DB3899604FEF7 /* PryvApiSwiftKit-dummy.m */; };
+		E7F434EE7A1F54A002C7F56580A9CCC5 /* AuthState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BF620D9A3FE03EDBFDCAB24B500E533 /* AuthState.swift */; };
+		EB286E2F52AE057B8C53D0DE5B165B9C /* Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222B8A3F0A2505A14F43BF2C05626023 /* Mock.swift */; };
+		F74A51C82DB485E1D24EC23630AB16B6 /* MockingURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4029DEEA493877FE91EAAED040825F16 /* MockingURLProtocol.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		17969A764D155B6344EF31B46F95BAE8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B57D756A6D634D05A2BF53D961A7CFBC;
+			remoteInfo = PryvApiSwiftKit;
+		};
+		B2585F28F4A11177F8A9A6E7DB1CDA1D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 04AFC708359363290935C681A1CE226D;
+			remoteInfo = Mocker;
+		};
+		FF3EE3D63089DF77B22137CD8DFFAD10 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 04AFC708359363290935C681A1CE226D;
+			remoteInfo = Mocker;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		001C8144775D2B16B2931F3E78E6DDF7 /* Pods_PryvApiSwiftKit_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_PryvApiSwiftKit_Tests.framework; path = "Pods-PryvApiSwiftKit_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		00D70087464BEE9EBCB9C393FD3177C5 /* Mocker-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Mocker-Info.plist"; sourceTree = "<group>"; };
+		06AF6BA82E9FB66F1D9A9A7342E5F90D /* PryvApiSwiftKit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PryvApiSwiftKit.swift; path = PryvApiSwiftKit/Classes/PryvApiSwiftKit.swift; sourceTree = "<group>"; };
+		07E5E1807B903E8696067D2179EF3D12 /* Pods-PryvApiSwiftKit_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-PryvApiSwiftKit_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		1684BA918E0E1B2CA4026743CC5DBB46 /* Pods-PryvApiSwiftKit_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-PryvApiSwiftKit_Tests.modulemap"; sourceTree = "<group>"; };
+		1771643B921F0DA2ED4C05020D3307A6 /* Mocker.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = Mocker.modulemap; sourceTree = "<group>"; };
+		18AC0077C12CB36CB1A6E48143B1691B /* PryvServiceInfo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PryvServiceInfo.swift; path = PryvApiSwiftKit/Classes/PryvServiceInfo.swift; sourceTree = "<group>"; };
+		1B0080F775B3645526CB57A0A3698361 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		1D4AE396CC91228FE660B84E90FBD20A /* Mocker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Mocker.framework; path = Mocker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2147D56E50BCA0DB07FFEB6B01EA9EEC /* PryvApiSwiftKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PryvApiSwiftKit.framework; path = PryvApiSwiftKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		222B8A3F0A2505A14F43BF2C05626023 /* Mock.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Mock.swift; path = Sources/Mock.swift; sourceTree = "<group>"; };
+		4029DEEA493877FE91EAAED040825F16 /* MockingURLProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MockingURLProtocol.swift; path = Sources/MockingURLProtocol.swift; sourceTree = "<group>"; };
+		4AFCA6CFF3B1710EA7ADE35935FD7B07 /* Connection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Connection.swift; path = PryvApiSwiftKit/Classes/Connection.swift; sourceTree = "<group>"; };
+		4E4266BBBDBF79AE97FED94EA4580234 /* Pods-PryvApiSwiftKit_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-PryvApiSwiftKit_Tests-umbrella.h"; sourceTree = "<group>"; };
+		4FB19258878E428BF7E54A7821880B0C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		562F10DC932B89D6DF96F36B2576163E /* PryvApiSwiftKit-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PryvApiSwiftKit-prefix.pch"; sourceTree = "<group>"; };
+		5FDC8E4AD4E938B827864401F79FC68C /* PryvApiSwiftKit-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "PryvApiSwiftKit-Info.plist"; sourceTree = "<group>"; };
+		69EDF4083A723B00B30DB3899604FEF7 /* PryvApiSwiftKit-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "PryvApiSwiftKit-dummy.m"; sourceTree = "<group>"; };
+		6B91FDA3CAD768C07E806B0406DE2312 /* Utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = PryvApiSwiftKit/Classes/Utils.swift; sourceTree = "<group>"; };
+		7047819C44941C90987C2BC96710CAC3 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		705024AD90E5AE07184A3D7B242E6AE4 /* PryvApiSwiftKit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = PryvApiSwiftKit.xcconfig; sourceTree = "<group>"; };
+		73B50B13A56DE2E6FCE7983E2B5720BD /* Mocker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Mocker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		75F520541C4E60A7F53D835EBE897130 /* Mocker.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Mocker.xcconfig; sourceTree = "<group>"; };
+		8A04B1AB4376200D544DF3FDB400CD15 /* PryvApiSwiftKit-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PryvApiSwiftKit-umbrella.h"; sourceTree = "<group>"; };
+		93F1DEFAF0DB4D6A6FA4B3D37152D83C /* Mocker-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Mocker-prefix.pch"; sourceTree = "<group>"; };
+		97CCDB8FA2C5F4235CAD0FDA6BC11794 /* Mocker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Mocker.swift; path = Sources/Mocker.swift; sourceTree = "<group>"; };
+		9BF620D9A3FE03EDBFDCAB24B500E533 /* AuthState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthState.swift; path = PryvApiSwiftKit/Classes/AuthState.swift; sourceTree = "<group>"; };
+		9C5B26FAC88D14CC0515795E8EC57C3B /* Mocker-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Mocker-umbrella.h"; sourceTree = "<group>"; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		B66B206E497229A4EEA7009B76D4F73C /* Mocker-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Mocker-dummy.m"; sourceTree = "<group>"; };
+		BBAECA7F6190B5B03697CE85FE043D53 /* Pods-PryvApiSwiftKit_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-PryvApiSwiftKit_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
+		CC6B97472E6C6C30EEB44C773B08B225 /* PryvApiSwiftKit.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = PryvApiSwiftKit.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		D02097A3B2A432F52AD07E4B119B208F /* PryvApiSwiftKit.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PryvApiSwiftKit.h; path = PryvApiSwiftKit/Classes/PryvApiSwiftKit.h; sourceTree = "<group>"; };
+		D0F245FC9B5934A6F6311961F5E33373 /* Pods-PryvApiSwiftKit_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-PryvApiSwiftKit_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
+		D4C6B0E10DB8AC595191334ECE12F8E7 /* Pods-PryvApiSwiftKit_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-PryvApiSwiftKit_Tests-dummy.m"; sourceTree = "<group>"; };
+		D6EB4ACE20913034C105C6BC409E6B43 /* Pods-PryvApiSwiftKit_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-PryvApiSwiftKit_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		DD24C3BBD787B16B0B337616E654F153 /* Service.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Service.swift; path = PryvApiSwiftKit/Classes/Service.swift; sourceTree = "<group>"; };
+		E263B589410117BC169C04C7505DE393 /* Pods-PryvApiSwiftKit_Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-PryvApiSwiftKit_Tests-Info.plist"; sourceTree = "<group>"; };
+		E929551DA47AC3E2D0BFA23475670F1A /* PryvApiSwiftKit.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = PryvApiSwiftKit.modulemap; sourceTree = "<group>"; };
+		FD7C1AF5CF084501490FDA7ED63783B3 /* Pods-PryvApiSwiftKit_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-PryvApiSwiftKit_Tests-frameworks.sh"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		34773B0B81579DFBC82EACAA2D31C195 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				282F51A66E3BA64CC32308727AFF92E3 /* Foundation.framework in Frameworks */,
+				B3FFD789F20A1B77B822C39599CFA679 /* Mocker.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4433D9352673C70AE0DBCEDEC734B8FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3FA7FFEA091A1145AAD5BBE5A32BF4DD /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0A3E27A1D7525B97F2CE998475F97F5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B7134695F9DA87333394B5C0F98BC97 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1154EF160018E0978529784DC3373480 /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				1B0080F775B3645526CB57A0A3698361 /* LICENSE */,
+				CC6B97472E6C6C30EEB44C773B08B225 /* PryvApiSwiftKit.podspec */,
+				7047819C44941C90987C2BC96710CAC3 /* README.md */,
+			);
+			name = Pod;
+			sourceTree = "<group>";
+		};
+		19BE698365357B78C82DC93ECDB92E55 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				E929551DA47AC3E2D0BFA23475670F1A /* PryvApiSwiftKit.modulemap */,
+				705024AD90E5AE07184A3D7B242E6AE4 /* PryvApiSwiftKit.xcconfig */,
+				69EDF4083A723B00B30DB3899604FEF7 /* PryvApiSwiftKit-dummy.m */,
+				5FDC8E4AD4E938B827864401F79FC68C /* PryvApiSwiftKit-Info.plist */,
+				562F10DC932B89D6DF96F36B2576163E /* PryvApiSwiftKit-prefix.pch */,
+				8A04B1AB4376200D544DF3FDB400CD15 /* PryvApiSwiftKit-umbrella.h */,
+			);
+			name = "Support Files";
+			path = "Example/Pods/Target Support Files/PryvApiSwiftKit";
+			sourceTree = "<group>";
+		};
+		307F2957DFA0619020F3FCC367354092 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				73B50B13A56DE2E6FCE7983E2B5720BD /* Mocker.framework */,
+				4E3F2C3894831C3AD8CD816588D0774E /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		32C7AD82D93D935DFFE591D49410BA28 /* PryvApiSwiftKit */ = {
+			isa = PBXGroup;
+			children = (
+				9BF620D9A3FE03EDBFDCAB24B500E533 /* AuthState.swift */,
+				4AFCA6CFF3B1710EA7ADE35935FD7B07 /* Connection.swift */,
+				D02097A3B2A432F52AD07E4B119B208F /* PryvApiSwiftKit.h */,
+				06AF6BA82E9FB66F1D9A9A7342E5F90D /* PryvApiSwiftKit.swift */,
+				18AC0077C12CB36CB1A6E48143B1691B /* PryvServiceInfo.swift */,
+				DD24C3BBD787B16B0B337616E654F153 /* Service.swift */,
+				6B91FDA3CAD768C07E806B0406DE2312 /* Utils.swift */,
+				1154EF160018E0978529784DC3373480 /* Pod */,
+				19BE698365357B78C82DC93ECDB92E55 /* Support Files */,
+			);
+			name = PryvApiSwiftKit;
+			path = ../..;
+			sourceTree = "<group>";
+		};
+		37A208C47267874FE6537A5ED135DB73 /* Mocker */ = {
+			isa = PBXGroup;
+			children = (
+				222B8A3F0A2505A14F43BF2C05626023 /* Mock.swift */,
+				97CCDB8FA2C5F4235CAD0FDA6BC11794 /* Mocker.swift */,
+				4029DEEA493877FE91EAAED040825F16 /* MockingURLProtocol.swift */,
+				F283A58B75C80904F314FEF2A6D91854 /* Support Files */,
+			);
+			name = Mocker;
+			path = Mocker;
+			sourceTree = "<group>";
+		};
+		3BF449B0CFFCA94B97A2C14C6770E2B0 /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				32C7AD82D93D935DFFE591D49410BA28 /* PryvApiSwiftKit */,
+			);
+			name = "Development Pods";
+			sourceTree = "<group>";
+		};
+		4529FE60F102F288FE78BCF6D9FA6B83 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1D4AE396CC91228FE660B84E90FBD20A /* Mocker.framework */,
+				001C8144775D2B16B2931F3E78E6DDF7 /* Pods_PryvApiSwiftKit_Tests.framework */,
+				2147D56E50BCA0DB07FFEB6B01EA9EEC /* PryvApiSwiftKit.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4E3F2C3894831C3AD8CD816588D0774E /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				4FB19258878E428BF7E54A7821880B0C /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		598F2D894E5A553FC3D61D84871A4ACC /* Pods-PryvApiSwiftKit_Tests */ = {
+			isa = PBXGroup;
+			children = (
+				1684BA918E0E1B2CA4026743CC5DBB46 /* Pods-PryvApiSwiftKit_Tests.modulemap */,
+				D0F245FC9B5934A6F6311961F5E33373 /* Pods-PryvApiSwiftKit_Tests-acknowledgements.markdown */,
+				BBAECA7F6190B5B03697CE85FE043D53 /* Pods-PryvApiSwiftKit_Tests-acknowledgements.plist */,
+				D4C6B0E10DB8AC595191334ECE12F8E7 /* Pods-PryvApiSwiftKit_Tests-dummy.m */,
+				FD7C1AF5CF084501490FDA7ED63783B3 /* Pods-PryvApiSwiftKit_Tests-frameworks.sh */,
+				E263B589410117BC169C04C7505DE393 /* Pods-PryvApiSwiftKit_Tests-Info.plist */,
+				4E4266BBBDBF79AE97FED94EA4580234 /* Pods-PryvApiSwiftKit_Tests-umbrella.h */,
+				07E5E1807B903E8696067D2179EF3D12 /* Pods-PryvApiSwiftKit_Tests.debug.xcconfig */,
+				D6EB4ACE20913034C105C6BC409E6B43 /* Pods-PryvApiSwiftKit_Tests.release.xcconfig */,
+			);
+			name = "Pods-PryvApiSwiftKit_Tests";
+			path = "Target Support Files/Pods-PryvApiSwiftKit_Tests";
+			sourceTree = "<group>";
+		};
+		A396974EAF16DB3DE56E3FF143BDA847 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				598F2D894E5A553FC3D61D84871A4ACC /* Pods-PryvApiSwiftKit_Tests */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		CF1408CF629C7361332E53B88F7BD30C = {
+			isa = PBXGroup;
+			children = (
+				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
+				3BF449B0CFFCA94B97A2C14C6770E2B0 /* Development Pods */,
+				307F2957DFA0619020F3FCC367354092 /* Frameworks */,
+				DC79105CBBB28818085AEDBF58244AA9 /* Pods */,
+				4529FE60F102F288FE78BCF6D9FA6B83 /* Products */,
+				A396974EAF16DB3DE56E3FF143BDA847 /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		DC79105CBBB28818085AEDBF58244AA9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				37A208C47267874FE6537A5ED135DB73 /* Mocker */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		F283A58B75C80904F314FEF2A6D91854 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				1771643B921F0DA2ED4C05020D3307A6 /* Mocker.modulemap */,
+				75F520541C4E60A7F53D835EBE897130 /* Mocker.xcconfig */,
+				B66B206E497229A4EEA7009B76D4F73C /* Mocker-dummy.m */,
+				00D70087464BEE9EBCB9C393FD3177C5 /* Mocker-Info.plist */,
+				93F1DEFAF0DB4D6A6FA4B3D37152D83C /* Mocker-prefix.pch */,
+				9C5B26FAC88D14CC0515795E8EC57C3B /* Mocker-umbrella.h */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/Mocker";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D1256B9611DF98A310D308ABB40A8DCA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A55C017819DDF7485A9CFB5519550FF1 /* Pods-PryvApiSwiftKit_Tests-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E2BD397FB608306398706BED12A07275 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA1DA0807021D7A5A18546C9DA507B96 /* PryvApiSwiftKit-umbrella.h in Headers */,
+				92A157EE24D469B8696594355A620C47 /* PryvApiSwiftKit.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E51591D99BC2E02563DC99FF70F328B5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				25E270DB498F3A3486ECCB7A76FA80C8 /* Mocker-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		04AFC708359363290935C681A1CE226D /* Mocker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2FD8CB94866CFCC4174DBA4A4DC5C615 /* Build configuration list for PBXNativeTarget "Mocker" */;
+			buildPhases = (
+				E51591D99BC2E02563DC99FF70F328B5 /* Headers */,
+				F8C65E0D3604C79987AB544A1B97514D /* Sources */,
+				4433D9352673C70AE0DBCEDEC734B8FD /* Frameworks */,
+				2EB736C6F5ADDCBFEC3E7074C40E36E0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Mocker;
+			productName = Mocker;
+			productReference = 1D4AE396CC91228FE660B84E90FBD20A /* Mocker.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		0AA20CC709B302FDCDB5F98B71822761 /* Pods-PryvApiSwiftKit_Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E35C40A507D68CD538EC0436D4A4E018 /* Build configuration list for PBXNativeTarget "Pods-PryvApiSwiftKit_Tests" */;
+			buildPhases = (
+				D1256B9611DF98A310D308ABB40A8DCA /* Headers */,
+				553E62D2D21F8D0234E4E65C8BDFC3B6 /* Sources */,
+				C0A3E27A1D7525B97F2CE998475F97F5 /* Frameworks */,
+				8BA0247E024642467B84A7BDCDED8BEF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				38450ACE273F630BDDDFC6895E4D94E5 /* PBXTargetDependency */,
+				743E6AECA25DCCCB6FC0988E3BA6B250 /* PBXTargetDependency */,
+			);
+			name = "Pods-PryvApiSwiftKit_Tests";
+			productName = "Pods-PryvApiSwiftKit_Tests";
+			productReference = 001C8144775D2B16B2931F3E78E6DDF7 /* Pods_PryvApiSwiftKit_Tests.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B57D756A6D634D05A2BF53D961A7CFBC /* PryvApiSwiftKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8A78F49E70CACF61BAB79320DE5FC0A7 /* Build configuration list for PBXNativeTarget "PryvApiSwiftKit" */;
+			buildPhases = (
+				E2BD397FB608306398706BED12A07275 /* Headers */,
+				53A2E102E3DD950CBF11B759648FD35E /* Sources */,
+				34773B0B81579DFBC82EACAA2D31C195 /* Frameworks */,
+				31EA8730439504A0E0F14F3186FCD007 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				157D7A1891AB04D4E550AF44DC11FC14 /* PBXTargetDependency */,
+			);
+			name = PryvApiSwiftKit;
+			productName = PryvApiSwiftKit;
+			productReference = 2147D56E50BCA0DB07FFEB6B01EA9EEC /* PryvApiSwiftKit.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BFDFE7DC352907FC980B868725387E98 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+			};
+			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
+			productRefGroup = 4529FE60F102F288FE78BCF6D9FA6B83 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				04AFC708359363290935C681A1CE226D /* Mocker */,
+				0AA20CC709B302FDCDB5F98B71822761 /* Pods-PryvApiSwiftKit_Tests */,
+				B57D756A6D634D05A2BF53D961A7CFBC /* PryvApiSwiftKit */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2EB736C6F5ADDCBFEC3E7074C40E36E0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		31EA8730439504A0E0F14F3186FCD007 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8BA0247E024642467B84A7BDCDED8BEF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		53A2E102E3DD950CBF11B759648FD35E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E7F434EE7A1F54A002C7F56580A9CCC5 /* AuthState.swift in Sources */,
+				BFCF23361F9CCDB464BFB0C65E0ABB34 /* Connection.swift in Sources */,
+				D1C3065E4C2FC2C218D05DDE18F07ECD /* PryvApiSwiftKit-dummy.m in Sources */,
+				28D8B6EE6D00F0B86A369ACF70F89C42 /* PryvApiSwiftKit.swift in Sources */,
+				4F443EA5D2A825F1EECD17ACEE56C3A0 /* PryvServiceInfo.swift in Sources */,
+				0B2670644FC05514D2DBBE373CAB4C91 /* Service.swift in Sources */,
+				456C3F02E8280336ADFE09FFFCE19973 /* Utils.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		553E62D2D21F8D0234E4E65C8BDFC3B6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ADC95E6BBDF4921C4DD03983168200E8 /* Pods-PryvApiSwiftKit_Tests-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8C65E0D3604C79987AB544A1B97514D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB286E2F52AE057B8C53D0DE5B165B9C /* Mock.swift in Sources */,
+				26102C252C4B4535F2C3713C8220C64F /* Mocker-dummy.m in Sources */,
+				A06E7BE7BC6A89C4E6906CB50AB4DA68 /* Mocker.swift in Sources */,
+				F74A51C82DB485E1D24EC23630AB16B6 /* MockingURLProtocol.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		157D7A1891AB04D4E550AF44DC11FC14 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Mocker;
+			target = 04AFC708359363290935C681A1CE226D /* Mocker */;
+			targetProxy = B2585F28F4A11177F8A9A6E7DB1CDA1D /* PBXContainerItemProxy */;
+		};
+		38450ACE273F630BDDDFC6895E4D94E5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Mocker;
+			target = 04AFC708359363290935C681A1CE226D /* Mocker */;
+			targetProxy = FF3EE3D63089DF77B22137CD8DFFAD10 /* PBXContainerItemProxy */;
+		};
+		743E6AECA25DCCCB6FC0988E3BA6B250 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = PryvApiSwiftKit;
+			target = B57D756A6D634D05A2BF53D961A7CFBC /* PryvApiSwiftKit */;
+			targetProxy = 17969A764D155B6344EF31B46F95BAE8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		083148D0A0DDE206AF96E75627B73855 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 75F520541C4E60A7F53D835EBE897130 /* Mocker.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/Mocker/Mocker-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Mocker/Mocker-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/Mocker/Mocker.modulemap";
+				PRODUCT_MODULE_NAME = Mocker;
+				PRODUCT_NAME = Mocker;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		196DFA3E4A09A28224918543529A1885 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		1BDF1CECCC61CBFBD85876F9C4460521 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D6EB4ACE20913034C105C6BC409E6B43 /* Pods-PryvApiSwiftKit_Tests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-PryvApiSwiftKit_Tests/Pods-PryvApiSwiftKit_Tests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-PryvApiSwiftKit_Tests/Pods-PryvApiSwiftKit_Tests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		1E5C0E04208C86437BF87143558C2C3C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 705024AD90E5AE07184A3D7B242E6AE4 /* PryvApiSwiftKit.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/PryvApiSwiftKit/PryvApiSwiftKit-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/PryvApiSwiftKit/PryvApiSwiftKit-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/PryvApiSwiftKit/PryvApiSwiftKit.modulemap";
+				PRODUCT_MODULE_NAME = PryvApiSwiftKit;
+				PRODUCT_NAME = PryvApiSwiftKit;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		3F46737B431ED240CC9E869173059F5A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 705024AD90E5AE07184A3D7B242E6AE4 /* PryvApiSwiftKit.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/PryvApiSwiftKit/PryvApiSwiftKit-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/PryvApiSwiftKit/PryvApiSwiftKit-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/PryvApiSwiftKit/PryvApiSwiftKit.modulemap";
+				PRODUCT_MODULE_NAME = PryvApiSwiftKit;
+				PRODUCT_NAME = PryvApiSwiftKit;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		78F4C40ACA34B14AE7FB99333869A7FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 07E5E1807B903E8696067D2179EF3D12 /* Pods-PryvApiSwiftKit_Tests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-PryvApiSwiftKit_Tests/Pods-PryvApiSwiftKit_Tests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-PryvApiSwiftKit_Tests/Pods-PryvApiSwiftKit_Tests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B01D14FDC83DCF9D4BE53066BEA96D05 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Release;
+		};
+		C4C864E63062B875828EEDA02D08749C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 75F520541C4E60A7F53D835EBE897130 /* Mocker.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/Mocker/Mocker-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Mocker/Mocker-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/Mocker/Mocker.modulemap";
+				PRODUCT_MODULE_NAME = Mocker;
+				PRODUCT_NAME = Mocker;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2FD8CB94866CFCC4174DBA4A4DC5C615 /* Build configuration list for PBXNativeTarget "Mocker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4C864E63062B875828EEDA02D08749C /* Debug */,
+				083148D0A0DDE206AF96E75627B73855 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				196DFA3E4A09A28224918543529A1885 /* Debug */,
+				B01D14FDC83DCF9D4BE53066BEA96D05 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8A78F49E70CACF61BAB79320DE5FC0A7 /* Build configuration list for PBXNativeTarget "PryvApiSwiftKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1E5C0E04208C86437BF87143558C2C3C /* Debug */,
+				3F46737B431ED240CC9E869173059F5A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E35C40A507D68CD538EC0436D4A4E018 /* Build configuration list for PBXNativeTarget "Pods-PryvApiSwiftKit_Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				78F4C40ACA34B14AE7FB99333869A7FD /* Debug */,
+				1BDF1CECCC61CBFBD85876F9C4460521 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+}
