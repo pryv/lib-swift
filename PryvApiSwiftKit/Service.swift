@@ -241,6 +241,7 @@ class Service {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = Data(payload.utf8)
         
         var result: (String, String, Double)? = nil
