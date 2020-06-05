@@ -26,7 +26,12 @@ class Service {
             var currentState: AuthState? = nil
             var elapsedTime = 0.0
             let poll_s = self.pollingInfo!.poll_ms * 0.001 // Library doc: TimeInteval is in seconds, whereas poll_rate_ms is in milliseconds
-            
+
+            /**
+                # Note
+                The timer is invalidated if the request is refused or accepted.
+                In the case of "NEED_SIGNIN" response, the timer is never invalidated, unless the function `interruptAuth()` is called or in case of a timeout.
+            */
             timer = Timer.scheduledTimer(withTimeInterval: poll_s, repeats: true) { _ in
                 elapsedTime += poll_s
                 if elapsedTime >= self.timeout {
