@@ -22,7 +22,7 @@ This will allow the developers to interact with the API with simple structures.
   
 This framework will be structured as the [lib-js](https://github.com/pryv/lib-js) library, which is already available.  
   
-An example of app using this framework can be found on [app-swift-example](https://github.com/pryv/app-swift-example)
+An example of app using this framework can be found on [app-swift-example](https://github.com/pryv/app-swift-example).
   
 ## Deliverables
 
