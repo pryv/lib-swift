@@ -1,5 +1,5 @@
 # lib-swift
-Pryv's Swift library
+Pryv's Swift library for iOS
 
 
 |         |                       |
