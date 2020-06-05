@@ -12,9 +12,7 @@ class Utils {
     private let regexAPIandToken = "(?i)https?:\\/\\/(.+)@(.+)"
     private let regexSchemaAndPath = "(?i)https?:\\/\\/(.+)"
     
-    init() {
-        
-    }
+    init() { }
 
     /// Returns the token and the endpoint from an API endpoint
     /// - Parameter apiEndpoint
