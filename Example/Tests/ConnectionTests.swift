@@ -14,6 +14,7 @@ class ConnectionTests: XCTestCase {
     
     private let apiEndpoint = "https://token@username.pryv.me/"
     private var connection: Connection?
+    private var a: String?
     
     private let callBatches = """
         [
@@ -99,7 +100,16 @@ class ConnectionTests: XCTestCase {
     }
     
     func testCallBatchCallback() {
-        // TODO
+        let _ = connection?.api(APICalls: callBatches, handleResults: [0: changeA])
+        
+        XCTAssertNotNil(a)
+        XCTAssertEqual(a, "ckb0rldt0000tq6pvrahee7gj")
+        
+        // Note: this test only checks that a simple callback is executed. A more precise test for call batch is `testCallBatch`
+    }
+    
+    private func changeA(event: [String : Any]) -> () {
+        a = event["id"] as? String
     }
 
     private func mockResponses() {

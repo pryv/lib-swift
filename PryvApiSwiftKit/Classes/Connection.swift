@@ -31,8 +31,7 @@ public class Connection {
     /// Issue a [Batch call](https://api.pryv.com/reference/#call-batch)
     /// - Parameter APICalls: array of method calls in json formatted string
     /// - Returns: array of results matching each method call in order
-    // TODO: handle result callback
-    public func api(APICalls: String) -> [[String: Any]]? {
+    public func api(APICalls: String, handleResults: [Int: (([String: Any]) -> ())]? = nil) -> [[String: Any]]? {
         guard let url = URL(string: apiEndpoint) else { print("problem encountered: cannot access register url \(apiEndpoint)") ; return nil }
         
         var request = URLRequest(url: url)
@@ -58,7 +57,14 @@ public class Connection {
         task.resume()
         group.wait()
         
-        return events
+        guard let callbacks = handleResults, let result = events else { return events }
+        
+        for (i, callback) in callbacks {
+            if i >= result.count { print("problem encountered when applying the callback \(i): index out of bounds") ; return result }
+            callback(result[i])
+        }
+        
+        return result
     }
     
     /// ADD Data Points to HFEvent (flatJSON format) as described in the [reference API](https://api.pryv.com/reference/#add-hf-series-data-points)
