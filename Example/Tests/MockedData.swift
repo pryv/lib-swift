@@ -102,23 +102,6 @@ public final class MockedData {
                 "modified": 1591274234.916,
                 "modifiedBy": "ckb0rldr90001q6pv8zymgvpr"
               }
-            },
-            {
-              "event": {
-                "id": "ckb0rldt0000vq6pv3b0efe36",
-                "time": 1385046854.282,
-                "streamIds": [
-                  "diastolic"
-                ],
-                "streamId": "diastolic",
-                "tags": [],
-                "type": "pressure/mmhg",
-                "content": 80,
-                "created": 1591274234.916,
-                "createdBy": "ckb0rldr90001q6pv8zymgvpr",
-                "modified": 1591274234.916,
-                "modifiedBy": "ckb0rldr90001q6pv8zymgvpr"
-              }
             }
           ]
         }

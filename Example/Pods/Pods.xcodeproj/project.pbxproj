@@ -20,8 +20,6 @@
 		A06E7BE7BC6A89C4E6906CB50AB4DA68 /* Mocker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97CCDB8FA2C5F4235CAD0FDA6BC11794 /* Mocker.swift */; };
 		A55C017819DDF7485A9CFB5519550FF1 /* Pods-PryvApiSwiftKit_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E4266BBBDBF79AE97FED94EA4580234 /* Pods-PryvApiSwiftKit_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		ADC95E6BBDF4921C4DD03983168200E8 /* Pods-PryvApiSwiftKit_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C6B0E10DB8AC595191334ECE12F8E7 /* Pods-PryvApiSwiftKit_Tests-dummy.m */; };
-		B3EFB209248E557A008D6C52 /* MethodCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EFB208248E557A008D6C52 /* MethodCall.swift */; };
-		B3EFB20B248E56DB008D6C52 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EFB20A248E56DB008D6C52 /* Event.swift */; };
 		B3FFD789F20A1B77B822C39599CFA679 /* Mocker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73B50B13A56DE2E6FCE7983E2B5720BD /* Mocker.framework */; };
 		BFCF23361F9CCDB464BFB0C65E0ABB34 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFCA6CFF3B1710EA7ADE35935FD7B07 /* Connection.swift */; };
 		CA1DA0807021D7A5A18546C9DA507B96 /* PryvApiSwiftKit-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A04B1AB4376200D544DF3FDB400CD15 /* PryvApiSwiftKit-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -85,8 +83,6 @@
 		9BF620D9A3FE03EDBFDCAB24B500E533 /* AuthState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthState.swift; path = PryvApiSwiftKit/Classes/AuthState.swift; sourceTree = "<group>"; };
 		9C5B26FAC88D14CC0515795E8EC57C3B /* Mocker-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Mocker-umbrella.h"; sourceTree = "<group>"; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		B3EFB208248E557A008D6C52 /* MethodCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MethodCall.swift; sourceTree = "<group>"; };
-		B3EFB20A248E56DB008D6C52 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		B66B206E497229A4EEA7009B76D4F73C /* Mocker-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Mocker-dummy.m"; sourceTree = "<group>"; };
 		BBAECA7F6190B5B03697CE85FE043D53 /* Pods-PryvApiSwiftKit_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-PryvApiSwiftKit_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		CC6B97472E6C6C30EEB44C773B08B225 /* PryvApiSwiftKit.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = PryvApiSwiftKit.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
@@ -167,10 +163,8 @@
 			children = (
 				9BF620D9A3FE03EDBFDCAB24B500E533 /* AuthState.swift */,
 				4AFCA6CFF3B1710EA7ADE35935FD7B07 /* Connection.swift */,
-				B3EFB20A248E56DB008D6C52 /* Event.swift */,
 				D02097A3B2A432F52AD07E4B119B208F /* PryvApiSwiftKit.h */,
 				06AF6BA82E9FB66F1D9A9A7342E5F90D /* PryvApiSwiftKit.swift */,
-				B3EFB208248E557A008D6C52 /* MethodCall.swift */,
 				18AC0077C12CB36CB1A6E48143B1691B /* PryvServiceInfo.swift */,
 				DD24C3BBD787B16B0B337616E654F153 /* Service.swift */,
 				6B91FDA3CAD768C07E806B0406DE2312 /* Utils.swift */,
@@ -423,8 +417,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3EFB209248E557A008D6C52 /* MethodCall.swift in Sources */,
-				B3EFB20B248E56DB008D6C52 /* Event.swift in Sources */,
 				E7F434EE7A1F54A002C7F56580A9CCC5 /* AuthState.swift in Sources */,
 				BFCF23361F9CCDB464BFB0C65E0ABB34 /* Connection.swift in Sources */,
 				D1C3065E4C2FC2C218D05DDE18F07ECD /* PryvApiSwiftKit-dummy.m in Sources */,
