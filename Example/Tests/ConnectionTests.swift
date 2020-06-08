@@ -118,56 +118,56 @@ class ConnectionTests: XCTestCase {
         // Note: as the function `addPointsToHFEvent` does not return anything, we cannot check its correctness. We will only check that it does not raise an exception; otherwise this test will fail
     }
     
-    func testCreateEvent() {
-        let payload: [String: Any] = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
-        let event = connection?.createEventWithFile(event: payload, filePath: "")
-        
-        let id = event!["id"] as? String
-        XCTAssertNotNil(id)
-        XCTAssertEqual(id!, "ckb0rldt0000wq6pv1g9qxozc")
-        
-        let time = event!["time"] as? Double
-        XCTAssertNotNil(time)
-        XCTAssertEqual(time!, 1591274234.916)
-        
-        let streamIds = event!["streamIds"] as? [String]
-        XCTAssertNotNil(streamIds)
-        XCTAssertEqual(streamIds!, ["weight"])
-    
-        let streamId = event!["streamId"] as? String
-        XCTAssertNotNil(streamId)
-        XCTAssertEqual(streamId!, "weight")
-        
-        let tags = event!["tags"] as? [String]
-        XCTAssertNotNil(tags)
-        XCTAssertTrue(tags!.isEmpty)
-        
-        let type = event!["type"] as? String
-        XCTAssertNotNil(type)
-        XCTAssertEqual(type!, "mass/kg")
-        
-        let content = event!["content"] as? Int
-        XCTAssertNotNil(content)
-        XCTAssertEqual(content!, 90)
-        
-        let created = event!["created"] as? Double
-        XCTAssertNotNil(created)
-        XCTAssertEqual(created!, 1591274234.916)
-        
-        let createdBy = event!["createdBy"] as? String
-        XCTAssertNotNil(createdBy)
-        XCTAssertEqual(createdBy!, "ckb0rldr90001q6pv8zymgvpr")
-        
-        let modified = event!["modified"] as? Double
-        XCTAssertNotNil(modified)
-        XCTAssertEqual(modified!, 1591274234.916)
-        
-        let modifiedBy = event!["modifiedBy"] as? String
-        XCTAssertNotNil(modifiedBy)
-        XCTAssertEqual(modifiedBy!, "ckb0rldr90001q6pv8zymgvpr")
-        
-        // TODO: add file
-    }
+//    func testCreateEvent() {
+//        let payload: [String: Any] = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
+//        let event = connection?.createEventWithFile(event: payload, filePath: "")
+//
+//        let id = event!["id"] as? String
+//        XCTAssertNotNil(id)
+//        XCTAssertEqual(id!, "ckb0rldt0000wq6pv1g9qxozc")
+//
+//        let time = event!["time"] as? Double
+//        XCTAssertNotNil(time)
+//        XCTAssertEqual(time!, 1591274234.916)
+//
+//        let streamIds = event!["streamIds"] as? [String]
+//        XCTAssertNotNil(streamIds)
+//        XCTAssertEqual(streamIds!, ["weight"])
+//
+//        let streamId = event!["streamId"] as? String
+//        XCTAssertNotNil(streamId)
+//        XCTAssertEqual(streamId!, "weight")
+//
+//        let tags = event!["tags"] as? [String]
+//        XCTAssertNotNil(tags)
+//        XCTAssertTrue(tags!.isEmpty)
+//
+//        let type = event!["type"] as? String
+//        XCTAssertNotNil(type)
+//        XCTAssertEqual(type!, "mass/kg")
+//
+//        let content = event!["content"] as? Int
+//        XCTAssertNotNil(content)
+//        XCTAssertEqual(content!, 90)
+//
+//        let created = event!["created"] as? Double
+//        XCTAssertNotNil(created)
+//        XCTAssertEqual(created!, 1591274234.916)
+//
+//        let createdBy = event!["createdBy"] as? String
+//        XCTAssertNotNil(createdBy)
+//        XCTAssertEqual(createdBy!, "ckb0rldr90001q6pv8zymgvpr")
+//
+//        let modified = event!["modified"] as? Double
+//        XCTAssertNotNil(modified)
+//        XCTAssertEqual(modified!, 1591274234.916)
+//
+//        let modifiedBy = event!["modifiedBy"] as? String
+//        XCTAssertNotNil(modifiedBy)
+//        XCTAssertEqual(modifiedBy!, "ckb0rldr90001q6pv8zymgvpr")
+//
+//        // TODO: add file
+//    }
     
     private func changeA(event: [String : Any]) -> () {
         a = event["id"] as? String
