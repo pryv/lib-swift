@@ -65,4 +65,62 @@ public final class MockedData {
           "preferredLanguage": "zh"
         }
     """.data(using: .utf8)!
+    
+    public static let callBatchResponse = """
+        {
+          "results": [
+            {
+              "event": {
+                "id": "ckb0rldt0000tq6pvrahee7gj",
+                "time": 1385046854.282,
+                "streamIds": [
+                  "heart"
+                ],
+                "streamId": "heart",
+                "tags": [],
+                "type": "frequency/bpm",
+                "content": 90,
+                "created": 1591274234.916,
+                "createdBy": "ckb0rldr90001q6pv8zymgvpr",
+                "modified": 1591274234.916,
+                "modifiedBy": "ckb0rldr90001q6pv8zymgvpr"
+              }
+            },
+            {
+              "event": {
+                "id": "ckb0rldt0000uq6pv9lvaluav",
+                "time": 1385046854.282,
+                "streamIds": [
+                  "systolic"
+                ],
+                "streamId": "systolic",
+                "tags": [],
+                "type": "pressure/mmhg",
+                "content": 120,
+                "created": 1591274234.916,
+                "createdBy": "ckb0rldr90001q6pv8zymgvpr",
+                "modified": 1591274234.916,
+                "modifiedBy": "ckb0rldr90001q6pv8zymgvpr"
+              }
+            },
+            {
+              "event": {
+                "id": "ckb0rldt0000vq6pv3b0efe36",
+                "time": 1385046854.282,
+                "streamIds": [
+                  "diastolic"
+                ],
+                "streamId": "diastolic",
+                "tags": [],
+                "type": "pressure/mmhg",
+                "content": 80,
+                "created": 1591274234.916,
+                "createdBy": "ckb0rldr90001q6pv8zymgvpr",
+                "modified": 1591274234.916,
+                "modifiedBy": "ckb0rldr90001q6pv8zymgvpr"
+              }
+            }
+          ]
+        }
+    """.data(using: .utf8)!
 }

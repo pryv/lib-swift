@@ -27,4 +27,33 @@ public class Connection {
     public func getApiEndpoint() -> String {
         return apiEndpoint
     }
+    
+    /// Issue a [Batch call](https://api.pryv.com/reference/#call-batch)
+    /// - Parameter APICalls: array of method calls in json formatted string
+    /// - Returns: array of results matching each method call in order
+    // TODO: handle result callback
+    public func api(APICalls: String) -> [Any] {
+        // TODO: implement
+        
+    }
+    
+    /// ADD Data Points to HFEvent (flatJSON format) as described in the [reference API](https://api.pryv.com/reference/#add-hf-series-data-points)
+    /// - Parameters:
+    ///   - eventId
+    ///   - fields
+    ///   - points
+    public func addPointsToHFEvent(eventId: String, fields: [String], points: [[Any]]) {
+        // TODO: post to endpoint/events/{id}/series
+        // TODO check if error
+    }
+    
+    /// Create an event with attached file
+    /// - Parameters:
+    ///   - event
+    ///   - filePath
+    /// - Returns: the created event
+    public func createEventWithFile(event: Event, filePath: String) -> Event {
+        // TODO: implement
+    }
+    
 }
