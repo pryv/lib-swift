@@ -112,4 +112,24 @@ public final class MockedData {
           "status": "ok"
         }
     """.data(using: .utf8)!
+    
+    public static let createEventResponse = """
+        {
+          "event": {
+            "id": "ckb0rldt0000wq6pv1g9qxozc",
+            "time": 1591274234.916,
+            "streamIds": [
+              "weight"
+            ],
+            "streamId": "weight",
+            "tags": [],
+            "type": "mass/kg",
+            "content": 90,
+            "created": 1591274234.916,
+            "createdBy": "ckb0rldr90001q6pv8zymgvpr",
+            "modified": 1591274234.916,
+            "modifiedBy": "ckb0rldr90001q6pv8zymgvpr"
+          }
+        }
+    """.data(using: .utf8)!
 }

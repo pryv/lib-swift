@@ -40,7 +40,7 @@ public class Connection {
 
         var events: [[String: Any]]? = nil // array of json objects corresponding to events
         let group = DispatchGroup()
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
             if let _ = error, data == nil { print("problem encountered when requesting login") ; group.leave() ; return }
 
             guard let callBatchResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: callBatchResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when parsing the call batch response") ; group.leave() ; return }
@@ -96,9 +96,30 @@ public class Connection {
     ///   - event
     ///   - filePath
     /// - Returns: the created event
-    public func createEventWithFile(event: Any, filePath: String) -> Any? {
-        // TODO: implement
-        return nil
+    // TODO: add file
+    public func createEventWithFile(event: [String: Any], filePath: String) -> [String: Any]? {
+        guard let url = URL(string: apiEndpoint + "/events") else { print("problem encountered: cannot access register url \(apiEndpoint)") ; return nil }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = try? JSONSerialization.data(withJSONObject: event)
+
+        var event: [String: Any]? = nil
+        let group = DispatchGroup()
+        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
+            if let _ = error, data == nil { print("problem encountered when requesting event") ; group.leave() ; return }
+
+            guard let eventResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: eventResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when parsing the event response") ; group.leave() ; return }
+            
+            event = dictionary["event"] as? [String: Any]
+            group.leave()
+        }
+
+        group.enter()
+        task.resume()
+        group.wait()
+        
+        return event
     }
     
 }
