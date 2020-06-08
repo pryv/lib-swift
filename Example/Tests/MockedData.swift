@@ -106,4 +106,10 @@ public final class MockedData {
           ]
         }
     """.data(using: .utf8)!
+    
+    public static let okResponse = """
+        {
+          "status": "ok"
+        }
+    """.data(using: .utf8)!
 }

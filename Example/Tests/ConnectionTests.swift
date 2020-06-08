@@ -42,6 +42,7 @@ class ConnectionTests: XCTestCase {
           }
         ]
     """
+    private let eventId = "eventId"
     
     override func setUp() {
         
@@ -108,6 +109,15 @@ class ConnectionTests: XCTestCase {
         // Note: this test only checks that a simple callback is executed. A more precise test for call batch is `testCallBatch`
     }
     
+    func testAddPointsToHFEvent() {
+        let fields = ["deltaTime", "latitude", "longitude", "altitude" ]
+        let points = [[0, 10.2, 11.2, 500], [1, 10.2, 11.2, 510], [2, 10.2, 11.2, 520]]
+        
+        connection?.addPointsToHFEvent(eventId: eventId, fields: fields, points: points)
+        
+        // Note: as the function `addPointsToHFEvent` does not return anything, we cannot check its correctness. We will only check that it does not raise an exception; otherwise this test will fail
+    }
+    
     private func changeA(event: [String : Any]) -> () {
         a = event["id"] as? String
     }
@@ -116,7 +126,11 @@ class ConnectionTests: XCTestCase {
         let mockCallBatch = Mock(url: URL(string: apiEndpoint)!, contentType: .json, statusCode: 200, data: [
             .post: MockedData.callBatchResponse
         ])
+        let mockAddPointsToHFEvent = Mock(url: URL(string: apiEndpoint + "/events/\(eventId)/series")!, contentType: .json, statusCode: 200, data: [
+            .post: MockedData.okResponse
+        ])
         
         Mocker.register(mockCallBatch)
+        Mocker.register(mockAddPointsToHFEvent)
     }
 }

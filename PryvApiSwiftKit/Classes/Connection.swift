@@ -73,8 +73,22 @@ public class Connection {
     ///   - fields
     ///   - points
     public func addPointsToHFEvent(eventId: String, fields: [String], points: [[Any]]) {
-        // TODO: post to endpoint/events/{id}/series
-        // TODO check if error
+        let payload: [String: Any] = [
+            "format": "flatJSON",
+            "fields": fields,
+            "points": points
+        ]
+        guard let url = URL(string: endpoint + "events/\(eventId)/series") else { print("problem encountered: cannot access register url \(endpoint)") ; return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+        
+        let task = URLSession.shared.dataTask(with: request) { (_, response, error) in
+            if let _ = error, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 { print("problem encountered when requesting to add a high frequency event") ; return }
+        }
+        
+        task.resume()
     }
     
     /// Create an event with attached file
