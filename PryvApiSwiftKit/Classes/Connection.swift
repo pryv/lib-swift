@@ -10,6 +10,7 @@ import Foundation
 
 public typealias Event = Json
 public typealias Parameters = [String: String]
+public typealias APICall = [String: Any]
 
 public class Connection {
     private let utils = Utils()
@@ -38,12 +39,12 @@ public class Connection {
     ///   - APICalls: array of method calls in json formatted string
     ///   - handleResults: callbacks indexed by the api calls indexes, i.e. `[0: func]` means "apply function `func` to result of api call 0"
     /// - Returns: array of results matching each method call in order
-    public func api(APICalls: String, handleResults: [Int: (Event) -> ()]? = nil) -> [Event]? {
+    public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil) -> [Event]? {
         guard let url = URL(string: apiEndpoint) else { print("problem encountered: cannot access register url \(apiEndpoint)") ; return nil }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.httpBody = Data(APICalls.utf8)
+        request.httpBody = try! JSONSerialization.data(withJSONObject: APICalls)
         
         var events: [Event]? = nil
         let group = DispatchGroup()

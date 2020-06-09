@@ -9,6 +9,8 @@
 import Foundation
 
 public final class MockedData {
+    public static let eventId = "eventId"
+    
     public static let serviceInfoResponse: Data = """
         {
           "register": "https://reg.pryv.me/",
@@ -66,26 +68,30 @@ public final class MockedData {
         }
     """.data(using: .utf8)!
     
+    public static let basicEvent = """
+        {
+          "event": {
+          "id": "\(eventId)",
+            "time": 1591274234.916,
+            "streamIds": [
+              "weight"
+            ],
+            "streamId": "weight",
+            "tags": [],
+            "type": "mass/kg",
+            "content": 90,
+            "created": 1591274234.916,
+            "createdBy": "ckb0rldr90001q6pv8zymgvpr",
+            "modified": 1591274234.916,
+            "modifiedBy": "ckb0rldr90001q6pv8zymgvpr"
+          }
+        }
+    """
+    
     public static let callBatchResponse = """
         {
           "results": [
-            {
-              "event": {
-                "id": "ckb0rldt0000tq6pvrahee7gj",
-                "time": 1385046854.282,
-                "streamIds": [
-                  "heart"
-                ],
-                "streamId": "heart",
-                "tags": [],
-                "type": "frequency/bpm",
-                "content": 90,
-                "created": 1591274234.916,
-                "createdBy": "ckb0rldr90001q6pv8zymgvpr",
-                "modified": 1591274234.916,
-                "modifiedBy": "ckb0rldr90001q6pv8zymgvpr"
-              }
-            },
+            \(basicEvent),
             {
               "event": {
                 "id": "ckb0rldt0000uq6pv9lvaluav",
@@ -113,30 +119,12 @@ public final class MockedData {
         }
     """.data(using: .utf8)!
     
-    public static let createEventResponse = """
-        {
-          "event": {
-            "id": "eventId",
-            "time": 1591274234.916,
-            "streamIds": [
-              "weight"
-            ],
-            "streamId": "weight",
-            "tags": [],
-            "type": "mass/kg",
-            "content": 90,
-            "created": 1591274234.916,
-            "createdBy": "ckb0rldr90001q6pv8zymgvpr",
-            "modified": 1591274234.916,
-            "modifiedBy": "ckb0rldr90001q6pv8zymgvpr"
-          }
-        }
-    """.data(using: .utf8)!
+    public static let createEventResponse = basicEvent.data(using: .utf8)!
     
     public static let addAttachmentResponse = """
         {
           "event": {
-            "id": "eventId",
+            "id": "\(eventId)",
             "time": 1591274234.916,
             "streamIds": [
               "weight"
