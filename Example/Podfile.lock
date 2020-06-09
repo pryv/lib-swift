@@ -1,6 +1,6 @@
 PODS:
   - Mocker (2.2.0)
-  - PryvApiSwiftKit (0.1.1):
+  - PryvApiSwiftKit (0.1.2):
     - Mocker
 
 DEPENDENCIES:
@@ -17,7 +17,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Mocker: d0ceb340eddd5c28539a691ce67d068674cef9a0
-  PryvApiSwiftKit: b7b5c4dc82d692a974c1bdff79e6c429ac2f58e6
+  PryvApiSwiftKit: d22d77f6e5b8a8eb5a7b17d103c19684167558f8
 
 PODFILE CHECKSUM: 0b4cd15eda361d1232011281ff8cf29354a04492
 
