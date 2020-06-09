@@ -126,7 +126,7 @@ class ConnectionTests: XCTestCase {
         mockCreateEventWithAttachment()
         
         let payload: [String: Any] = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
-        let event = connection?.createEventWithFormData(event: payload, parameters: nil, files: nil)
+        let event = connection?.createEventWithFormData(event: payload)
         
         XCTAssertNotNil(event)
 

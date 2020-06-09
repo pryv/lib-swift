@@ -8,6 +8,8 @@
 
 import Foundation
 
+public typealias Json = [String: Any]
+
 @available(iOS 10.0, *)
 public class Service {
     private let utils = Utils()
@@ -18,7 +20,7 @@ public class Service {
     private var timer: Timer?
     
     private var pryvServiceInfoUrl: String
-    private var serviceCustomization: [String: Any]
+    private var serviceCustomization: Json
     
     private var pryvServiceInfo: PryvServiceInfo? = nil
     
@@ -53,14 +55,14 @@ public class Service {
     /// - Parameter pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: `https://access.{domain}/service/info`
     public init(pryvServiceInfoUrl: String) {
         self.pryvServiceInfoUrl = pryvServiceInfoUrl
-        self.serviceCustomization = [String: Any]()
+        self.serviceCustomization = Json()
     }
     
     /// Inits a service with the service info url and custom elements
     /// - Parameters:
     ///   - pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: [https://access.{domain}/service/info](https://access.{domain}/service/info)
     ///   - serviceCustomization: a json formatted dictionary corresponding to the customizations of the service
-    public init(pryvServiceInfoUrl: String, serviceCustomization: [String: Any]) {
+    public init(pryvServiceInfoUrl: String, serviceCustomization: Json) {
         self.pryvServiceInfoUrl = pryvServiceInfoUrl
         self.serviceCustomization = serviceCustomization
     }
@@ -212,7 +214,7 @@ public class Service {
     ///   - endpoint: the api endpoint given by the service info
     ///   - payload: the json formatted payload for the request: username, password and app id
     /// - Returns: the token received from the request
-    private func sendLoginRequest(endpoint: String, payload: [String: Any]) -> String? {
+    private func sendLoginRequest(endpoint: String, payload: Json) -> String? {
         guard let url = URL(string: endpoint) else { print("problem encountered: cannot access register url \(endpoint)") ; return nil }
         
         var request = URLRequest(url: url)
@@ -224,7 +226,7 @@ public class Service {
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let _ = error, data == nil { print("problem encountered when requesting login") ; group.leave() ; return }
 
-            guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when parsing the login response") ; group.leave() ; return }
+            guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the login response") ; group.leave() ; return }
             
             token = dictionary["token"] as? String
             group.leave()
@@ -255,7 +257,7 @@ public class Service {
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let _ = error, data == nil { print("problem encountered when sending the auth request") ; group.leave() ; return }
 
-            guard let authResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: authResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when decoding the auth response") ; group.leave() ; return }
+            guard let authResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: authResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when decoding the auth response") ; group.leave() ; return }
             
             let authURL = dictionary["authUrl"] as? String
             let poll = dictionary["poll"] as? String
@@ -287,7 +289,7 @@ public class Service {
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let _ = error, data == nil { print("problem encountered when polling") ; return completion(nil) }
 
-            guard let pollResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: pollResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when decoding the poll response") ; return completion(nil) }
+            guard let pollResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: pollResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when decoding the poll response") ; return completion(nil) }
             
             guard let status = dictionary["status"] as? String else { return completion(nil) }
             let pryvApiEndpoint = dictionary["apiEndpoint"] as? String

@@ -8,6 +8,9 @@
 
 import Foundation
 
+public typealias Event = Json
+public typealias Parameters = [String: String]
+
 public class Connection {
     private let utils = Utils()
     
@@ -31,25 +34,27 @@ public class Connection {
     }
     
     /// Issue a [Batch call](https://api.pryv.com/reference/#call-batch)
-    /// - Parameter APICalls: array of method calls in json formatted string
+    /// - Parameters:
+    ///   - APICalls: array of method calls in json formatted string
+    ///   - handleResults: callbacks indexed by the api calls indexes, i.e. `[0: func]` means "apply function `func` to result of api call 0"
     /// - Returns: array of results matching each method call in order
-    public func api(APICalls: String, handleResults: [Int: (([String: Any]) -> ())]? = nil) -> [[String: Any]]? {
+    public func api(APICalls: String, handleResults: [Int: (Event) -> ()]? = nil) -> [Event]? {
         guard let url = URL(string: apiEndpoint) else { print("problem encountered: cannot access register url \(apiEndpoint)") ; return nil }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = Data(APICalls.utf8)
         
-        var events: [[String: Any]]? = nil // array of json objects corresponding to events
+        var events: [Event]? = nil
         let group = DispatchGroup()
         let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
             if let _ = error, data == nil { print("problem encountered when requesting login") ; group.leave() ; return }
             
-            guard let callBatchResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: callBatchResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when parsing the call batch response") ; group.leave() ; return }
+            guard let callBatchResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: callBatchResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the call batch response") ; group.leave() ; return }
             
-            let results = dictionary["results"] as? [[String: [String: Any]]]
+            let results = dictionary["results"] as? [[String: Event]]
             events = results?.map { result in
-                result["event"] ?? [String: Any]()
+                result["event"] ?? Event()
             }
             
             group.leave()
@@ -75,7 +80,7 @@ public class Connection {
     ///   - fields
     ///   - points
     public func addPointsToHFEvent(eventId: String, fields: [String], points: [[Any]]) {
-        let payload: [String: Any] = [
+        let payload: Json = [
             "format": "flatJSON",
             "fields": fields,
             "points": points
@@ -96,11 +101,11 @@ public class Connection {
     
     /// Create an event with attached file
     /// - Parameters:
-    ///   - event
+    ///   - event: description of the new event to create
     ///   - filePath
     ///   - mimeType: the mimeType of the file in `filePath`
-    /// - Returns: the created event
-    public func createEventWithFile(event: [String: Any], filePath: String, mimeType: String) -> [String: Any]? {
+    /// - Returns: the newly created event with attachement corresponding to the file in `filePath`
+    public func createEventWithFile(event: Event, filePath: String, mimeType: String) -> Event? {
         let url = NSURL(fileURLWithPath: filePath)
         let media = Media(key: "file-\(UUID().uuidString)-\(String(describing: token))", filename: filePath, data: url.dataRepresentation, mimeType: mimeType)
         
@@ -109,11 +114,13 @@ public class Connection {
     
     /// Create an event with attached file encoded as [multipart/form-data content](https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData)
     /// - Parameters:
-    ///   - event: json formatted dictionnary corresponding to the new event to create
-    ///   - parameters: the string parameters for the add attachement(s) request
-    ///   - files: the attachement(s) to add
+    ///   - event: description of the new event to create
+    ///   - parameters: the string parameters for the add attachement(s) request (optional)
+    ///   - files: the attachement(s) to add (optional)
     /// - Returns: the newly created event with attachment(s) corresponding to `parameters` and `files`
-    public func createEventWithFormData(event: [String: Any], parameters: [String: String]?, files: [Media]?) -> [String: Any]? {
+    /// # Note
+    /// If no `parameters`, nor `files` are given, the method will just create a new event.
+    public func createEventWithFormData(event: Event, parameters: Parameters? = nil, files: [Media]? = nil) -> Event? {
         var event = sendCreateEventRequest(payload: event)
         guard let eventId = event?["id"] as? String else { print("problem encountered when creating the event") ; return nil }
     
@@ -129,9 +136,9 @@ public class Connection {
     // MARK: - private helpers functions for the library
         
     /// Send an `events.create` request
-    /// - Parameter payload: json formatted dictionnary corresponding to the new event to create
+    /// - Parameter payload: description of the new event to create
     /// - Returns: the newly created event
-    private func sendCreateEventRequest(payload: [String: Any]) -> [String: Any]? {
+    private func sendCreateEventRequest(payload: Json) -> Event? {
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events" : apiEndpoint + "/events"
         guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return nil }
         
@@ -144,9 +151,9 @@ public class Connection {
         let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
             if let _ = error, data == nil { print("problem encountered when requesting event") ; group.leave() ; return }
             
-            guard let eventResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: eventResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when parsing the event response") ; group.leave() ; return }
+            guard let eventResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: eventResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the event response") ; group.leave() ; return }
             
-            result = dictionary["event"] as? [String: Any]
+            result = dictionary["event"] as? Event
             group.leave()
         }
         
@@ -163,8 +170,8 @@ public class Connection {
     ///   - boundary: the boundary corresponding to the attachement to add
     ///   - httpBody: the data corresponding to the attachement to add
     /// - Returns: the event with id `eventId` with an attachement
-    private func addAttachmentToEvent(eventId: String, boundary: String, httpBody: Data) -> [String: Any]? {
-        var result: [String: Any]? = nil
+    private func addAttachmentToEvent(eventId: String, boundary: String, httpBody: Data) -> Event? {
+        var result: Event? = nil
         
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)" : apiEndpoint + "/events/\(eventId)"
         guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return nil }
@@ -178,9 +185,9 @@ public class Connection {
         let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
             if let _ = error, data == nil { print("problem encountered when requesting event from form data") ; group.leave() ; return }
             
-            guard let eventResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: eventResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when parsing the event response") ; group.leave() ; return }
+            guard let eventResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: eventResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the event response") ; group.leave() ; return }
             
-            result = dictionary["event"] as? [String: Any]
+            result = dictionary["event"] as? Event
             group.leave()
         }
         
@@ -198,7 +205,7 @@ public class Connection {
     ///   - parameters: the string parameters
     ///   - files: the attachement(s)
     /// - Returns: the data as `Data` corresponding with `boundary`, `parameters` and `files`
-    private func createData(with boundary: String, from parameters: [String: String]?, and files: [Media]?) -> Data {
+    private func createData(with boundary: String, from parameters: Parameters?, and files: [Media]?) -> Data {
         var body = Data()
         
         if let parameters = parameters {
