@@ -116,7 +116,9 @@ public class Connection {
     
         let boundary = "Boundary-\(UUID().uuidString)"
         let httpBody = createData(with: boundary, from: parameters, and: files)
-        event = addAttachmentToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody)
+        if let result = addAttachmentToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) {
+            event = result 
+        }
         
         return event
     }

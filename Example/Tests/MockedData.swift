@@ -116,7 +116,7 @@ public final class MockedData {
     public static let createEventResponse = """
         {
           "event": {
-            "id": "ckb0rldt0000wq6pv1g9qxozc",
+            "id": "eventId",
             "time": 1591274234.916,
             "streamIds": [
               "weight"
@@ -129,6 +129,36 @@ public final class MockedData {
             "createdBy": "ckb0rldr90001q6pv8zymgvpr",
             "modified": 1591274234.916,
             "modifiedBy": "ckb0rldr90001q6pv8zymgvpr"
+          }
+        }
+    """.data(using: .utf8)!
+    
+    public static let addAttachmentResponse = """
+        {
+          "event": {
+            "id": "eventId",
+            "time": 1591616955.5,
+            "duration": null,
+            "streamIds": [
+              "ckb6fn2p8000e4y0sk6wj3vaa"
+            ],
+            "streamId": "ckb6fn2p8000e4y0sk6wj3vaa",
+            "tags": [],
+            "type": "activity/pryv",
+            "content": null,
+            "attachments": [
+              {
+                "id": "ckb6fn2p9000r4y0s51ve4cx8",
+                "fileName": "travel-expense.jpg",
+                "type": "image/jpeg",
+                "size": 111,
+                "readToken": "ckb6fn2p9000s4y0slij89se5-JGZ6xx1vFDvSFsCxdoO4ptM7gc8"
+              }
+            ],
+            "created": 1591616955.501,
+            "createdBy": "ckb6fn2mo00014y0s09es996y",
+            "modified": 1591616955.501,
+            "modifiedBy": "ckb6fn2mo00014y0s09es996y"
           }
         }
     """.data(using: .utf8)!

@@ -12,9 +12,6 @@ import Mocker
 
 class ServiceTests: XCTestCase {
     private let pryvServiceInfoUrl = "https://reg.pryv.me/service/info"
-    private let username = "username"
-    private let token = "token"
-    private let password = "password"
     private let serviceCustomization = [
         "register": "https://reg.pryv2.me",
         "access": "https://access.pryv2.me/access",
@@ -26,14 +23,18 @@ class ServiceTests: XCTestCase {
         "eventTypes": "https://api.pryv2.com/event-types/flat.json"
     ]
     
+    private let username = "username"
+    private let token = "token"
+    private let password = "password"
+    
     private var service: Service?
     private var customService: Service?
     
     override func setUp() {
+        mockServiceInfo()
+        
         service = Service(pryvServiceInfoUrl: pryvServiceInfoUrl)
         customService = Service(pryvServiceInfoUrl: pryvServiceInfoUrl, serviceCustomization: serviceCustomization)
-        
-        mockResponses()
     }
     
     func testInfoNoCustomization() {
@@ -72,6 +73,8 @@ class ServiceTests: XCTestCase {
     }
     
     func testLogin() {
+        mockLogin()
+        
         let connection = service?.login(username: "username", password: "password", appId: "app-id")
         let apiEndpoint = connection?.getApiEndpoint()
         
@@ -80,6 +83,8 @@ class ServiceTests: XCTestCase {
     }
     
     func testSetUpAuth() {
+        mockAuthResponse()
+        
         let authPayload = """
         {
             "requestingAppId": "test-app-id",
@@ -99,29 +104,30 @@ class ServiceTests: XCTestCase {
         }
         """
     
-        let authUrl = service?.setUpAuth(authPayload: authPayload, stateChangedCallback: stateChangeCallback)
+        let authUrl = service?.setUpAuth(authPayload: authPayload, stateChangedCallback: { _ in return })
         XCTAssertEqual(authUrl, "https://sw.pryv.me/access/access.html?poll=https://reg.pryv.me/access/6CInm4R2TLaoqtl4")
         
         // The test for the callback function is done in the [app example](https://github.com/pryv/app-swift-example)
     }
     
-    private func stateChangeCallback(authResult: AuthResult) {
-        return
-    }
-    
-    private func mockResponses() {
+    private func mockServiceInfo() {
         let mockServiceInfo = Mock(url: URL(string: pryvServiceInfoUrl)!, contentType: .json, statusCode: 200, data: [
             .get: MockedData.serviceInfoResponse
         ])
+        Mocker.register(mockServiceInfo)
+    }
+    
+    private func mockLogin() {
         let mockLoginEndpoint = Mock(url: URL(string: "https://username.pryv.me/auth/login")!, contentType: .json, statusCode: 200, data: [
             .post: MockedData.loginResponse
         ])
+        Mocker.register(mockLoginEndpoint)
+    }
+    
+    private func mockAuthResponse() {
         let mockAccessEndpoint = Mock(url: URL(string: "https://reg.pryv.me/access")!, contentType: .json, statusCode: 200, data: [
             .post: MockedData.authResponse
         ])
-        
-        Mocker.register(mockServiceInfo)
-        Mocker.register(mockLoginEndpoint)
         Mocker.register(mockAccessEndpoint)
     }
 }
