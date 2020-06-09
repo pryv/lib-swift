@@ -22,8 +22,10 @@ public class Connection {
         (self.endpoint, self.token) = utils.extractTokenAndEndpoint(apiEndpoint: apiEndpoint) ?? ("", nil)
     }
     
+    // MARK: - public library
+    
     /// Getter for the field `apiEndpoint`
-    /// - Returns: the endpoint given in the constructor
+    /// - Returns: the api endpoint given in the constructor
     public func getApiEndpoint() -> String {
         return apiEndpoint
     }
@@ -67,7 +69,7 @@ public class Connection {
         return result
     }
     
-    /// ADD Data Points to HFEvent (flatJSON format) as described in the [reference API](https://api.pryv.com/reference/#add-hf-series-data-points)
+    /// Add Data Points to HFEvent (flatJSON format) as described in the [reference API](https://api.pryv.com/reference/#add-hf-series-data-points)
     /// - Parameters:
     ///   - eventId
     ///   - fields
@@ -78,7 +80,8 @@ public class Connection {
             "fields": fields,
             "points": points
         ]
-        guard let url = URL(string: endpoint + "events/\(eventId)/series") else { print("problem encountered: cannot access register url \(endpoint)") ; return }
+        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)/series" : apiEndpoint + "/events/\(eventId)/series"
+        guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -101,21 +104,35 @@ public class Connection {
         return nil
     }
     
-    /// Create an event with attached file
+    /// Create an event with attached file encoded as [multipart/form-data content](https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData)
     /// - Parameters:
-    ///   - event
-    ///   - formData see [multipart/form-data content](https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData)
-    /// - Returns: the created event
-    // TODO: add file
-    // TODO: clean
-    public func createEventWithFormData(event: [String: Any], formData: String) -> [String: Any]? {
-        // MARK: - create event
+    ///   - event: json formatted dictionnary corresponding to the new event to create
+    ///   - parameters: the string parameters for the add attachement(s) request
+    ///   - files: the attachement(s) to add
+    /// - Returns: the newly created event with attachment(s) corresponding to `parameters` and `files`
+    public func createEventWithFormData(event: [String: Any], parameters: [String: String]?, files: [Media]?) -> [String: Any]? {
+        var event = sendCreateEventRequest(payload: event)
+        guard let eventId = event?["id"] as? String else { print("problem encountered when creating the event") ; return nil }
+    
+        let boundary = "Boundary-\(UUID().uuidString)"
+        let httpBody = createData(with: boundary, from: parameters, and: files)
+        event = addAttachmentToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody)
         
-        guard let url = URL(string: apiEndpoint + "/events") else { print("problem encountered: cannot access register url \(apiEndpoint)") ; return nil }
+        return event
+    }
+    
+    // MARK: - private helpers functions for the library
+        
+    /// Send an `events.create` request
+    /// - Parameter payload: json formatted dictionnary corresponding to the new event to create
+    /// - Returns: the newly created event
+    private func sendCreateEventRequest(payload: [String: Any]) -> [String: Any]? {
+        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events" : apiEndpoint + "/events"
+        guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return nil }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.httpBody = try? JSONSerialization.data(withJSONObject: event)
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
         
         var result: [String: Any]? = nil
         let group = DispatchGroup()
@@ -132,26 +149,74 @@ public class Connection {
         task.resume()
         group.wait()
         
-        // MARK: - add attachment
+        return result
+    }
+    
+    /// Send a request to add an attachment to an existing event with id `eventId`
+    /// - Parameters:
+    ///   - eventId
+    ///   - boundary: the boundary corresponding to the attachement to add
+    ///   - httpBody: the data corresponding to the attachement to add
+    /// - Returns: the event with id `eventId` with an attachement
+    private func addAttachmentToEvent(eventId: String, boundary: String, httpBody: Data) -> [String: Any]? {
+        var result: [String: Any]? = nil
         
-        guard let event = result else { print("problem encountered when creating the event") ; return nil }
-        let eventId = event["id"]
+        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)" : apiEndpoint + "/events/\(eventId)"
+        guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return nil }
         
-        guard let url2 = URL(string: apiEndpoint + "/events/\(eventId)") else { print("problem encountered: cannot access register url \(apiEndpoint)") ; return nil }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.httpBody = httpBody
         
-        var request2 = URLRequest(url: url2)
-        request2.httpMethod = "POST"
-        // TODO: data
+        let group = DispatchGroup()
+        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
+            if let _ = error, data == nil { print("problem encountered when requesting event from form data") ; group.leave() ; return }
+            
+            guard let eventResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: eventResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when parsing the event response") ; group.leave() ; return }
+            
+            result = dictionary["event"] as? [String: Any]
+            group.leave()
+        }
         
-        var result2: [String: Any]? = nil
-        let group2 = DispatchGroup()
-        // TODO: send request with formdata
+        group.enter()
+        task.resume()
+        group.wait()
         
-        group2.enter()
-//       TODO: task2.resume()
-        group2.wait()
+        return result
+    }
+    
+    
+    /// Create `Data` from the `parameters` and the `files` encoded as [multipart/form-data content](https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData)
+    /// - Parameters:
+    ///   - boundary: the boundary of the multipart/form-data content
+    ///   - parameters: the string parameters
+    ///   - files: the attachement(s)
+    /// - Returns: the data as `Data` corresponding with `boundary`, `parameters` and `files`
+    private func createData(with boundary: String, from parameters: [String: String]?, and files: [Media]?) -> Data {
+        var body = Data()
         
-        return result2
+        if let parameters = parameters {
+            for (key, value) in parameters {
+                body.append("--\(boundary)\r\n")
+                body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.append("\(value)\r\n")
+            }
+        }
+        
+        if let files = files {
+            for item in files {
+                body.append("--\(boundary)\r\n")
+                body.append("Content-Disposition: form-data; name=\"\(item.key)\"; filename=\"\(item.filename)\"\r\n")
+                body.append("Content-Type: \(item.mimeType)\r\n\r\n")
+                body.append(item.data)
+                body.append("\r\n")
+            }
+        }
+        
+        body.append("--\(boundary)--\r\n")
+        
+        return body
     }
     
 }
