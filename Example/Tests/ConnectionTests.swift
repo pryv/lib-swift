@@ -122,7 +122,7 @@ class ConnectionTests: XCTestCase {
         // Note: as the function `addPointsToHFEvent` does not return anything, we cannot check its correctness. We will only check that it does not raise an exception; otherwise this test will fail
     }
     
-    func testCreateEvent() { // FIXME
+    func testCreateEvent() { 
         mockCreateEventWithAttachment()
         
         let payload: [String: Any] = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
@@ -210,6 +210,8 @@ class ConnectionTests: XCTestCase {
         let readToken = attachment!["readToken"] as? String
         XCTAssertNotNil(readToken)
         XCTAssertEqual(readToken!, "ckb6fn2p9000s4y0slij89se5-JGZ6xx1vFDvSFsCxdoO4ptM7gc8")
+        
+        // Note: The test for the function `createEventWithFile` is done in the [app example](https://github.com/pryv/app-swift-example)
     }
 
     private func mockCreateEventWithAttachment() {

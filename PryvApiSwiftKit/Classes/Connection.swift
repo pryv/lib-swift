@@ -98,10 +98,13 @@ public class Connection {
     /// - Parameters:
     ///   - event
     ///   - filePath
+    ///   - mimeType: the mimeType of the file in `filePath`
     /// - Returns: the created event
-    public func createEventWithFile(event: [String: Any], filePath: String) -> [String: Any]? {
-        // TODO: convert file into formdata and call createeventwithformdata
-        return nil
+    public func createEventWithFile(event: [String: Any], filePath: String, mimeType: String) -> [String: Any]? {
+        let url = NSURL(fileURLWithPath: filePath)
+        let media = Media(key: "file-\(UUID().uuidString)-\(String(describing: token))", filename: filePath, data: url.dataRepresentation, mimeType: mimeType)
+        
+        return createEventWithFormData(event: event, parameters: nil, files: [media])
     }
     
     /// Create an event with attached file encoded as [multipart/form-data content](https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData)
@@ -117,7 +120,7 @@ public class Connection {
         let boundary = "Boundary-\(UUID().uuidString)"
         let httpBody = createData(with: boundary, from: parameters, and: files)
         if let result = addAttachmentToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) {
-            event = result 
+            event = result
         }
         
         return event

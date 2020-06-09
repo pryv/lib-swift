@@ -7,9 +7,15 @@
 
 import Foundation
 
-// TODO: Rename + doc
+/// Data structure to hold a file
 public struct Media {
     
+    /// Create a `Media`
+    /// - Parameters:
+    ///   - key: the key value for the file in the database, must be unique
+    ///   - filename
+    ///   - data: the data contained in the file
+    ///   - mimeType: the type of file: image, text, ...
     public init(key: String, filename: String, data: Data, mimeType: String) {
         self.key = key
         self.filename = filename
