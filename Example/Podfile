@@ -1,7 +1,7 @@
 platform :ios, '10.0'
 use_frameworks!
 target 'PryvApiSwiftKit_Tests' do
-  pod 'Mocker', '~> 1.0.0'
+  pod 'Mocker'
   pod 'PryvApiSwiftKit', :path => '../'
   
   

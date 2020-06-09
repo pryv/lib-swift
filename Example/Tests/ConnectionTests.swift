@@ -215,10 +215,10 @@ class ConnectionTests: XCTestCase {
     }
 
     private func mockCreateEventWithAttachment() {
-        let mockCreateEvent = Mock(url: URL(string: apiEndpoint + "events")!, contentType: .json, statusCode: 200, data: [
+        let mockCreateEvent = Mock(url: URL(string: apiEndpoint + "events")!, dataType: .json, statusCode: 200, data: [
             .post: MockedData.createEventResponse
         ])
-        let mockAddAttachment = Mock(url: URL(string: apiEndpoint + "events/\(eventId)")!, contentType: .json, statusCode: 200, data: [
+        let mockAddAttachment = Mock(url: URL(string: apiEndpoint + "events/\(eventId)")!, dataType: .json, statusCode: 200, data: [
             .post: MockedData.addAttachmentResponse
         ])
         
@@ -227,7 +227,7 @@ class ConnectionTests: XCTestCase {
     }
     
     private func mockCallBatch() {
-        let mockCallBatch = Mock(url: URL(string: apiEndpoint)!, contentType: .json, statusCode: 200, data: [
+        let mockCallBatch = Mock(url: URL(string: apiEndpoint)!, dataType: .json, statusCode: 200, data: [
             .post: MockedData.callBatchResponse
         ])
         
@@ -235,7 +235,7 @@ class ConnectionTests: XCTestCase {
     }
     
     private func mockHFEvent() {
-        let mockAddPointsToHFEvent = Mock(url: URL(string: apiEndpoint + "events/\(eventId)/series")!, contentType: .json, statusCode: 200, data: [
+        let mockAddPointsToHFEvent = Mock(url: URL(string: apiEndpoint + "events/\(eventId)/series")!, dataType: .json, statusCode: 200, data: [
             .post: MockedData.okResponse
         ])
         

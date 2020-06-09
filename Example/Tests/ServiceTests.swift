@@ -73,9 +73,9 @@ class ServiceTests: XCTestCase {
     }
     
     func testLogin() {
-        mockLogin()
+        mockLogin(expectedParameters: ["username": username, "password": password, "appId": "app-id"])
         
-        let connection = service?.login(username: "username", password: "password", appId: "app-id")
+        let connection = service?.login(username: username, password: password, appId: "app-id")
         let apiEndpoint = connection?.getApiEndpoint()
         
         XCTAssertNotNil(apiEndpoint)
@@ -83,7 +83,12 @@ class ServiceTests: XCTestCase {
     }
     
     func testSetUpAuth() {
-        mockAuthResponse()
+        mockAuthResponse(expectedParameters: ["requestingAppId": "test-app-id", "languageCode": "fr",
+            "requestedPermissions": [
+                    ["streamId": "diary", "level": "read", "defaultName": "Journal"],
+                    ["streamId": "position", "level": "contribute", "defaultName": "Position"]
+            ]
+        ])
         
         let authPayload = """
         {
@@ -111,23 +116,47 @@ class ServiceTests: XCTestCase {
     }
     
     private func mockServiceInfo() {
-        let mockServiceInfo = Mock(url: URL(string: pryvServiceInfoUrl)!, contentType: .json, statusCode: 200, data: [
+        let mockServiceInfo = Mock(url: URL(string: pryvServiceInfoUrl)!, dataType: .json, statusCode: 200, data: [
             .get: MockedData.serviceInfoResponse
         ])
-        Mocker.register(mockServiceInfo)
+        mockServiceInfo.register()
     }
     
-    private func mockLogin() {
-        let mockLoginEndpoint = Mock(url: URL(string: "https://username.pryv.me/auth/login")!, contentType: .json, statusCode: 200, data: [
+    private func mockLogin(expectedParameters: [String: String]) {
+        var mockLoginEndpoint = Mock(url: URL(string: "https://username.pryv.me/auth/login")!, dataType: .json, statusCode: 200, data: [
             .post: MockedData.loginResponse
         ])
-        Mocker.register(mockLoginEndpoint)
+        
+        mockLoginEndpoint.onRequest = { request, postBodyArguments in
+            XCTAssertEqual(request.url, mockLoginEndpoint.request.url)
+            XCTAssertEqual(expectedParameters, postBodyArguments as? [String: String])
+        }
+        
+        mockLoginEndpoint.register()
     }
     
-    private func mockAuthResponse() {
-        let mockAccessEndpoint = Mock(url: URL(string: "https://reg.pryv.me/access")!, contentType: .json, statusCode: 200, data: [
+    private func mockAuthResponse(expectedParameters: [String: Any]) {
+        var mockAccessEndpoint = Mock(url: URL(string: "https://reg.pryv.me/access")!, dataType: .json, statusCode: 200, data: [
             .post: MockedData.authResponse
         ])
-        Mocker.register(mockAccessEndpoint)
+        
+        mockAccessEndpoint.onRequest = { request, postBodyArguments in
+            XCTAssertEqual(request.url, mockAccessEndpoint.request.url)
+            XCTAssertNotNil(postBodyArguments)
+             
+            let appId = postBodyArguments!["requestingAppId"] as? String
+            XCTAssertNotNil(appId)
+            XCTAssertEqual(appId!, "test-app-id")
+            
+            let languageCode = postBodyArguments!["languageCode"] as? String
+            XCTAssertNotNil(languageCode)
+            XCTAssertEqual(languageCode!, "fr")
+            
+            let requestedPermissions = postBodyArguments!["requestedPermissions"] as? [[String: String]]
+            XCTAssertNotNil(requestedPermissions)
+            XCTAssertEqual(requestedPermissions!, [["streamId": "diary", "level": "read", "defaultName": "Journal"], ["streamId": "position", "level": "contribute", "defaultName": "Position"]])
+        }
+        
+        mockAccessEndpoint.register()
     }
 }
