@@ -137,15 +137,14 @@ public final class MockedData {
         {
           "event": {
             "id": "eventId",
-            "time": 1591616955.5,
-            "duration": null,
+            "time": 1591274234.916,
             "streamIds": [
-              "ckb6fn2p8000e4y0sk6wj3vaa"
+              "weight"
             ],
-            "streamId": "ckb6fn2p8000e4y0sk6wj3vaa",
+            "streamId": "weight",
             "tags": [],
-            "type": "activity/pryv",
-            "content": null,
+            "type": "mass/kg",
+            "content": 90,
             "attachments": [
               {
                 "id": "ckb6fn2p9000r4y0s51ve4cx8",
@@ -155,10 +154,10 @@ public final class MockedData {
                 "readToken": "ckb6fn2p9000s4y0slij89se5-JGZ6xx1vFDvSFsCxdoO4ptM7gc8"
               }
             ],
-            "created": 1591616955.501,
-            "createdBy": "ckb6fn2mo00014y0s09es996y",
-            "modified": 1591616955.501,
-            "modifiedBy": "ckb6fn2mo00014y0s09es996y"
+            "created": 1591274234.916,
+            "createdBy": "ckb0rldr90001q6pv8zymgvpr",
+            "modified": 1591274234.916,
+            "modifiedBy": "ckb0rldr90001q6pv8zymgvpr"
           }
         }
     """.data(using: .utf8)!
