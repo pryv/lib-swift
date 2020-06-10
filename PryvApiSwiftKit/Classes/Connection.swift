@@ -21,7 +21,7 @@ public class Connection {
     
     /// Creates a connection object from the api endpoint
     /// - Parameter apiEndpoint
-    init(apiEndpoint: String) {
+    public init(apiEndpoint: String) {
         self.apiEndpoint = apiEndpoint
         (self.endpoint, self.token) = utils.extractTokenAndEndpoint(apiEndpoint: apiEndpoint) ?? ("", nil)
     }
