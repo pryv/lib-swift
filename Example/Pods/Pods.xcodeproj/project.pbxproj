@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		17F81AE9958B61708DAC28162F52F6BA /* Data+append.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AC2A72483374B8B8F7537F6F0CF420 /* Data+append.swift */; };
 		25E270DB498F3A3486ECCB7A76FA80C8 /* Mocker-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9C5B26FAC88D14CC0515795E8EC57C3B /* Mocker-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		26102C252C4B4535F2C3713C8220C64F /* Mocker-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = B66B206E497229A4EEA7009B76D4F73C /* Mocker-dummy.m */; };
 		292208651E587C8DD3CC462EB514DD48 /* PryvApiSwiftKit-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 17DEB39CEEC75028370401A5F2E2B736 /* PryvApiSwiftKit-dummy.m */; };
@@ -21,8 +22,6 @@
 		A06E7BE7BC6A89C4E6906CB50AB4DA68 /* Mocker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97CCDB8FA2C5F4235CAD0FDA6BC11794 /* Mocker.swift */; };
 		A55C017819DDF7485A9CFB5519550FF1 /* Pods-PryvApiSwiftKit_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E4266BBBDBF79AE97FED94EA4580234 /* Pods-PryvApiSwiftKit_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		ADC95E6BBDF4921C4DD03983168200E8 /* Pods-PryvApiSwiftKit_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C6B0E10DB8AC595191334ECE12F8E7 /* Pods-PryvApiSwiftKit_Tests-dummy.m */; };
-		B31CAF00248FD99A0093ACCB /* Data+append.swift in Sources */ = {isa = PBXBuildFile; fileRef = B31CAEFF248FD99A0093ACCB /* Data+append.swift */; };
-		B31CAF01248FD99A0093ACCB /* Data+append.swift in Sources */ = {isa = PBXBuildFile; fileRef = B31CAEFF248FD99A0093ACCB /* Data+append.swift */; };
 		B782167EE22A36FAEDBDB9EDF943AFEF /* PryvApiSwiftKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1323F436563760CE2772A9EE089CEB0 /* PryvApiSwiftKit.swift */; };
 		CA9B8B0F6ED469BF4B99ABAD080D3E43 /* PryvApiSwiftKit-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7DC42F12B89268931AAD7ABD035636 /* PryvApiSwiftKit-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CBBDA101D0A80A7AE5C1172953D6164F /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3CD31DB748DA41B0FBE0E305C7EE520 /* Service.swift */; };
@@ -57,7 +56,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		001C8144775D2B16B2931F3E78E6DDF7 /* Pods_PryvApiSwiftKit_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PryvApiSwiftKit_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		001C8144775D2B16B2931F3E78E6DDF7 /* Pods_PryvApiSwiftKit_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_PryvApiSwiftKit_Tests.framework; path = "Pods-PryvApiSwiftKit_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		00D70087464BEE9EBCB9C393FD3177C5 /* Mocker-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Mocker-Info.plist"; sourceTree = "<group>"; };
 		07E5E1807B903E8696067D2179EF3D12 /* Pods-PryvApiSwiftKit_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-PryvApiSwiftKit_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		1684BA918E0E1B2CA4026743CC5DBB46 /* Pods-PryvApiSwiftKit_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-PryvApiSwiftKit_Tests.modulemap"; sourceTree = "<group>"; };
@@ -65,28 +64,28 @@
 		17DEB39CEEC75028370401A5F2E2B736 /* PryvApiSwiftKit-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "PryvApiSwiftKit-dummy.m"; sourceTree = "<group>"; };
 		1BE61184A9BD3BE55AC5202C37E3842A /* PryvApiSwiftKit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = PryvApiSwiftKit.xcconfig; sourceTree = "<group>"; };
 		1C6DF193C4AB58454D25C89ECA758BEB /* Utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = PryvApiSwiftKit/Classes/Utils.swift; sourceTree = "<group>"; };
-		1D4AE396CC91228FE660B84E90FBD20A /* Mocker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Mocker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		2147D56E50BCA0DB07FFEB6B01EA9EEC /* PryvApiSwiftKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PryvApiSwiftKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D4AE396CC91228FE660B84E90FBD20A /* Mocker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Mocker.framework; path = Mocker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2147D56E50BCA0DB07FFEB6B01EA9EEC /* PryvApiSwiftKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PryvApiSwiftKit.framework; path = PryvApiSwiftKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		222B8A3F0A2505A14F43BF2C05626023 /* Mock.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Mock.swift; path = Sources/Mock.swift; sourceTree = "<group>"; };
 		4029DEEA493877FE91EAAED040825F16 /* MockingURLProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MockingURLProtocol.swift; path = Sources/MockingURLProtocol.swift; sourceTree = "<group>"; };
 		429E400E62DEBBD8A8992A4A9155173A /* Connection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Connection.swift; path = PryvApiSwiftKit/Classes/Connection.swift; sourceTree = "<group>"; };
 		46FB4A49B4E384DCE01811F52250C1D8 /* PryvApiSwiftKit.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PryvApiSwiftKit.h; path = PryvApiSwiftKit/Classes/PryvApiSwiftKit.h; sourceTree = "<group>"; };
 		4E4266BBBDBF79AE97FED94EA4580234 /* Pods-PryvApiSwiftKit_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-PryvApiSwiftKit_Tests-umbrella.h"; sourceTree = "<group>"; };
-		4F6B1716CD7802FE23EA163538BC0418 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		4F6B1716CD7802FE23EA163538BC0418 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
 		4FB19258878E428BF7E54A7821880B0C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		5B7DC42F12B89268931AAD7ABD035636 /* PryvApiSwiftKit-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PryvApiSwiftKit-umbrella.h"; sourceTree = "<group>"; };
+		61AC2A72483374B8B8F7537F6F0CF420 /* Data+append.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Data+append.swift"; path = "PryvApiSwiftKit/Classes/Data+append.swift"; sourceTree = "<group>"; };
 		6695112DFAF1073A13ECDED584889577 /* AuthState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AuthState.swift; path = PryvApiSwiftKit/Classes/AuthState.swift; sourceTree = "<group>"; };
 		68AFF55868FEDF6BB44C6D9B69D69AED /* PryvApiSwiftKit.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = PryvApiSwiftKit.modulemap; sourceTree = "<group>"; };
 		73B50B13A56DE2E6FCE7983E2B5720BD /* Mocker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Mocker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		74F7D21A74138B379487CAB74BF0D0AF /* PryvApiSwiftKit.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = PryvApiSwiftKit.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		74F7D21A74138B379487CAB74BF0D0AF /* PryvApiSwiftKit.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = PryvApiSwiftKit.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		75F520541C4E60A7F53D835EBE897130 /* Mocker.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Mocker.xcconfig; sourceTree = "<group>"; };
-		8FB818A403B8A0455F9B44804EA12DB2 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		8FB818A403B8A0455F9B44804EA12DB2 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
 		93F1DEFAF0DB4D6A6FA4B3D37152D83C /* Mocker-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Mocker-prefix.pch"; sourceTree = "<group>"; };
 		97CCDB8FA2C5F4235CAD0FDA6BC11794 /* Mocker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Mocker.swift; path = Sources/Mocker.swift; sourceTree = "<group>"; };
 		9C5B26FAC88D14CC0515795E8EC57C3B /* Mocker-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Mocker-umbrella.h"; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		A067E45C3ACFA58A73F16424E7DD2350 /* Media.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Media.swift; path = PryvApiSwiftKit/Classes/Media.swift; sourceTree = "<group>"; };
-		B31CAEFF248FD99A0093ACCB /* Data+append.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Data+append.swift"; path = "PryvApiSwiftKit/Classes/Data+append.swift"; sourceTree = "<group>"; };
 		B66B206E497229A4EEA7009B76D4F73C /* Mocker-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Mocker-dummy.m"; sourceTree = "<group>"; };
 		BBAECA7F6190B5B03697CE85FE043D53 /* Pods-PryvApiSwiftKit_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-PryvApiSwiftKit_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		D0B4D5675A6A554582B9AD2A02027218 /* PryvApiSwiftKit-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PryvApiSwiftKit-prefix.pch"; sourceTree = "<group>"; };
@@ -147,6 +146,7 @@
 				4029DEEA493877FE91EAAED040825F16 /* MockingURLProtocol.swift */,
 				F283A58B75C80904F314FEF2A6D91854 /* Support Files */,
 			);
+			name = Mocker;
 			path = Mocker;
 			sourceTree = "<group>";
 		};
@@ -202,9 +202,9 @@
 		6085C8F9F87931359B127B0782C3FFA3 /* PryvApiSwiftKit */ = {
 			isa = PBXGroup;
 			children = (
-				B31CAEFF248FD99A0093ACCB /* Data+append.swift */,
 				6695112DFAF1073A13ECDED584889577 /* AuthState.swift */,
 				429E400E62DEBBD8A8992A4A9155173A /* Connection.swift */,
+				61AC2A72483374B8B8F7537F6F0CF420 /* Data+append.swift */,
 				A067E45C3ACFA58A73F16424E7DD2350 /* Media.swift */,
 				46FB4A49B4E384DCE01811F52250C1D8 /* PryvApiSwiftKit.h */,
 				F1323F436563760CE2772A9EE089CEB0 /* PryvApiSwiftKit.swift */,
@@ -426,11 +426,11 @@
 			files = (
 				8192316D2AB5E5AC7E60D4DC3FF0E3F1 /* AuthState.swift in Sources */,
 				50C48CA93A7F8AF887DCF47C9A95DB3A /* Connection.swift in Sources */,
+				17F81AE9958B61708DAC28162F52F6BA /* Data+append.swift in Sources */,
 				7A9B1050C7076E50098FE981A7209035 /* Media.swift in Sources */,
 				292208651E587C8DD3CC462EB514DD48 /* PryvApiSwiftKit-dummy.m in Sources */,
 				B782167EE22A36FAEDBDB9EDF943AFEF /* PryvApiSwiftKit.swift in Sources */,
 				4EFAEEB95B51C858A229A157804E4BC0 /* PryvServiceInfo.swift in Sources */,
-				B31CAF01248FD99A0093ACCB /* Data+append.swift in Sources */,
 				CBBDA101D0A80A7AE5C1172953D6164F /* Service.swift in Sources */,
 				462916B5E66AC042EEDB568A444A2D11 /* Utils.swift in Sources */,
 			);
@@ -450,7 +450,6 @@
 			files = (
 				EB286E2F52AE057B8C53D0DE5B165B9C /* Mock.swift in Sources */,
 				26102C252C4B4535F2C3713C8220C64F /* Mocker-dummy.m in Sources */,
-				B31CAF00248FD99A0093ACCB /* Data+append.swift in Sources */,
 				A06E7BE7BC6A89C4E6906CB50AB4DA68 /* Mocker.swift in Sources */,
 				F74A51C82DB485E1D24EC23630AB16B6 /* MockingURLProtocol.swift in Sources */,
 			);
@@ -796,7 +795,8 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = NO;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
 			};
