@@ -42,17 +42,25 @@ public class Connection {
     public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil) -> [Event]? {
         guard let url = URL(string: apiEndpoint) else { print("problem encountered: cannot access register url \(apiEndpoint)") ; return nil }
         
+        var jsonData = Data()
+        APICalls.forEach({ apiCall in
+            let data = try! JSONSerialization.data(withJSONObject: apiCall)
+            jsonData.append(data)
+        })
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.httpBody = try! JSONSerialization.data(withJSONObject: APICalls)
+        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
+        request.httpBody = jsonData
         
         var events: [Event]? = nil
         let group = DispatchGroup()
         let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            if let _ = error, data == nil { print("problem encountered when requesting login") ; group.leave() ; return }
+            if let _ = error, data == nil { print("problem encountered when requesting call batch") ; group.leave() ; return }
             
             guard let callBatchResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: callBatchResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the call batch response") ; group.leave() ; return }
             
+            if let _ = dictionary["error"] { print("problem encountered when requesting call batch") ; group.leave() ; return }
             let results = dictionary["results"] as? [[String: Event]]
             events = results?.map { result in
                 result["event"] ?? Event()
@@ -91,6 +99,7 @@ public class Connection {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
         request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
         
         let task = URLSession.shared.dataTask(with: request) { (_, response, error) in
@@ -145,6 +154,7 @@ public class Connection {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
         request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
         
         var result: [String: Any]? = nil
@@ -179,6 +189,7 @@ public class Connection {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         request.httpBody = httpBody
         

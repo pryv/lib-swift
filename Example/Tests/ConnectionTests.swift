@@ -16,7 +16,7 @@ class ConnectionTests: XCTestCase {
     private var connection: Connection?
     private var a: String?
     
-    private let callBatches: [Json] = [
+    private let callBatches: [APICall] = [
         [
             "method": "events.create",
             "params": [
