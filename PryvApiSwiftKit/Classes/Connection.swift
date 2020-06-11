@@ -56,14 +56,21 @@ public class Connection {
             guard let callBatchResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: callBatchResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the call batch response") ; group.leave() ; return }
             
             if let _ = dictionary["error"] { print("problem encountered when requesting call batch") ; group.leave() ; return }
-            let results = dictionary["results"] as? [[String: Event]]
             
-            events = results?.map { result in
-                if let error = result["error"] {
-                    print("error encountered when getting the event from callbatch")
-                    return error
+            // if format of response if {"results": [{"event": {...}}, {"event": {...}}, ...]}
+            if let creationResults = dictionary["results"] as? [[String: Event]] {
+                events = creationResults.map { result in
+                    if let error = result["error"] {
+                        print("error encountered when getting the event from callbatch")
+                        print(error)
+                        return error
+                    }
+                    return result["event"] ?? Event()
                 }
-                return result["event"] ?? Event()
+            }
+            // if format of response if {"results": {"events": [{"streamId": ..., ...}, {"streamId": ..., ...}, ...]}}
+            else if let getResults = dictionary["results"] as? [[String: [Event]]] {
+                events = getResults.first?["events"]
             }
             
             group.leave()
