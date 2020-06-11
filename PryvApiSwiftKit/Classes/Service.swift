@@ -116,7 +116,7 @@ public class Service {
     /// Sends an auth request to the `access` field of the service info and polls the received url
     /// such that the callback function is called when the state of the connection is changed
     /// - Parameters:
-    ///   - authPayload: the auth request json formatted string according to [the API reference](https://api.pryv.com/reference/#auth-request)
+    ///   - authPayload: the auth request json formatted according to [the API reference](https://api.pryv.com/reference/#auth-request)
     ///   - stateChangedCallback: function that will be called as soon as the state of the authentication changes
     /// - Returns: the `authUrl` field from the response to the service info
     ///
@@ -139,7 +139,7 @@ public class Service {
     ///            }
     ///    }
     ///    ```
-    public func setUpAuth(authPayload: String, stateChangedCallback: @escaping (AuthResult) -> ()) -> String? {
+    public func setUpAuth(authPayload: Json, stateChangedCallback: @escaping (AuthResult) -> ()) -> String? {
         let serviceInfo = pryvServiceInfo ?? info()
         guard let registerUrl = serviceInfo?.register else { print("problem encountered when getting the register url") ; return nil }
         let endpoint = registerUrl.hasSuffix("/") ? registerUrl + authPath : registerUrl + "/" + authPath
@@ -244,13 +244,13 @@ public class Service {
     ///   - endpoint: the field `register` of the service info concatenated with "/access"
     ///   - payload: the json formatted payload for the request according to [the API reference](https://api.pryv.com/reference/#auth-request)
     /// - Returns: the fields `authUrl`, `poll` and `poll_ms`
-    private func sendAuthRequest(endpoint: String, payload: String) -> (String, String, Double)? {
+    private func sendAuthRequest(endpoint: String, payload: Json) -> (String, String, Double)? {
         guard let url = URL(string: endpoint) else { print("problem encountered: cannot access register url \(endpoint)") ; return nil }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = Data(payload.utf8)
+        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
         
         var result: (String, String, Double)? = nil
         let group = DispatchGroup()

@@ -83,31 +83,21 @@ class ServiceTests: XCTestCase {
     }
     
     func testSetUpAuth() {
-        mockAuthResponse(expectedParameters: ["requestingAppId": "test-app-id", "languageCode": "fr",
-            "requestedPermissions": [
-                    ["streamId": "diary", "level": "read", "defaultName": "Journal"],
-                    ["streamId": "position", "level": "contribute", "defaultName": "Position"]
-            ]
+        let requestingAppId = "test-app-id"
+        let requestedPermissions = [
+                ["streamId": "diary", "level": "read", "defaultName": "Journal"],
+                ["streamId": "position", "level": "contribute", "defaultName": "Position"]
+        ]
+        
+        mockAuthResponse(expectedParameters: ["requestingAppId": requestingAppId, "languageCode": "fr",
+            "requestedPermissions": requestedPermissions
         ])
         
-        let authPayload = """
-        {
-            "requestingAppId": "test-app-id",
-            "requestedPermissions": [
-                {
-                    "streamId": "diary",
-                    "level": "read",
-                    "defaultName": "Journal"
-                },
-                {
-                    "streamId": "position",
-                    "level": "contribute",
-                    "defaultName": "Position"
-                }
-            ],
+        let authPayload: Json = [
+            "requestingAppId": requestingAppId,
+            "requestedPermissions": requestedPermissions,
             "languageCode": "fr"
-        }
-        """
+       ]
     
         let authUrl = service?.setUpAuth(authPayload: authPayload, stateChangedCallback: { _ in return })
         XCTAssertEqual(authUrl, "https://sw.pryv.me/access/access.html?poll=https://reg.pryv.me/access/6CInm4R2TLaoqtl4")
