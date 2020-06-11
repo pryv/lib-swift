@@ -42,16 +42,11 @@ public class Connection {
     public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil) -> [Event]? {
         guard let url = URL(string: apiEndpoint) else { print("problem encountered: cannot access register url \(apiEndpoint)") ; return nil }
         
-        var jsonData = Data()
-        APICalls.forEach({ apiCall in
-            let data = try! JSONSerialization.data(withJSONObject: apiCall)
-            jsonData.append(data)
-        })
-        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
-        request.httpBody = jsonData
+        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try! JSONSerialization.data(withJSONObject: APICalls)
         
         var events: [Event]? = nil
         let group = DispatchGroup()
@@ -62,8 +57,13 @@ public class Connection {
             
             if let _ = dictionary["error"] { print("problem encountered when requesting call batch") ; group.leave() ; return }
             let results = dictionary["results"] as? [[String: Event]]
+            
             events = results?.map { result in
-                result["event"] ?? Event()
+                if let error = result["error"] {
+                    print("error encountered when getting the event from callbatch")
+                    return error
+                }
+                return result["event"] ?? Event()
             }
             
             group.leave()
@@ -155,6 +155,7 @@ public class Connection {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
+        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
         
         var result: [String: Any]? = nil
@@ -165,6 +166,11 @@ public class Connection {
             guard let eventResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: eventResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the event response") ; group.leave() ; return }
             
             result = dictionary["event"] as? Event
+            /*
+                Note: this result can only be an event.
+                If the result is an error, the returned value will be nil.
+                The function that calls this function is responsible for checking that the result is ≠ nil.
+            */
             group.leave()
         }
         
