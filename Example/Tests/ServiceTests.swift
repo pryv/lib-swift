@@ -44,7 +44,7 @@ class ServiceTests: XCTestCase {
         XCTAssertEqual(serviceInfo?.register, "https://reg.pryv.me/")
         XCTAssertEqual(serviceInfo?.access, "https://access.pryv.me/access")
         XCTAssertEqual(serviceInfo?.api, "https://{username}.pryv.me/")
-        XCTAssertEqual(serviceInfo?.name, "Pryv Lab")
+        XCTAssertEqual(serviceInfo?.name, "Pryv Test Lab")
         XCTAssertEqual(serviceInfo?.home, "https://www.pryv.com")
         XCTAssertEqual(serviceInfo?.support, "https://pryv.com/helpdesk")
         XCTAssertEqual(serviceInfo?.terms, "https://pryv.com/pryv-lab-terms-of-use/")
