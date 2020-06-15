@@ -16,7 +16,7 @@ public final class MockedData {
           "register": "https://reg.pryv.me/",
           "access": "https://access.pryv.me/access",
           "api": "https://{username}.pryv.me/",
-          "name": "Pryv Test Lab",
+          "name": "Pryv Lab",
           "home": "https://www.pryv.com",
           "support": "https://pryv.com/helpdesk",
           "terms": "https://pryv.com/pryv-lab-terms-of-use/",
@@ -57,23 +57,6 @@ public final class MockedData {
                   "support": "https://pryv.com/helpdesk",
                   "terms": "https://pryv.com/pryv-lab-terms-of-use/",
                   "eventTypes": "https://api.pryv.com/event-types/flat.json"
-            }
-        }
-    """.data(using: .utf8)!
-    
-    public static let acceptedPollingResponse: Data = """
-        {
-            "status": "ACCEPTED",
-            "pryvAPIEndpoint": "https://ckbc28vpd00kz1vd3s7vgiszs@Testuser.pryv.me/",
-            "serviceInfo": {
-                "register": "https://reg.pryv.me",
-                "access": "https://access.pryv2.me/access",
-                "api": "https://{username}.pryv.me/",
-                "name": "Pryv Lab",
-                "home": "https://www.pryv.com",
-                "support": "https://pryv.com/helpdesk",
-                "terms": "https://pryv.com/pryv-lab-terms-of-use/",
-                "eventTypes": "https://api.pryv.com/event-types/flat.json"
             }
         }
     """.data(using: .utf8)!

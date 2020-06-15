@@ -308,9 +308,6 @@ public class Service {
     /// - Returns: the new authentication state according to the polling response
     private func poll(currentState: AuthState?, poll: String, stateChangedCallback: @escaping (AuthResult) -> ()) -> AuthState? {
         var newState = currentState
-        DispatchQueue.main.async {
-            print("I am polling") // TOOD: remove
-        }
         
         DispatchQueue.global(qos: .background).async {
             self.sendPollingRequest(poll: poll) { tuple in
@@ -321,18 +318,18 @@ public class Service {
                         self.timer?.invalidate()
                         
                         if newState != .refused {
+                            newState = .refused
+                            let result = AuthResult(state: newState!, endpoint: nil)
                             DispatchQueue.main.async {
-                                newState = .refused
-                                let result = AuthResult(state: newState!, endpoint: nil)
                                 stateChangedCallback(result)
                             }
                         }
                         
                     case "NEED_SIGNIN":
                         if newState != .need_signin {
+                            newState = .need_signin
+                            let result = AuthResult(state: newState!, endpoint: nil)
                             DispatchQueue.main.async {
-                                newState = .need_signin
-                                let result = AuthResult(state: newState!, endpoint: nil)
                                 stateChangedCallback(result)
                             }
                         }
@@ -342,9 +339,9 @@ public class Service {
                         guard let pryvApiEndpoint = pryvApiEndpoint else { print("Cannot get field \"apiEndpoint\" from response") ; return }
                         
                         if newState != .accepted {
+                            newState = .accepted
+                            let result = AuthResult(state: newState!, endpoint: pryvApiEndpoint)
                             DispatchQueue.main.async {
-                                newState = .accepted
-                                let result = AuthResult(state: newState!, endpoint: pryvApiEndpoint)
                                 stateChangedCallback(result)
                             }
                         }

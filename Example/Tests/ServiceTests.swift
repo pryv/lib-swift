@@ -98,14 +98,11 @@ class ServiceTests: XCTestCase {
             "requestedPermissions": requestedPermissions,
             "languageCode": "fr"
        ]
-        
-        var endpoint: String? = nil
-        let authUrl = service?.setUpAuth(authPayload: authPayload, stateChangedCallback: { authResult in if(authResult.state == .accepted) { endpoint = authResult.endpoint } })
-        
+    
+        let authUrl = service?.setUpAuth(authPayload: authPayload, stateChangedCallback: { _ in return })
         XCTAssertEqual(authUrl, "https://sw.pryv.me/access/access.html?poll=https://reg.pryv.me/access/6CInm4R2TLaoqtl4")
-//        TODO: XCTAssertEqual(endpoint, "https://ckbc28vpd00kz1vd3s7vgiszs@Testuser.pryv.me/")
+        
         // The test for the callback function is done in the [app example](https://github.com/pryv/app-swift-example)
-        sleep(1000000000)
     }
     
     private func mockServiceInfo() {
@@ -151,15 +148,5 @@ class ServiceTests: XCTestCase {
         }
         
         mockAccessEndpoint.register()
-        
-        var mockAcceptedPollRequest = Mock(url: URL(string: "https://access.pryv.me/access/6CInm4R2TLaoqtl4")!, dataType: .json, statusCode: 200, data: [.get: MockedData.acceptedPollingResponse])
-        
-        mockAcceptedPollRequest.onRequest = { request, postBodyArguments in
-            XCTAssertEqual(request.url, mockAcceptedPollRequest.request.url)
-            XCTAssertEqual(request.httpMethod, "GET")
-            XCTAssertNil(postBodyArguments)
-        }
-        
-        mockAcceptedPollRequest.register()
     }
 }
