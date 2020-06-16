@@ -105,9 +105,10 @@ public class Service {
         guard let apiEndpoint = apiEndpointFor(username: username) else { return nil }
         let endpoint = apiEndpoint.hasSuffix("/") ? apiEndpoint + loginPath : apiEndpoint + "/" + loginPath
         
-        let token = sendLoginRequest(endpoint: endpoint, payload: loginPayload)
-        if let apiEndpoint = self.apiEndpointFor(username: username, token: token) {
-           connection = Connection(apiEndpoint: apiEndpoint)
+        if let token = sendLoginRequest(endpoint: endpoint, payload: loginPayload) {
+            if let apiEndpoint = self.apiEndpointFor(username: username, token: token) {
+               connection = Connection(apiEndpoint: apiEndpoint)
+            }
         }
         
         return connection
