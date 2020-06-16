@@ -10,6 +10,7 @@
 		B36DBA16248A7477001A37E4 /* MockedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36DBA13248A7477001A37E4 /* MockedData.swift */; };
 		B36DBA17248A7477001A37E4 /* ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36DBA14248A7477001A37E4 /* ServiceTests.swift */; };
 		B36DBA18248A7477001A37E4 /* UtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36DBA15248A7477001A37E4 /* UtilsTests.swift */; };
+		B3EFB206248E4BD2008D6C52 /* ConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EFB205248E4BD2008D6C52 /* ConnectionTests.swift */; };
 		D917F93A36A362164FC4FA7B /* Pods_PryvApiSwiftKit_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9894CAA1F6E1130FAE0114FC /* Pods_PryvApiSwiftKit_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -24,6 +25,7 @@
 		B36DBA13248A7477001A37E4 /* MockedData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockedData.swift; sourceTree = "<group>"; };
 		B36DBA14248A7477001A37E4 /* ServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTests.swift; sourceTree = "<group>"; };
 		B36DBA15248A7477001A37E4 /* UtilsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilsTests.swift; sourceTree = "<group>"; };
+		B3EFB205248E4BD2008D6C52 /* ConnectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionTests.swift; sourceTree = "<group>"; };
 		E6660B53F8535456AB651CF0 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -63,6 +65,7 @@
 			children = (
 				B36DBA13248A7477001A37E4 /* MockedData.swift */,
 				B36DBA14248A7477001A37E4 /* ServiceTests.swift */,
+				B3EFB205248E4BD2008D6C52 /* ConnectionTests.swift */,
 				B36DBA15248A7477001A37E4 /* UtilsTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
@@ -224,6 +227,7 @@
 				B36DBA16248A7477001A37E4 /* MockedData.swift in Sources */,
 				B36DBA17248A7477001A37E4 /* ServiceTests.swift in Sources */,
 				B36DBA18248A7477001A37E4 /* UtilsTests.swift in Sources */,
+				B3EFB206248E4BD2008D6C52 /* ConnectionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,6 +8,8 @@
 
 import Foundation
 
+public typealias Json = [String: Any]
+
 @available(iOS 10.0, *)
 public class Service {
     private let utils = Utils()
@@ -18,7 +20,7 @@ public class Service {
     private var timer: Timer?
     
     private var pryvServiceInfoUrl: String
-    private var serviceCustomization: [String: Any]
+    private var serviceCustomization: Json
     
     private var pryvServiceInfo: PryvServiceInfo? = nil
     
@@ -53,14 +55,14 @@ public class Service {
     /// - Parameter pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: `https://access.{domain}/service/info`
     public init(pryvServiceInfoUrl: String) {
         self.pryvServiceInfoUrl = pryvServiceInfoUrl
-        self.serviceCustomization = [String: Any]()
+        self.serviceCustomization = Json()
     }
     
     /// Inits a service with the service info url and custom elements
     /// - Parameters:
     ///   - pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: [https://access.{domain}/service/info](https://access.{domain}/service/info)
     ///   - serviceCustomization: a json formatted dictionary corresponding to the customizations of the service
-    public init(pryvServiceInfoUrl: String, serviceCustomization: [String: Any]) {
+    public init(pryvServiceInfoUrl: String, serviceCustomization: Json) {
         self.pryvServiceInfoUrl = pryvServiceInfoUrl
         self.serviceCustomization = serviceCustomization
     }
@@ -96,16 +98,20 @@ public class Service {
     ///   - username
     ///   - password
     ///   - appId
+    ///   - domain: domain parameter for the `Origin` header, according to the [trusted apps verification](https://api.pryv.com/reference/#trusted-apps-verification)
     /// - Returns: the user's connection to the appId or nil if problem is encountered
-    public func login(username: String, password: String, appId: String) -> Connection? {
+    public func login(username: String, password: String, appId: String, domain: String) -> Connection? {
         var connection: Connection? = nil
-        let loginPayload = ["username": username, "password": password, "appId": appId]
+        let loginPayload: Json = ["username": username, "password": password, "appId": appId]
+        
         guard let apiEndpoint = apiEndpointFor(username: username) else { return nil }
         let endpoint = apiEndpoint.hasSuffix("/") ? apiEndpoint + loginPath : apiEndpoint + "/" + loginPath
+        let origin = "https://login.\(domain)"
         
-        let token = sendLoginRequest(endpoint: endpoint, payload: loginPayload)
-        if let apiEndpoint = self.apiEndpointFor(username: username, token: token) {
-           connection = Connection(apiEndpoint: apiEndpoint)
+        if let token = sendLoginRequest(endpoint: endpoint, payload: loginPayload, origin: origin) {
+            if let apiEndpoint = self.apiEndpointFor(username: username, token: token) {
+               connection = Connection(apiEndpoint: apiEndpoint)
+            }
         }
         
         return connection
@@ -114,7 +120,7 @@ public class Service {
     /// Sends an auth request to the `access` field of the service info and polls the received url
     /// such that the callback function is called when the state of the connection is changed
     /// - Parameters:
-    ///   - authPayload: the auth request json formatted string according to [the API reference](https://api.pryv.com/reference/#auth-request)
+    ///   - authPayload: the auth request json formatted according to [the API reference](https://api.pryv.com/reference/#auth-request)
     ///   - stateChangedCallback: function that will be called as soon as the state of the authentication changes
     /// - Returns: the `authUrl` field from the response to the service info
     ///
@@ -137,7 +143,7 @@ public class Service {
     ///            }
     ///    }
     ///    ```
-    public func setUpAuth(authPayload: String, stateChangedCallback: @escaping (AuthResult) -> ()) -> String? {
+    public func setUpAuth(authPayload: Json, stateChangedCallback: @escaping (AuthResult) -> ()) -> String? {
         let serviceInfo = pryvServiceInfo ?? info()
         guard let registerUrl = serviceInfo?.register else { print("problem encountered when getting the register url") ; return nil }
         let endpoint = registerUrl.hasSuffix("/") ? registerUrl + authPath : registerUrl + "/" + authPath
@@ -211,12 +217,15 @@ public class Service {
     /// - Parameters:
     ///   - endpoint: the api endpoint given by the service info
     ///   - payload: the json formatted payload for the request: username, password and app id
+    ///   - origin: the field of the form `https://login.{domain}` to add to the `Origin` header
     /// - Returns: the token received from the request
-    private func sendLoginRequest(endpoint: String, payload: [String: Any]) -> String? {
+    private func sendLoginRequest(endpoint: String, payload: Json, origin: String) -> String? {
         guard let url = URL(string: endpoint) else { print("problem encountered: cannot access register url \(endpoint)") ; return nil }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.addValue(origin, forHTTPHeaderField: "Origin")
         request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
 
         var token: String? = nil
@@ -224,9 +233,14 @@ public class Service {
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let _ = error, data == nil { print("problem encountered when requesting login") ; group.leave() ; return }
 
-            guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when parsing the login response") ; group.leave() ; return }
+            guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the login response") ; group.leave() ; return }
             
             token = dictionary["token"] as? String
+            if let problem = dictionary["error"] as? [String: Any] {
+                if let message = problem["message"] {
+                    print("problem encountered when requesting login: \(String(describing: message))")
+                }
+            }
             group.leave()
         }
 
@@ -242,20 +256,20 @@ public class Service {
     ///   - endpoint: the field `register` of the service info concatenated with "/access"
     ///   - payload: the json formatted payload for the request according to [the API reference](https://api.pryv.com/reference/#auth-request)
     /// - Returns: the fields `authUrl`, `poll` and `poll_ms`
-    private func sendAuthRequest(endpoint: String, payload: String) -> (String, String, Double)? {
+    private func sendAuthRequest(endpoint: String, payload: Json) -> (String, String, Double)? {
         guard let url = URL(string: endpoint) else { print("problem encountered: cannot access register url \(endpoint)") ; return nil }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = Data(payload.utf8)
+        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
         
         var result: (String, String, Double)? = nil
         let group = DispatchGroup()
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let _ = error, data == nil { print("problem encountered when sending the auth request") ; group.leave() ; return }
 
-            guard let authResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: authResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when decoding the auth response") ; group.leave() ; return }
+            guard let authResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: authResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when decoding the auth response") ; group.leave() ; return }
             
             let authURL = dictionary["authUrl"] as? String
             let poll = dictionary["poll"] as? String
@@ -287,7 +301,7 @@ public class Service {
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             if let _ = error, data == nil { print("problem encountered when polling") ; return completion(nil) }
 
-            guard let pollResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: pollResponse), let dictionary = jsonResponse as? [String: Any] else { print("problem encountered when decoding the poll response") ; return completion(nil) }
+            guard let pollResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: pollResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when decoding the poll response") ; return completion(nil) }
             
             guard let status = dictionary["status"] as? String else { return completion(nil) }
             let pryvApiEndpoint = dictionary["apiEndpoint"] as? String

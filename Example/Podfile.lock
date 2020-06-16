@@ -1,10 +1,10 @@
 PODS:
-  - Mocker (1.0.0)
-  - PryvApiSwiftKit (0.1.0):
-    - Mocker (~> 1.0.0)
+  - Mocker (2.2.0)
+  - PryvApiSwiftKit (0.1.2):
+    - Mocker
 
 DEPENDENCIES:
-  - Mocker (~> 1.0.0)
+  - Mocker
   - PryvApiSwiftKit (from `../`)
 
 SPEC REPOS:
@@ -16,9 +16,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Mocker: 58560cc516f6240e92492dad66f295e7cdd7cdb2
-  PryvApiSwiftKit: 5bab7631b8479ca3a5dd45167e28274902becad0
+  Mocker: d0ceb340eddd5c28539a691ce67d068674cef9a0
+  PryvApiSwiftKit: d22d77f6e5b8a8eb5a7b17d103c19684167558f8
 
-PODFILE CHECKSUM: da22073876a785084297327221fc062fa493fe07
+PODFILE CHECKSUM: 0b4cd15eda361d1232011281ff8cf29354a04492
 
 COCOAPODS: 1.8.4

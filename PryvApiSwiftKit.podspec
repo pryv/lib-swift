@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PryvApiSwiftKit'
-  s.version          = '0.1.1'
+  s.version          = '0.1.2'
   s.summary          = 'Pryv Swift library for iOS'
 
 # This description is used to generate tags and improve search results.
@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'alemannosara' => 'sara.alemanno@epfl.ch' }
-  s.source           = { :git => 'https://github.com/pryv/lib-swift.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/pryv/lib-swift.git', :branch => "connection-object" }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '10.0'
@@ -38,5 +38,5 @@ Pod::Spec.new do |s|
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
-   s.dependency 'Mocker', '~> 1.0.0'
+   s.dependency 'Mocker'
 end

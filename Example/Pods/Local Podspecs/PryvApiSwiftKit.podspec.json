@@ -1,9 +1,9 @@
 {
   "name": "PryvApiSwiftKit",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "summary": "Pryv Swift library for iOS",
   "description": "An SDK to connect and interact with the Pryv API from any iOS application.",
-  "homepage": "https://github.com/pryv/PryvApiSwiftKit",
+  "homepage": "https://github.com/pryv/lib-swift",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
@@ -12,8 +12,8 @@
     "alemannosara": "sara.alemanno@epfl.ch"
   },
   "source": {
-    "git": "https://github.com/pryv/PryvApiSwiftKit.git",
-    "tag": "0.1.0"
+    "git": "https://github.com/pryv/lib-swift.git",
+    "tag": "0.1.2"
   },
   "platforms": {
     "ios": "10.0"
@@ -21,7 +21,7 @@
   "source_files": "PryvApiSwiftKit/Classes/**/*",
   "dependencies": {
     "Mocker": [
-      "~> 1.0.0"
+
     ]
   }
 }
