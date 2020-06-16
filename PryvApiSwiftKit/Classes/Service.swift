@@ -101,7 +101,7 @@ public class Service {
     /// - Returns: the user's connection to the appId or nil if problem is encountered
     public func login(username: String, password: String, appId: String) -> Connection? {
         var connection: Connection? = nil
-        let loginPayload = ["username": username, "password": password, "appId": appId]
+        let loginPayload: Json = ["username": username, "password": password, "appId": appId]
         guard let apiEndpoint = apiEndpointFor(username: username) else { return nil }
         let endpoint = apiEndpoint.hasSuffix("/") ? apiEndpoint + loginPath : apiEndpoint + "/" + loginPath
         
@@ -220,6 +220,7 @@ public class Service {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
 
         var token: String? = nil
@@ -230,6 +231,11 @@ public class Service {
             guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the login response") ; group.leave() ; return }
             
             token = dictionary["token"] as? String
+            if let problem = dictionary["error"] as? [String: Any] {
+                if let message = problem["message"] {
+                    print("problem encountered when requesting login: \(String(describing: message))")
+                }
+            }
             group.leave()
         }
 
