@@ -1,14 +1,18 @@
 PODS:
+  - Alamofire (5.2.1)
   - Mocker (2.2.0)
   - PryvApiSwiftKit (0.1.2):
+    - Alamofire
     - Mocker
 
 DEPENDENCIES:
+  - Alamofire (~> 5.2)
   - Mocker
   - PryvApiSwiftKit (from `../`)
 
 SPEC REPOS:
   trunk:
+    - Alamofire
     - Mocker
 
 EXTERNAL SOURCES:
@@ -16,9 +20,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
+  Alamofire: e911732990610fe89af59ac0077f923d72dc3dfd
   Mocker: d0ceb340eddd5c28539a691ce67d068674cef9a0
-  PryvApiSwiftKit: d22d77f6e5b8a8eb5a7b17d103c19684167558f8
+  PryvApiSwiftKit: 6e12e7fbe6ae74cb047bbe3ef8a3604564b73b32
 
-PODFILE CHECKSUM: 0b4cd15eda361d1232011281ff8cf29354a04492
+PODFILE CHECKSUM: 31cc70daeb6bdda5ec81134349efceaff7012a3a
 
 COCOAPODS: 1.8.4

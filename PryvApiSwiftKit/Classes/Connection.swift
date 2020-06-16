@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Alamofire
 
 public typealias Event = Json
 public typealias Parameters = [String: String]
@@ -114,6 +115,10 @@ public class Connection {
         }
         
         task.resume()
+    }
+
+    public func getEventsStreamed(params: Json? = nil, forEachEvent: ((Event) -> ())? = nil) {
+         // TODO: implement
     }
     
     /// Create an event with attached file
