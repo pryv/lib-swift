@@ -75,7 +75,7 @@ class ServiceTests: XCTestCase {
     func testLogin() {
         mockLogin(expectedParameters: ["username": username, "password": password, "appId": "app-id"])
         
-        let connection = service?.login(username: username, password: password, appId: "app-id")
+        let connection = service?.login(username: username, password: password, appId: "app-id", domain: "pryv.me")
         let apiEndpoint = connection?.getApiEndpoint()
         
         XCTAssertNotNil(apiEndpoint)
