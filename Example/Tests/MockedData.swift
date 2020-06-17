@@ -136,8 +136,8 @@ public final class MockedData {
             "attachments": [
               {
                 "id": "ckb6fn2p9000r4y0s51ve4cx8",
-                "fileName": "travel-expense.jpg",
-                "type": "image/jpeg",
+                "fileName": "sample.pdf",
+                "type": "application/pdf",
                 "size": 111,
                 "readToken": "ckb6fn2p9000s4y0slij89se5-JGZ6xx1vFDvSFsCxdoO4ptM7gc8"
               }
