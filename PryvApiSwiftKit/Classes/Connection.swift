@@ -143,7 +143,7 @@ public class Connection {
     
         let boundary = "Boundary-\(UUID().uuidString)"
         let httpBody = createData(with: boundary, from: parameters, and: files)
-        if let result = addFormDataToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) {
+        if let result = addAttachmentToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) {
             event = result
         }
         
@@ -162,7 +162,7 @@ public class Connection {
         let boundary = "Boundary-\(UUID().uuidString)"
         let httpBody = createData(with: boundary, from: nil, and: [media])
         
-        if let event = addFormDataToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) {
+        if let event = addAttachmentToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) {
             return event
         }
         
@@ -213,7 +213,7 @@ public class Connection {
     ///   - boundary: the boundary corresponding to the attachement to add
     ///   - httpBody: the data corresponding to the attachement to add
     /// - Returns: the event with id `eventId` with an attachement
-    private func addFormDataToEvent(eventId: String, boundary: String, httpBody: Data) -> Event? {
+    private func addAttachmentToEvent(eventId: String, boundary: String, httpBody: Data) -> Event? {
         var result: Event? = nil
         
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)" : apiEndpoint + "/events/\(eventId)"
