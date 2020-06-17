@@ -141,13 +141,49 @@ public class Connection {
         var event = sendCreateEventRequest(payload: event)
         guard let eventId = event?["id"] as? String else { print("problem encountered when creating the event") ; return nil }
     
-        let boundary = "Boundary-\(UUID().uuidString)"
-        let httpBody = createData(with: boundary, from: parameters, and: files)
-        if let result = addAttachmentToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) {
+        if let result = addAttachmentToEvent(eventId: eventId, parameters: parameters, files: files) {
             event = result
         }
         
         return event
+    }
+    
+    /// Send a request to add an attachment to an existing event with id `eventId`
+    /// - Parameters:
+    ///   - eventId
+    ///   - parameters: the string parameters for the add attachement(s) request (optional)
+    ///   - files: the attachement(s) to add (optional)
+    /// - Returns: the event with id `eventId` with an attachement
+    public func addAttachmentToEvent(eventId: String, parameters: Parameters? = nil, files: [Media]? = nil) -> Event? {
+        let boundary = "Boundary-\(UUID().uuidString)"
+        let httpBody = createData(with: boundary, from: parameters, and: files)
+        
+        var result: Event? = nil
+        
+        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)" : apiEndpoint + "/events/\(eventId)"
+        guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return nil }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.httpBody = httpBody
+        
+        let group = DispatchGroup()
+        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
+            if let _ = error, data == nil { print("problem encountered when requesting event from form data") ; group.leave() ; return }
+            
+            guard let eventResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: eventResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the event response") ; group.leave() ; return }
+            
+            result = dictionary["event"] as? Event
+            group.leave()
+        }
+        
+        group.enter()
+        task.resume()
+        group.wait()
+        
+        return result
     }
     
     // MARK: - private helpers functions for the library
@@ -187,42 +223,6 @@ public class Connection {
         
         return result
     }
-    
-    /// Send a request to add an attachment to an existing event with id `eventId`
-    /// - Parameters:
-    ///   - eventId
-    ///   - boundary: the boundary corresponding to the attachement to add
-    ///   - httpBody: the data corresponding to the attachement to add
-    /// - Returns: the event with id `eventId` with an attachement
-    private func addAttachmentToEvent(eventId: String, boundary: String, httpBody: Data) -> Event? {
-        var result: Event? = nil
-        
-        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)" : apiEndpoint + "/events/\(eventId)"
-        guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return nil }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.httpBody = httpBody
-        
-        let group = DispatchGroup()
-        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            if let _ = error, data == nil { print("problem encountered when requesting event from form data") ; group.leave() ; return }
-            
-            guard let eventResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: eventResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the event response") ; group.leave() ; return }
-            
-            result = dictionary["event"] as? Event
-            group.leave()
-        }
-        
-        group.enter()
-        task.resume()
-        group.wait()
-        
-        return result
-    }
-    
     
     /// Create `Data` from the `parameters` and the `files` encoded as [multipart/form-data content](https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData)
     /// - Parameters:
