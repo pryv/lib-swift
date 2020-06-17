@@ -127,8 +127,6 @@ class ConnectionTests: XCTestCase {
         XCTAssertEqual(readToken!, "ckb6fn2p9000s4y0slij89se5-JGZ6xx1vFDvSFsCxdoO4ptM7gc8")
         
         // Note: The test for the function `createEventWithFile` is done in the [app example](https://github.com/pryv/app-swift-example)
-        
-        // Note: `addAttachementToEvent` is not explicitly tested as `testCreateEventWithFormData` already tests `createEventWithFormData`, which uses this function to add the file to the event
     }
 
     private func mockCreateEventWithAttachment(expectedParameters: [String: Any]) {
