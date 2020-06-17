@@ -150,6 +150,25 @@ public class Connection {
         return event
     }
     
+    /// Adds an attached file to an event with id `eventId`
+    /// - Parameters:
+    ///   - eventId
+    ///   - filePath
+    ///   - mimeType: the mimeType of the file in `filePath`
+    /// - Returns: the newly created event with attachement corresponding to the file in `filePath`
+    public func addFileToEvent(eventId: String, filePath: String, mimeType: String) -> Event? {
+        let url = NSURL(fileURLWithPath: filePath)
+        let media = Media(key: "file-\(UUID().uuidString)-\(String(describing: token))", filename: filePath, data: url.dataRepresentation, mimeType: mimeType)
+        let boundary = "Boundary-\(UUID().uuidString)"
+        let httpBody = createData(with: boundary, from: nil, and: [media])
+        
+        if let event = addAttachmentToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) {
+            return event
+        }
+        
+        return nil
+    }
+    
     // MARK: - private helpers functions for the library
         
     /// Send an `events.create` request
