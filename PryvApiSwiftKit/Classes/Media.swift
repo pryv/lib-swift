@@ -25,7 +25,7 @@ public struct Media {
     
     let key: String
     let filename: String
-    public let data: Data
+    let data: Data
     let mimeType: String
     
 }
