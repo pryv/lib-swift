@@ -128,8 +128,6 @@ class ConnectionTests: XCTestCase {
         
         // Note: The test for the function `createEventWithFile` is done in the [app example](https://github.com/pryv/app-swift-example)
     }
-    
-    // TODO: test addfiletoevent
 
     private func mockCreateEventWithAttachment(expectedParameters: [String: Any]) {
         var mockCreateEvent = Mock(url: URL(string: apiEndpoint + "events")!, dataType: .json, statusCode: 200, data: [
