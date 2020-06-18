@@ -91,13 +91,12 @@ class ConnectionTests: XCTestCase {
         checkEvent(event)
     }
     
-    func testCreateEventWithFormData() {
+    func testCreateEventWithFile() {
         let payload: Event = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
         mockCreateEventWithAttachment(expectedParameters: payload)
         
-        let parameters = [String: String]()
-        let files = [Media]()
-        let event = connection?.createEventWithFormData(event: payload, parameters: parameters, files: files)
+        let file = Bundle(for: ConnectionTests.self).url(forResource: "sample", withExtension: "pdf")!
+        let event = connection?.createEventWithFile(event: payload, filePath: file.absoluteString, mimeType: "application/pdf")
         XCTAssertNotNil(event)
         
         let attachments = event!["attachments"] as? [Any]
@@ -112,11 +111,11 @@ class ConnectionTests: XCTestCase {
         
         let fileName = attachment!["fileName"] as? String
         XCTAssertNotNil(fileName)
-        XCTAssertEqual(fileName!, "travel-expense.jpg")
+        XCTAssertEqual(fileName!, "sample.pdf")
         
         let type = attachment!["type"] as? String
         XCTAssertNotNil(type)
-        XCTAssertEqual(type!, "image/jpeg")
+        XCTAssertEqual(type!, "application/pdf")
         
         let size = attachment!["size"] as? Int
         XCTAssertNotNil(size)
@@ -126,7 +125,48 @@ class ConnectionTests: XCTestCase {
         XCTAssertNotNil(readToken)
         XCTAssertEqual(readToken!, "ckb6fn2p9000s4y0slij89se5-JGZ6xx1vFDvSFsCxdoO4ptM7gc8")
         
-        // Note: The test for the function `createEventWithFile` is done in the [app example](https://github.com/pryv/app-swift-example)
+        // Note: No test for the function `createEventWithFormData` is done as the function `createEventWithFile` uses already this function.
+    }
+    
+    func testAddFileToEvent() {
+        let payload: Event = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
+        mockCreateEventWithAttachment(expectedParameters: payload)
+        
+        var event = connection?.createEventWithFormData(event: payload)
+        XCTAssertNotNil(event)
+        
+        let eventId = event!["id"] as? String
+        XCTAssertNotNil(eventId)
+        
+        let file = Bundle(for: ConnectionTests.self).url(forResource: "sample", withExtension: "pdf")!
+        event = connection?.addFileToEvent(eventId: eventId!, filePath: file.absoluteString, mimeType: "application/pdf")
+        XCTAssertNotNil(event)
+        
+        let attachments = event!["attachments"] as? [Any]
+        XCTAssertNotNil(attachments)
+        
+        let attachment = attachments![0] as? [String: Any]
+        XCTAssertNotNil(attachment)
+        
+        let id = attachment!["id"] as? String
+        XCTAssertNotNil(id)
+        XCTAssertEqual(id!, "ckb6fn2p9000r4y0s51ve4cx8")
+        
+        let fileName = attachment!["fileName"] as? String
+        XCTAssertNotNil(fileName)
+        XCTAssertEqual(fileName!, "sample.pdf")
+        
+        let type = attachment!["type"] as? String
+        XCTAssertNotNil(type)
+        XCTAssertEqual(type!, "application/pdf")
+        
+        let size = attachment!["size"] as? Int
+        XCTAssertNotNil(size)
+        XCTAssertEqual(size!, 111)
+        
+        let readToken = attachment!["readToken"] as? String
+        XCTAssertNotNil(readToken)
+        XCTAssertEqual(readToken!, "ckb6fn2p9000s4y0slij89se5-JGZ6xx1vFDvSFsCxdoO4ptM7gc8")
     }
 
     private func mockCreateEventWithAttachment(expectedParameters: [String: Any]) {
