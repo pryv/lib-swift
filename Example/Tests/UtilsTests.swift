@@ -77,8 +77,8 @@ class UtilsTests: XCTestCase {
     
     func testExtractUsernameWithoutToken() {
         let apiEndpoint = "https://username.pryv.me/"
-        
         let username = utils.extractUsername(from: apiEndpoint)
+
         XCTAssertEqual(username, "username")
     }
     
