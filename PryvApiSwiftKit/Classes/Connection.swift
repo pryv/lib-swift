@@ -68,7 +68,7 @@ public class Connection {
                     return result["event"] ?? Event()
                 }
             }
-                // if format of response if {"results": {"events": [{"streamId": ..., ...}, {"streamId": ..., ...}, ...]}}
+            // if format of response if {"results": {"events": [{"streamId": ..., ...}, {"streamId": ..., ...}, ...]}}
             else if let getResults = dictionary["results"] as? [[String: [Event]]] {
                 events = getResults.first?["events"]
             }
@@ -90,42 +90,6 @@ public class Connection {
         return result
     }
     
-    /// Streamed [get event](https://api.pryv.com/reference/#get-events)
-    /// - Parameters:
-    ///   - queryParams: see `events.get` parameters
-    ///   - forEachEvent: function taking one event as parameter, will be called for each event
-    /// - Returns: // TODO ??
-    public func getEventsStreamed(queryParams: Json, forEachEvent: @escaping (Event) -> ()) {
-        // TODO: streamed and not wait() !
-        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events" : apiEndpoint + "/events"
-        guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
-        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try? JSONSerialization.data(withJSONObject: queryParams)
-        
-        let group = DispatchGroup()
-        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            if let _ = error, data == nil { print("problem encountered when requesting get events") ; group.leave() ; return }
-            
-            guard let response = data, let jsonResponse = try? JSONSerialization.jsonObject(with: response), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the get events response") ; group.leave() ; return }
-            
-            if let _ = dictionary["error"] { print("problem encountered when requesting get events") ; group.leave() ; return }
-                
-            if let events = dictionary["events"] as? [Event] {
-                events.forEach(forEachEvent)
-            }
-            
-            group.leave()
-        }
-        
-        group.enter()
-        task.resume()
-        group.wait()
-    }
-    
     /// Add Data Points to HFEvent (flatJSON format) as described in the [reference API](https://api.pryv.com/reference/#add-hf-series-data-points)
     /// - Parameters:
     ///   - eventId
@@ -143,7 +107,6 @@ public class Connection {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
-        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
         
         let task = URLSession.shared.dataTask(with: request) { (_, response, error) in
@@ -177,7 +140,7 @@ public class Connection {
     public func createEventWithFormData(event: Event, parameters: Parameters? = nil, files: [Media]? = nil) -> Event? {
         var event = sendCreateEventRequest(payload: event)
         guard let eventId = event?["id"] as? String else { print("problem encountered when creating the event") ; return nil }
-        
+    
         let boundary = "Boundary-\(UUID().uuidString)"
         let httpBody = createData(with: boundary, from: parameters, and: files)
         if let result = addFormDataToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) {
@@ -207,7 +170,7 @@ public class Connection {
     }
     
     // MARK: - private helpers functions for the library
-    
+        
     /// Send an `events.create` request
     /// - Parameter payload: description of the new event to create
     /// - Returns: the newly created event
@@ -230,10 +193,10 @@ public class Connection {
             
             result = dictionary["event"] as? Event
             /*
-             Note: this result can only be an event.
-             If the result is an error, the returned value will be nil.
-             The function that calls this function is responsible for checking that the result is ≠ nil.
-             */
+                Note: this result can only be an event.
+                If the result is an error, the returned value will be nil.
+                The function that calls this function is responsible for checking that the result is ≠ nil.
+            */
             group.leave()
         }
         
