@@ -119,38 +119,43 @@ public class Connection {
 
     /// Streamed [get event](https://api.pryv.com/reference/#get-events)
     /// - Parameters:
-    ///   - queryParams: see `events.get` parameters
+    ///   - queryParams: see `events.get` parameters // TODO: remove ?? cannot accept body in get request
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
     /// - Returns: // TODO ??
-    public func getEventsStreamed(queryParams: Json, forEachEvent: @escaping (Event) -> ()) {
-        // TODO: streamed with alamofire and not wait() !
-        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events" : apiEndpoint + "/events"
-        guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return }
+    public func getEventsStreamed(forEachEvent: @escaping (Event) -> (), completion: @escaping (Result<Any, AFError>) -> ()) {
+        let url = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events" : apiEndpoint + "/events"
+        let headers: HTTPHeaders = [
+            "Authorization": token ?? "",
+            "Content-Type": "application/json; charset=utf-8"
+        ]
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
-        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try? JSONSerialization.data(withJSONObject: queryParams)
-        
-        let group = DispatchGroup()
-        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            if let _ = error, data == nil { print("problem encountered when requesting get events") ; group.leave() ; return }
-            
-            guard let response = data, let jsonResponse = try? JSONSerialization.jsonObject(with: response), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the get events response") ; group.leave() ; return }
-            
-            if let _ = dictionary["error"] { print("problem encountered when requesting get events") ; group.leave() ; return }
-                
-            if let events = dictionary["events"] as? [Event] {
-                events.forEach(forEachEvent)
+        let request = AF.request(url, method: .get, headers: headers)
+        request.responseJSON { response in
+            switch response.result {
+            case .success(let response):
+                if let result = response as? [String: Any], let events = result["events"] as? [Event] {
+                    events.forEach(forEachEvent)
+                }
+                completion(.success(response))
+            case .failure(let error):
+                completion(.failure(error))
             }
-            
-            group.leave()
         }
-        
-        group.enter()
-        task.resume()
-        group.wait()
+            
+//        TODO
+//            { stream in
+//            switch stream.event {
+//            case let .stream(result):
+//                switch result {
+//                case .success(let data):
+//                    print(data)
+//                case .failure(let error):
+//                    print(error)
+//                }
+//            case let .complete(completion):
+//                print(completion)
+//            }
+//        }
     }
     
     /// Create an event with attached file
