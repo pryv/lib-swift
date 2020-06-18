@@ -123,7 +123,7 @@ public class Connection {
     ///   - queryParams: see `events.get` parameters // TODO: not accepted in get requests
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
     /// - Returns: // TODO ??
-    public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), log: @escaping (String) -> ()) {
+    public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), log: @escaping (Result<String>) -> ()) {
         let parameters: Json = [
             "method": "events.get",
             "params": queryParams!
@@ -135,15 +135,55 @@ public class Connection {
         request.setValue(token ?? "", forHTTPHeaderField: "Authorization")
         request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
         
+        var remaining: String? = nil
         Alamofire.request(request).stream { data in
-            do {
-                log("Data: " + (String(data: data, encoding: .utf8) ?? "nil"))
-                let json = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String: Any]
-                log("Json: " + String(describing: json))
-            } catch {
-                log("Failure: " + String(describing: error))
+            guard let string = String(data: data, encoding: .utf8) else { log(.failure("cannot decode data response for get events" as! Error)) ; return }
+            let parsedResponse = self.parseEventsChunked(string: remaining ?? "" + string)
+            remaining = parsedResponse.remaining
+            parsedResponse.events.forEach(forEachEvent)
+            if parsedResponse.done { log(.success("done")) }
+        }
+    }
+    
+    private func parseEventsChunked(string: String) -> (remaining: String?, events: [Event], done: Bool) {
+        let start = "{\"results\":[{\"events\":[" // TODO: or {"meta":{"apiVersion":"1.5.17","serverTime":1592488771.633,"serial":"2019061301"},"results":[{"events":[
+        let end = "]}]" // TODO: or }, {"meta":{"apiVersion":"1.5.17","serverTime":1592488771.633,"serial":"2019061301"}
+        let eventsString = string.replacingOccurrences(of: start, with: "").replacingOccurrences(of: end, with: "")
+        
+        let chunks = eventsString.split(separator: "{").map({String($0)})
+        var events = [String]()
+        var last: String? = nil
+        for chunk in chunks {
+            if chunk.last == "[" { // if it has an attachment
+                last = chunk
+            }
+            else {
+                if let preceding = last {
+                    last = nil
+                    events.append(preceding + chunk)
+                } else {
+                    events.append(chunk)
+                }
             }
         }
+        
+        var remaining: String? = nil
+        events = events.map { substring in
+                var event = substring
+                if event.hasSuffix(",") { event.removeLast() }
+                if !event.hasSuffix("}") { remaining = event ; return nil }
+                return String("{" + event)
+            }
+        .filter{$0 != nil}.map{$0!}
+        
+        let result: [Event] = events.map { event in
+            if let data = event.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event {
+                return dictionary
+            }
+            return Event()
+        }
+        
+        return (remaining, result, string.contains(end)) 
     }
     
     /// Create an event with attached file

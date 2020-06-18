@@ -67,14 +67,23 @@ class ConnectionTests: XCTestCase {
     }
     
     func testPrintGetEvents() {
+        let limit = 30
         let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
         let conn = service.login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
         
-        let params = ["limit": 20]
+        let params = ["limit": limit]
+        var error = false
         var events = [Event]()
-        conn?.getEventsStreamed(queryParams: params, forEachEvent: { events.append($0) ; print(events.count) }, log: { string in print(string) })
+        conn?.getEventsStreamed(queryParams: params, forEachEvent: { events.append($0) ; print(events.count) }) { result in
+            switch result {
+            case .failure(_): error = true
+            case .success(let message): print(message)
+            }
+        }
         
-        sleep(10) // TODO: refactor
+        sleep(5)
+        XCTAssertFalse(error)
+        XCTAssertLessThanOrEqual(events.count, limit)
     }
     
     func testAddPointsToHFEvent() {
