@@ -11,16 +11,15 @@ import Foundation
 public class Utils {
     private let regexAPIandToken = "(?i)https?:\\/\\/(.+)@(.+)"
     private let regexSchemaAndPath = "(?i)https?:\\/\\/(.+)"
-    
+    private let regexTokenUsername = "(?i)https?:\\/\\/(.+)@(.+)\\.(.+)\\.(.+)"
     private let regexUsername = "(?i)https?:\\/\\/(.+)\\.(.+)\\.(.+)"
-    private let regexUsernameToken = "(?i)https?:\\/\\/(.+)@(.+)\\.(.+)\\.(.+)"
     
     public init() { }
 
     /// Returns the token and the endpoint from an API endpoint
     /// - Parameter apiEndpoint
     /// - Returns: a tuple containing the endpoint and the token (optionnal)
-    public func extractTokenAndEndpoint(apiEndpoint: String) -> (endpoint: String, token: String?)? {
+    public func extractTokenAndEndpoint(from apiEndpoint: String) -> (endpoint: String, token: String?)? {
         var apiEp = apiEndpoint
         if !apiEp.hasSuffix("/") {
             apiEp += "/" // add a trailing '/' to end point if missing
@@ -43,13 +42,13 @@ public class Utils {
     /// Returns the username from an API endpoint
     /// - Parameter apiEndpoint
     /// - Returns: the username
-    public func extractUsername(apiEndpoint: String) -> String? {
+    public func extractUsername(from apiEndpoint: String) -> String? {
         var apiEp = apiEndpoint
         if !apiEp.hasSuffix("/") {
             apiEp += "/" // add a trailing '/' to end point if missing
         }
         
-        let res = regexExec(pattern: regexUsernameToken, string: apiEp)
+        let res = regexExec(pattern: regexTokenUsername, string: apiEp)
         if !res.isEmpty { // has token
             return res[1]
         }
@@ -59,7 +58,7 @@ public class Utils {
             print("Problem occurred when extracting the username: invalid URL format")
             return nil
         }
-
+        
         return res2[0]
     }
     

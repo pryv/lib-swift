@@ -24,7 +24,7 @@ public class Connection {
     /// - Parameter apiEndpoint
     public init(apiEndpoint: String) {
         self.apiEndpoint = apiEndpoint
-        (self.endpoint, self.token) = utils.extractTokenAndEndpoint(apiEndpoint: apiEndpoint) ?? ("", nil)
+        (self.endpoint, self.token) = utils.extractTokenAndEndpoint(from: apiEndpoint) ?? ("", nil)
     }
     
     // MARK: - public library

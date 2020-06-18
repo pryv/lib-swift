@@ -22,7 +22,7 @@ class UtilsTests: XCTestCase {
         let endpoint = "https://username.pryv.me/"
         let token = "token"
         
-        let extractedTuple = utils.extractTokenAndEndpoint(apiEndpoint: apiEndpoint) ?? ("", nil)
+        let extractedTuple = utils.extractTokenAndEndpoint(from: apiEndpoint) ?? ("", nil)
         
         XCTAssertEqual(extractedTuple.0, endpoint)
         XCTAssertEqual(extractedTuple.1, token)
@@ -30,7 +30,7 @@ class UtilsTests: XCTestCase {
     
     func testExtractTokenAndEndpointWithoutToken() {
         let apiEndpoint = "https://username.pryv.me"
-        let extractedTuple = utils.extractTokenAndEndpoint(apiEndpoint: apiEndpoint) ?? ("", nil)
+        let extractedTuple = utils.extractTokenAndEndpoint(from: apiEndpoint) ?? ("", nil)
         
         XCTAssertEqual(extractedTuple.0, apiEndpoint + "/")
         XCTAssertEqual(extractedTuple.1, nil)
@@ -38,7 +38,7 @@ class UtilsTests: XCTestCase {
     
     func testExtractTokenAndEnpointFromRandomUrl() {
         let fakeApiEndpoint = "hppt://sjdgkjsbj"
-        let extractedTuple = utils.extractTokenAndEndpoint(apiEndpoint: fakeApiEndpoint) ?? ("", nil)
+        let extractedTuple = utils.extractTokenAndEndpoint(from: fakeApiEndpoint) ?? ("", nil)
         
         XCTAssertEqual("", extractedTuple.0)
         XCTAssertEqual(nil, extractedTuple.1)
@@ -63,7 +63,7 @@ class UtilsTests: XCTestCase {
     
     func testExtractUsernameFromRandomUrl() {
         let fakeApiEndpoint = "hppt://sjdgkjsbj"
-        let username = utils.extractUsername(apiEndpoint: fakeApiEndpoint)
+        let username = utils.extractUsername(from: fakeApiEndpoint)
         
         XCTAssertNil(username)
     }
@@ -71,15 +71,15 @@ class UtilsTests: XCTestCase {
     func testExtractUsernameWithToken() {
         let apiEndpoint = "https://token@username.pryv.me"
         
-        let username = utils.extractUsername(apiEndpoint: apiEndpoint)
+        let username = utils.extractUsername(from: apiEndpoint)
         XCTAssertEqual(username, "username")
     }
     
     func testExtractUsernameWithoutToken() {
         let apiEndpoint = "https://username.pryv.me/"
         
-        let username = utils.extractUsername(apiEndpoint: apiEndpoint)
+        let username = utils.extractUsername(from: apiEndpoint)
         XCTAssertEqual(username, "username")
     }
-
+    
 }
