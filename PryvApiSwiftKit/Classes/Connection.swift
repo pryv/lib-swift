@@ -117,45 +117,33 @@ public class Connection {
         task.resume()
     }
 
+    // TODO: refactor doc
     /// Streamed [get event](https://api.pryv.com/reference/#get-events)
     /// - Parameters:
-    ///   - queryParams: see `events.get` parameters // TODO: remove ?? cannot accept body in get request
+    ///   - queryParams: see `events.get` parameters // TODO: not accepted in get requests
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
     /// - Returns: // TODO ??
-    public func getEventsStreamed(forEachEvent: @escaping (Event) -> (), completion: @escaping (Result<Any, AFError>) -> ()) {
-        let url = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events" : apiEndpoint + "/events"
-        let headers: HTTPHeaders = [
-            "Authorization": token ?? "",
-            "Content-Type": "application/json; charset=utf-8"
+    public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), log: @escaping (String) -> ()) {
+        let parameters: Json = [
+            "method": "events.get",
+            "params": queryParams!
         ]
         
-        let request = AF.request(url, method: .get, headers: headers)
-        request.responseJSON { response in
-            switch response.result {
-            case .success(let response):
-                if let result = response as? [String: Any], let events = result["events"] as? [Event] {
-                    events.forEach(forEachEvent)
-                }
-                completion(.success(response))
-            case .failure(let error):
-                completion(.failure(error))
+        var request = URLRequest(url: URL(string: endpoint)!)
+        request.httpMethod = "POST"
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(token ?? "", forHTTPHeaderField: "Authorization")
+        request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
+        
+        Alamofire.request(request).stream { data in
+            do {
+                log("Data: " + (String(data: data, encoding: .utf8) ?? "nil"))
+                let json = try JSONSerialization.jsonObject(with: data, options : .allowFragments) as? [String: Any]
+                log("Json: " + String(describing: json))
+            } catch {
+                log("Failure: " + String(describing: error))
             }
         }
-            
-//        TODO
-//            { stream in
-//            switch stream.event {
-//            case let .stream(result):
-//                switch result {
-//                case .success(let data):
-//                    print(data)
-//                case .failure(let error):
-//                    print(error)
-//                }
-//            case let .complete(completion):
-//                print(completion)
-//            }
-//        }
     }
     
     /// Create an event with attached file

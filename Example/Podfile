@@ -2,7 +2,7 @@ platform :ios, '10.0'
 use_frameworks!
 target 'PryvApiSwiftKit_Tests' do
   pod 'Mocker'
-  pod 'Alamofire', '~> 5.2'
+  pod 'Alamofire', '~> 4.1.0'
   pod 'PryvApiSwiftKit', :path => '../'
   
   

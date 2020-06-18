@@ -66,34 +66,15 @@ class ConnectionTests: XCTestCase {
         // Note: this test only checks that a simple callback is executed. A more precise test for call batch is `testCallBatch`
     }
     
-    // TODO: refactor with stream
-//    func testGetEvents() {
-//        let params = ["limit": "3"]
-//        mockGetEvents(expectedParameters: params)
-//        
-//        var events = [Event]()
-//        connection?.getEventsStreamed(queryParams: params) { event in
-//            events.append(event)
-//        }
-//        
-//        XCTAssertEqual(events.count, 3)
-//        checkEvent(events.first)
-//    }
-    
-    // TODO: remove ?
     func testPrintGetEvents() {
         let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
         let conn = service.login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
         
+        let params = ["limit": 20]
         var events = [Event]()
-        conn?.getEventsStreamed(forEachEvent: { events.append($0) ; print(events.count) }, completion: { result in
-            switch result {
-            case .failure(let error): print("Error: \(error)")
-            default: return
-            }
-        })
+        conn?.getEventsStreamed(queryParams: params, forEachEvent: { events.append($0) ; print(events.count) }, log: { string in print(string) })
         
-        sleep(10)
+        sleep(10) // TODO: refactor
     }
     
     func testAddPointsToHFEvent() {
