@@ -66,6 +66,19 @@ class ConnectionTests: XCTestCase {
         // Note: this test only checks that a simple callback is executed. A more precise test for call batch is `testCallBatch`
     }
     
+    func testGetEvents() {
+        let params = ["limit": 3]
+        mockGetEvents(expectedParameters: params)
+        
+        var events = [Event]()
+        connection?.getEventsStreamed(queryParams: params) { event in
+            events.append(event)
+        }
+        
+        XCTAssertEqual(events.count, 3)
+        checkEvent(events.first)
+    }
+    
     func testAddPointsToHFEvent() {
         let fields = ["deltaTime", "latitude", "longitude", "altitude"]
         let points = [[0, 10.2, 11.2, 500], [1, 10.2, 11.2, 510], [2, 10.2, 11.2, 520]]
@@ -209,8 +222,25 @@ class ConnectionTests: XCTestCase {
             The Mocker library does not access arrays, but only dictionnaries as `postBodyArguments`.
             As the callbatch request sends an array of dictionnaries, the `postBodyArguments` are `nil`.
             Therefore, it is not possible to assert that the body of the request is correct in this case.
-            We assumed the creation of event is similar, which is why this mock does not check the `postBodyArguments`.
+            We assumed the creation of event/get of events are similar, which is why this mock does not check the `postBodyArguments`.
         */
+    }
+    
+    private func mockGetEvents(expectedParameters: Json) {
+        var mockGetEvents = Mock(url: URL(string: apiEndpoint + "events")!, dataType: .json, statusCode: 200, data: [
+            .get: MockedData.getEventsResponse
+        ])
+        
+        mockGetEvents.onRequest = { request, getBodyArguments in
+            XCTAssertEqual(request.url, mockGetEvents.request.url)
+            XCTAssertNotNil(getBodyArguments)
+            
+            let limit = getBodyArguments!["limit"] as? Int
+            XCTAssertNotNil(limit)
+            XCTAssertEqual(limit, expectedParameters["limit"] as? Int)
+        }
+        
+        mockGetEvents.register()
     }
     
     private func mockHFEvent(expectedParameters: [String: Any]) {
