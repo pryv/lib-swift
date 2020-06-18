@@ -117,8 +117,40 @@ public class Connection {
         task.resume()
     }
 
-    public func getEventsStreamed(params: Json? = nil, forEachEvent: ((Event) -> ())? = nil) {
-         // TODO: implement
+    /// Streamed [get event](https://api.pryv.com/reference/#get-events)
+    /// - Parameters:
+    ///   - queryParams: see `events.get` parameters
+    ///   - forEachEvent: function taking one event as parameter, will be called for each event
+    /// - Returns: // TODO ??
+    public func getEventsStreamed(queryParams: Json, forEachEvent: @escaping (Event) -> ()) {
+        // TODO: streamed with alamofire and not wait() !
+        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events" : apiEndpoint + "/events"
+        guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
+        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: queryParams)
+        
+        let group = DispatchGroup()
+        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
+            if let _ = error, data == nil { print("problem encountered when requesting get events") ; group.leave() ; return }
+            
+            guard let response = data, let jsonResponse = try? JSONSerialization.jsonObject(with: response), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the get events response") ; group.leave() ; return }
+            
+            if let _ = dictionary["error"] { print("problem encountered when requesting get events") ; group.leave() ; return }
+                
+            if let events = dictionary["events"] as? [Event] {
+                events.forEach(forEachEvent)
+            }
+            
+            group.leave()
+        }
+        
+        group.enter()
+        task.resume()
+        group.wait()
     }
     
     /// Create an event with attached file
