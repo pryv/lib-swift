@@ -70,10 +70,10 @@
 				B38CD4E5249A37AB00A8A507 /* sample.pdf */,
 				B36DBA13248A7477001A37E4 /* MockedData.swift */,
 				B36DBA14248A7477001A37E4 /* ServiceTests.swift */,
+				B36C257F249CBE6E0081F976 /* StreamingTests.swift */,
 				B3EFB205248E4BD2008D6C52 /* ConnectionTests.swift */,
 				B36DBA15248A7477001A37E4 /* UtilsTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
-				B36C257F249CBE6E0081F976 /* StreamingTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";

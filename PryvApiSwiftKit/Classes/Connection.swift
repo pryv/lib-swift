@@ -357,13 +357,9 @@ public class Connection {
 
         let results: [Event?] = events.map { event in
             if let data = event.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event {
-                return dictionary
-            } else {
-                return nil
-            }
+                return dictionary } else {  return nil }
         }
-        
-        results.forEach({ event in if let _ = event { forEachEvent(event!) } }) //FIXME ??
+        results.forEach({ event in if let _ = event { forEachEvent(event!) } })
         
         #if DEBUG
         print("Batch size: \(results.count)")
