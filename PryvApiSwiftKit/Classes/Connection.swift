@@ -326,12 +326,17 @@ public class Connection {
         var last: String? = nil
         for chunk in chunks {
             if chunk.last == "[" { // if it has an attachment
-                last = chunk
+                last = chunk + "{"
             }
             else {
                 if let preceding = last {
-                    last = nil
-                    events.append(preceding + chunk)
+                    if chunk.contains("]") {
+                        last = nil
+                        events.append(preceding + chunk)
+                    }
+                    else {
+                        last = preceding + chunk
+                    }
                 } else {
                     events.append(chunk)
                 }

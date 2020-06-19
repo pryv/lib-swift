@@ -85,8 +85,6 @@ class ConnectionTests: XCTestCase {
             }
         }
         
-        print("Events: \(String(describing: events))")
-        
         sleep(wait)
         
         XCTAssertFalse(error)
