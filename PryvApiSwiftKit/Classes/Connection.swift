@@ -350,12 +350,9 @@ public class Connection {
         .filter{$0 != nil}.map{$0!}
 
         events.forEach { event in
-            guard let data = event.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event else {
-                remaining = event
-                remaining?.removeFirst()
-                return
+            if let data = event.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event {
+                forEachEvent(dictionary)
             }
-            forEachEvent(dictionary)
         }
 
         return (remaining, string.contains(end))
