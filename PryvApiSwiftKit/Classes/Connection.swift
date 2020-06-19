@@ -123,7 +123,7 @@ public class Connection {
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
     ///   - log: function taking the result of the request as parameter
     /// - Returns: the two escaping callbacks to handle the results: the events and the success/failure of the request 
-    public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), log: @escaping (Result<String>) -> ()) {
+    public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), log: @escaping (Result<String, Error>) -> ()) {
         let parameters: Json = [
             "method": "events.get",
             "params": queryParams!
@@ -136,13 +136,17 @@ public class Connection {
         request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
         
         var partialChunk: String? = nil
-        Alamofire.request(request).stream { data in
-            guard let string = String(data: data, encoding: .utf8) else { log(.failure("cannot decode data response for get events" as! Error)) ; return }
-            
-            DispatchQueue.global().async {
-                let (remaining, done) = self.parseEventsChunked(string: (partialChunk ?? "") + string, forEachEvent: forEachEvent)
-                partialChunk = remaining // FIXME: not set before next data coming
-                if done { log(.success("Streaming completed")) }
+        AF.streamRequest(request).responseStream { stream in
+            switch stream.event {
+            case let .stream(result):
+                switch result {
+                case let .success(data):
+                    guard let string = String(data: data, encoding: .utf8) else { return }
+                    let remaining = self.parseEventsChunked(string: (partialChunk ?? "") + string, forEachEvent: forEachEvent)
+                    partialChunk = remaining
+                }
+            case .complete(_):
+                log(.success("Streaming completed"))
             }
         }
     }
@@ -311,7 +315,7 @@ public class Connection {
     ///   - string: the string corresponding to the chunk of the `events.get` response
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
     /// - Returns: the remaining string, if an event if not entirely received and whether the response was entirely received, i.e. streaming is completed
-    private func parseEventsChunked(string: String, forEachEvent: @escaping (Event) -> ()) -> (remaining: String?, done: Bool) {
+    private func parseEventsChunked(string: String, forEachEvent: @escaping (Event) -> ()) -> String? {
         let start = "\"results\":[{\"events\":["
         let end = "]}]"
         let eventsString = string.replacingOccurrences(of: start, with: "").replacingOccurrences(of: end, with: "")
@@ -337,25 +341,35 @@ public class Connection {
                 }
             }
         }
+        
+        if let preceding = last { events.append(preceding) }
 
         var remaining: String? = nil
         events = events.map { substring in
                 var event = substring
                 if event.hasSuffix(",") { event.removeLast() }
-                if !event.hasPrefix("{") { event = "{" + event}
                 if !event.hasSuffix("}") { remaining = event ; return nil }
+                if !event.hasPrefix("{") { event = "{" + event}
                 if event.hasSuffix("}}") { event.removeLast() }
                 return event
             }
         .filter{$0 != nil}.map{$0!}
 
-        events.forEach { event in
+        let results: [Event?] = events.map { event in
             if let data = event.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event {
-                forEachEvent(dictionary)
+                return dictionary
+            } else {
+                return nil
             }
         }
-
-        return (remaining, string.contains(end))
+        
+        results.forEach({ event in if let _ = event { forEachEvent(event!) } }) //FIXME ??
+        
+        #if DEBUG
+        print("Batch size: \(results.count)")
+        #endif
+        
+        return remaining
     }
     
 }
