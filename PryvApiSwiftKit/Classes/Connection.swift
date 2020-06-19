@@ -135,13 +135,18 @@ public class Connection {
         request.setValue(token ?? "", forHTTPHeaderField: "Authorization")
         request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
         
-        var remaining: String? = nil
+        var rest = [String]()
         Alamofire.request(request).stream { data in
             guard let string = String(data: data, encoding: .utf8) else { log(.failure("cannot decode data response for get events" as! Error)) ; return }
             DispatchQueue.global().async {
-                let parsedResponse = self.parseEventsChunked(string: remaining ?? "" + string, forEachEvent: forEachEvent)
-                remaining = parsedResponse.remaining // FIXME: not passed to the next stream data
-                if parsedResponse.done { log(.success("Streaming completed")) }
+                let (remaining, done) = self.parseEventsChunked(string: string, forEachEvent: forEachEvent)
+                if remaining != nil { rest.append(remaining!) }
+                if rest.count >= 2 {
+                    let remainingEvent = rest.joined(separator: "")
+                    self.parseEventsChunked(string: remainingEvent, forEachEvent: forEachEvent)
+                    rest.removeFirst(2)
+                }
+                if done { log(.success("Streaming completed")) } //FIXME: only when remaining empty
             }
         }
     }
@@ -350,7 +355,8 @@ public class Connection {
 
         events.forEach { event in
             guard let data = event.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event else {
-                print("Problem encountered when parsing event: \(String(describing: event))")
+                remaining = event
+                remaining?.removeFirst()
                 return
             }
             forEachEvent(dictionary)

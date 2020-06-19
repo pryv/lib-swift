@@ -67,8 +67,8 @@ class ConnectionTests: XCTestCase {
     }
     
     func testStreamedGetEvents() {
-//        testStreamedGetEvents(limit: 5) // small set of event, almost no streaming TODO
-        testStreamedGetEvents(limit: 30) // big set of events, streaming and chunks for sure FIXME
+        testStreamedGetEvents(limit: 5) // small set of event, almost no streaming
+        testStreamedGetEvents(limit: 30) // big set of events, streaming and chunks for sure 
     }
     
     private func testStreamedGetEvents(limit: Int) {
