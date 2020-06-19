@@ -67,25 +67,25 @@ class ConnectionTests: XCTestCase {
     }
     
     func testStreamedGetEvents() {
-//        testStreamedGetEvents(limit: 5, wait: 2) // small set of event, almost no streaming TODO
-        testStreamedGetEvents(limit: 30, wait: 10) // big set of events, streaming and chunks for sure
+//        testStreamedGetEvents(limit: 5) // small set of event, almost no streaming TODO
+        testStreamedGetEvents(limit: 30) // big set of events, streaming and chunks for sure FIXME
     }
     
-    private func testStreamedGetEvents(limit: Int, wait: UInt32) {
+    private func testStreamedGetEvents(limit: Int) {
         let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
         let conn = service.login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
         
         let params = ["limit": limit]
         var error = false
         var events = [Event]()
-        conn?.getEventsStreamed(queryParams: params, forEachEvent: { events.append($0) ; print(events.count, terminator:",") }) { result in
+        conn?.getEventsStreamed(queryParams: params, forEachEvent: { events.append($0) }) { result in
             switch result {
             case .failure(_): error = true
-            case .success(let message): print("\n" + message)
+            case .success(let message): print(message)
             }
         }
         
-        sleep(wait)
+        sleep(2)
         
         XCTAssertFalse(error)
         XCTAssertEqual(events.count, limit)

@@ -135,21 +135,13 @@ public class Connection {
         request.setValue(token ?? "", forHTTPHeaderField: "Authorization")
         request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
         
-        var count = 0
         var remaining: String? = nil
         Alamofire.request(request).stream { data in
             guard let string = String(data: data, encoding: .utf8) else { log(.failure("cannot decode data response for get events" as! Error)) ; return }
-            
-            // FIXME: parsing is not correct if many assignments
-            DispatchQueue.global(qos: .background).async {
-                let parsedResponse = self.parseEventsChunked(string: remaining ?? "" + string)
-                DispatchQueue.main.async {
-                    remaining = parsedResponse.remaining
-                    parsedResponse.events.forEach(forEachEvent)
-                    count += 1
-                    log(.success("Chunk \(count) OK"))
-                    if parsedResponse.done { log(.success("Streaming completed")) }
-                }
+            DispatchQueue.global().async {
+                let parsedResponse = self.parseEventsChunked(string: remaining ?? "" + string, forEachEvent: forEachEvent)
+                remaining = parsedResponse.remaining // FIXME: not passed to the next stream data
+                if parsedResponse.done { log(.success("Streaming completed")) }
             }
         }
     }
@@ -314,9 +306,11 @@ public class Connection {
     }
     
     /// Parse a string containing a chunk of the `events.get` response
-    /// - Parameter string: the string corresponding to the chunk of the `events.get` response
-    /// - Returns: the remaining string, if an event if not entirely received, the list of events fully received and whether the response was entirely received
-    private func parseEventsChunked(string: String) -> (remaining: String?, events: [Event], done: Bool) {
+    /// - Parameters:
+    ///   - string: the string corresponding to the chunk of the `events.get` response
+    ///   - forEachEvent: function taking one event as parameter, will be called for each event
+    /// - Returns: the remaining string, if an event if not entirely received and whether the response was entirely received, i.e. streaming is completed
+    private func parseEventsChunked(string: String, forEachEvent: @escaping (Event) -> ()) -> (remaining: String?, done: Bool) {
         let start = "\"results\":[{\"events\":["
         let end = "]}]"
         let eventsString = string.replacingOccurrences(of: start, with: "").replacingOccurrences(of: end, with: "")
@@ -335,7 +329,7 @@ public class Connection {
                         events.append(preceding + chunk)
                     }
                     else {
-                        last = preceding + chunk
+                        last = preceding + chunk + "{"
                     }
                 } else {
                     events.append(chunk)
@@ -348,19 +342,21 @@ public class Connection {
                 var event = substring
                 if event.hasSuffix(",") { event.removeLast() }
                 if !event.hasSuffix("}") { remaining = event ; return nil }
+                if event.hasSuffix("}}") { event.removeLast() }
                 if !event.hasPrefix("{") { event = "{" + event}
                 return event
             }
         .filter{$0 != nil}.map{$0!}
 
-        let result: [Event] = events.map { event in
-            if let data = event.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event {
-                return dictionary
+        events.forEach { event in
+            guard let data = event.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event else {
+                print("Problem encountered when parsing event: \(String(describing: event))")
+                return
             }
-            return Event()
+            forEachEvent(dictionary)
         }
 
-        return (remaining, result, string.contains(end))
+        return (remaining, string.contains(end))
     }
     
 }
