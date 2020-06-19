@@ -135,13 +135,18 @@ public class Connection {
         request.setValue(token ?? "", forHTTPHeaderField: "Authorization")
         request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
         
+        var count = 0
         var remaining: String? = nil
         Alamofire.request(request).stream { data in
             guard let string = String(data: data, encoding: .utf8) else { log(.failure("cannot decode data response for get events" as! Error)) ; return }
+
+            // FIXME: takes too much time => cannot do anything for the next chunk comming
             let parsedResponse = self.parseEventsChunked(string: remaining ?? "" + string)
             remaining = parsedResponse.remaining
             parsedResponse.events.forEach(forEachEvent)
             if parsedResponse.done { log(.success("done")) }
+            count += 1
+            log(.success("Chunk \(count) ok"))
         }
     }
     
@@ -304,7 +309,6 @@ public class Connection {
         return body
     }
     
-    // TODO: optimize
     /// Parse a string containing a chunk of the `events.get` response
     /// - Parameter string: the string corresponding to the chunk of the `events.get` response
     /// - Returns: the remaining string, if an event if not entirely received, the list of events fully received and whether the response was entirely received
@@ -312,7 +316,7 @@ public class Connection {
         let start = "\"results\":[{\"events\":["
         let end = "]}]"
         let eventsString = string.replacingOccurrences(of: start, with: "").replacingOccurrences(of: end, with: "")
-    
+
         let chunks = eventsString.split(separator: "{").filter({!$0.contains("meta") && !$0.contains("apiVersion")}).map({String($0)})
         var events = [String]()
         var last: String? = nil
@@ -329,7 +333,7 @@ public class Connection {
                 }
             }
         }
-        
+
         var remaining: String? = nil
         events = events.map { substring in
                 var event = substring
@@ -339,14 +343,14 @@ public class Connection {
                 return event
             }
         .filter{$0 != nil}.map{$0!}
-        
+
         let result: [Event] = events.map { event in
             if let data = event.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event {
                 return dictionary
             }
             return Event()
         }
-        
+
         return (remaining, result, string.contains(end))
     }
     

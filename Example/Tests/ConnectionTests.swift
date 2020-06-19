@@ -66,8 +66,12 @@ class ConnectionTests: XCTestCase {
         // Note: this test only checks that a simple callback is executed. A more precise test for call batch is `testCallBatch`
     }
     
-    func testPrintGetEvents() {
-        let limit = 5
+    func testStreamedGetEvents() {
+//        testStreamedGetEvents(limit: 5, wait: 2) // small set of event, almost no streaming TODO
+        testStreamedGetEvents(limit: 30, wait: 10) // big set of events, streaming and chunks for sure
+    }
+    
+    private func testStreamedGetEvents(limit: Int, wait: UInt32) {
         let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
         let conn = service.login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
         
@@ -81,7 +85,7 @@ class ConnectionTests: XCTestCase {
             }
         }
         
-        sleep(2)
+        sleep(wait)
         
         XCTAssertFalse(error)
         XCTAssertEqual(events.count, limit)
