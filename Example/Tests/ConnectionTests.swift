@@ -78,12 +78,14 @@ class ConnectionTests: XCTestCase {
         let params = ["limit": limit]
         var error = false
         var events = [Event]()
-        conn?.getEventsStreamed(queryParams: params, forEachEvent: { events.append($0) ; print(events.count) }) { result in
+        conn?.getEventsStreamed(queryParams: params, forEachEvent: { events.append($0) ; print(events.count, terminator:",") }) { result in
             switch result {
             case .failure(_): error = true
-            case .success(let message): print(message)
+            case .success(let message): print("\n" + message)
             }
         }
+        
+        print("Events: \(String(describing: events))")
         
         sleep(wait)
         

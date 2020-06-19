@@ -139,14 +139,18 @@ public class Connection {
         var remaining: String? = nil
         Alamofire.request(request).stream { data in
             guard let string = String(data: data, encoding: .utf8) else { log(.failure("cannot decode data response for get events" as! Error)) ; return }
-
-            // FIXME: takes too much time => cannot do anything for the next chunk comming
-            let parsedResponse = self.parseEventsChunked(string: remaining ?? "" + string)
-            remaining = parsedResponse.remaining
-            parsedResponse.events.forEach(forEachEvent)
-            if parsedResponse.done { log(.success("done")) }
-            count += 1
-            log(.success("Chunk \(count) ok"))
+            
+            // FIXME: parsing is not correct if many assignments
+            DispatchQueue.global(qos: .background).async {
+                let parsedResponse = self.parseEventsChunked(string: remaining ?? "" + string)
+                DispatchQueue.main.async {
+                    remaining = parsedResponse.remaining
+                    parsedResponse.events.forEach(forEachEvent)
+                    count += 1
+                    log(.success("Chunk \(count) OK"))
+                    if parsedResponse.done { log(.success("Streaming completed")) }
+                }
+            }
         }
     }
     
