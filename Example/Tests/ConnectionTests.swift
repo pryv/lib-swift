@@ -66,31 +66,6 @@ class ConnectionTests: XCTestCase {
         // Note: this test only checks that a simple callback is executed. A more precise test for call batch is `testCallBatch`
     }
     
-    func testStreamedGetEvents() {
-        testStreamedGetEvents(limit: 5) // small set of event, almost no streaming
-        testStreamedGetEvents(limit: 30) // big set of events, streaming and chunks for sure 
-    }
-    
-    private func testStreamedGetEvents(limit: Int) {
-        let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
-        let conn = service.login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
-        
-        let params = ["limit": limit]
-        var error = false
-        var events = [Event]()
-        conn?.getEventsStreamed(queryParams: params, forEachEvent: { events.append($0) }) { result in
-            switch result {
-            case .failure(_): error = true
-            case .success(let message): print(message)
-            }
-        }
-        
-        sleep(2)
-        
-        XCTAssertFalse(error)
-        XCTAssertEqual(events.count, limit)
-    }
-    
     func testAddPointsToHFEvent() {
         let fields = ["deltaTime", "latitude", "longitude", "altitude"]
         let points = [[0, 10.2, 11.2, 500], [1, 10.2, 11.2, 510], [2, 10.2, 11.2, 520]]

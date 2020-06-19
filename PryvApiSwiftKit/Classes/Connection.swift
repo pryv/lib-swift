@@ -135,19 +135,25 @@ public class Connection {
         request.setValue(token ?? "", forHTTPHeaderField: "Authorization")
         request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
         
-        var rest = [String]()
+        var partialChunks = [String]()
         Alamofire.request(request).stream { data in
             guard let string = String(data: data, encoding: .utf8) else { log(.failure("cannot decode data response for get events" as! Error)) ; return }
+            
             DispatchQueue.global().async {
                 let (remaining, done) = self.parseEventsChunked(string: string, forEachEvent: forEachEvent)
-                if remaining != nil { rest.append(remaining!) }
-                if rest.count >= 2 {
-                    let remainingEvent = rest.joined(separator: "")
-                    self.parseEventsChunked(string: remainingEvent, forEachEvent: forEachEvent)
-                    rest.removeFirst(2)
-                }
-                if done { log(.success("Streaming completed")) } //FIXME: only when remaining empty
+                if remaining != nil { partialChunks.append(remaining!) }
+                if done && partialChunks.isEmpty { log(.success("Streaming completed")) }
             }
+        }
+
+        // FIXME
+        if !partialChunks.isEmpty {
+            while partialChunks.count >= 2 {
+                let string = partialChunks.joined(separator: "")
+                let (remaining, _) = self.parseEventsChunked(string: string, forEachEvent: forEachEvent)
+                if remaining != nil { partialChunks.insert(remaining!, at: 0) } // in case still not full event in chunk
+            }
+            log(.success("Streaming completed"))
         }
     }
     
