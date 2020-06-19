@@ -26,11 +26,11 @@ class StreamingTests: XCTestCase {
     }
     
     func testStreamedGetEventsMediumBatch() { // medium set of events, streaming and chunks for sure
-        testStreamedGetEvents(limit: 100) // FIXME
+        testStreamedGetEvents(limit: 100)
     }
     
     func testStreamedGetEventsBigBatch() { // big set of events, streaming and chunks for sure
-        testStreamedGetEvents(limit: 10000) // FIXME
+        testStreamedGetEvents(limit: 10000) 
     }
     
     private func testStreamedGetEvents(limit: Int) {

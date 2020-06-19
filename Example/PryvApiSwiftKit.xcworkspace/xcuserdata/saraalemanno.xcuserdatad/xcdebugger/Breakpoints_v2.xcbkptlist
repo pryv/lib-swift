@@ -179,15 +179,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6EBA9DDD-7D59-47FD-8CA3-0ACBB7BA1D1A"
+            uuid = "59A94080-C781-4550-A203-BD4E2D44FF95"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../PryvApiSwiftKit/Classes/Connection.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "151"
-            endingLineNumber = "151"
+            startingLineNumber = "145"
+            endingLineNumber = "145"
             landmarkName = "getEventsStreamed(queryParams:forEachEvent:log:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -195,15 +195,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "AFCA73AD-D8D3-41B5-AB91-F1A1C8208880"
+            uuid = "B462D3F6-ED1D-4188-8E77-F166DAEFB0C9"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../PryvApiSwiftKit/Classes/Connection.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "150"
-            endingLineNumber = "150"
+            startingLineNumber = "143"
+            endingLineNumber = "143"
             landmarkName = "getEventsStreamed(queryParams:forEachEvent:log:)"
             landmarkType = "7">
          </BreakpointContent>

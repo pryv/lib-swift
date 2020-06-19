@@ -135,25 +135,15 @@ public class Connection {
         request.setValue(token ?? "", forHTTPHeaderField: "Authorization")
         request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
         
-        var partialChunks = [String]()
+        var partialChunk: String? = nil
         Alamofire.request(request).stream { data in
             guard let string = String(data: data, encoding: .utf8) else { log(.failure("cannot decode data response for get events" as! Error)) ; return }
             
             DispatchQueue.global().async {
-                let (remaining, done) = self.parseEventsChunked(string: string, forEachEvent: forEachEvent)
-                if remaining != nil { partialChunks.append(remaining!) }
-                if done && partialChunks.isEmpty { log(.success("Streaming completed")) }
+                let (remaining, done) = self.parseEventsChunked(string: (partialChunk ?? "") + string, forEachEvent: forEachEvent)
+                partialChunk = remaining // FIXME: not set before next data coming
+                if done { log(.success("Streaming completed")) }
             }
-        }
-
-        // FIXME
-        if !partialChunks.isEmpty {
-            while partialChunks.count >= 2 {
-                let string = partialChunks.joined(separator: "")
-                let (remaining, _) = self.parseEventsChunked(string: string, forEachEvent: forEachEvent)
-                if remaining != nil { partialChunks.insert(remaining!, at: 0) } // in case still not full event in chunk
-            }
-            log(.success("Streaming completed"))
         }
     }
     
@@ -352,9 +342,9 @@ public class Connection {
         events = events.map { substring in
                 var event = substring
                 if event.hasSuffix(",") { event.removeLast() }
+                if !event.hasPrefix("{") { event = "{" + event}
                 if !event.hasSuffix("}") { remaining = event ; return nil }
                 if event.hasSuffix("}}") { event.removeLast() }
-                if !event.hasPrefix("{") { event = "{" + event}
                 return event
             }
         .filter{$0 != nil}.map{$0!}
