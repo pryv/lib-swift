@@ -175,7 +175,8 @@ public class Connection {
     /// # Note
     ///     This function is only applicable for events that contain image. In case the event does not have any image attached, its behavior is undefined.
     public func getImagePreview(eventId: String) -> Data? {
-        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "previews/events/\(eventId)" : apiEndpoint + "/previews/events/\(eventId)"
+        let previewPath = "\(eventId)?w=256&h=256&auth=\(token ?? "")"
+        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "previews/events/\(previewPath)" : apiEndpoint + "/previews/events/\(previewPath)"
         guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return nil }
         let nsData = NSData(contentsOf: url)
         return nsData as Data?
