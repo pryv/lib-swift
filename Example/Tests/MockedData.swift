@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 public final class MockedData {
     public static let eventId = "eventId"
@@ -149,4 +150,6 @@ public final class MockedData {
           }
         }
     """.data(using: .utf8)!
+    
+    public static let imagePreview = try! Data(contentsOf: Bundle.main.url(forResource: "corona", withExtension: "jpg")!)
 }
