@@ -329,53 +329,47 @@ public class Connection {
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
     /// - Returns: the remaining string, if an event if not entirely received and whether the response was entirely received, i.e. streaming is completed
     private func parseEventsChunked(string: String, forEachEvent: @escaping (Event) -> ()) -> String? {
-        let start = "\"results\":[{\"events\":["
-        let end = "]}]"
-        let eventsString = string.replacingOccurrences(of: start, with: "").replacingOccurrences(of: end, with: "")
-
-        let chunks = eventsString.split(separator: "{").filter({!$0.contains("meta") && !$0.contains("apiVersion")}).map({String($0)})
-        var events = [String]()
-        var last: String? = nil
-        for chunk in chunks {
-            if chunk.last == "[" { // if it has an attachment
-                last = chunk + "{"
-            }
-            else {
-                if let preceding = last {
-                    if chunk.contains("]") {
-                        last = nil
-                        events.append(preceding + chunk)
-                    }
-                    else {
-                        last = preceding + chunk + "{"
-                    }
-                } else {
-                    events.append(chunk)
-                }
+        let prefix = "\"results\":[{\"events\":["
+        var eventsString = string
+        if string.contains(prefix) {
+            while(!eventsString.hasPrefix(prefix)) {
+                eventsString = String(eventsString.dropFirst())
             }
         }
         
-        if let preceding = last { events.append(preceding) }
-
+        var eventsStrings = [String]()
+        var stack = [Character]()
+        var event = ""
         var remaining: String? = nil
-        events = events.map { substring in
-                var event = substring
-                if event.hasSuffix(",") { event.removeLast() }
-                if !event.hasSuffix("}") { remaining = event ; return nil }
-                if !event.hasPrefix("{") { event = "{" + event}
-                if event.hasSuffix("}}") { event.removeLast() }
-                return event
+        for character in eventsString.replacingOccurrences(of: prefix, with: "") {
+            event.append(character)
+            if character == "{" {
+                stack.append(character)
             }
-        .filter{$0 != nil}.map{$0!}
+            if character == "}" {
+                let _ = stack.popLast()
+            }
+            if stack.isEmpty {
+                if event != "," {
+                    eventsStrings.append(event)
+                }
+                event = ""
+            }
+        }
+        if !stack.isEmpty {
+            remaining = event
+        }
 
-        let results: [Event?] = events.map { event in
+        let eventsOpt: [Event?] = eventsStrings.map { event in
             if let data = event.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event {
                 return dictionary } else {  return nil }
         }
-        results.forEach({ event in if let _ = event { forEachEvent(event!) } })
+        
+        let events: [Event] = eventsOpt.filter({$0 != nil}).map({$0!})
+        events.forEach({forEachEvent($0)})
         
         #if DEBUG
-        print("Batch size: \(results.count)")
+        print("Batch size: \(events.count)")
         #endif
         
         return remaining

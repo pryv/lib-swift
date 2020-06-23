@@ -37,14 +37,19 @@ class StreamingTests: XCTestCase {
         let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
         let conn = service.login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
         
+        var events = [Event]()
+        var error = false
         let params = ["limit": limit]
-        conn?.getEventsStreamed(queryParams: params, forEachEvent: { _ in /*print($0) ; */ return }) { result in
+        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in events.append(event) ; return }) { result in
             switch result {
-            case .failure(_): return
+            case .failure(_): error = true
             case .success(let message): print(message)
             }
         }
         
         sleep(2)
+        // FIXME
+//        XCTAssertFalse(error)
+//        XCTAssertEqual(events.count, limit)
     }
 }

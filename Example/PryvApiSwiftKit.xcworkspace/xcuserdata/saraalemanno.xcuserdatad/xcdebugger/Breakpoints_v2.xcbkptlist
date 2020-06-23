@@ -179,95 +179,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "8855432D-0502-4245-AAAC-309A5A8EA96C"
+            uuid = "E8A84D60-F8E2-4B04-9D79-1C3BE3A22CB7"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../PryvApiSwiftKit/Classes/Connection.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "365"
-            endingLineNumber = "365"
+            startingLineNumber = "359"
+            endingLineNumber = "359"
             landmarkName = "parseEventsChunked(string:forEachEvent:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "7780F300-6D3F-4F20-892F-791298B5A3AF"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Tests/StreamingTests.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "41"
-            endingLineNumber = "41"
-            landmarkName = "testStreamedGetEvents(limit:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "7780F300-6D3F-4F20-892F-791298B5A3AF - 8c10148832c99453"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "PryvApiSwiftKit_Tests.StreamingTests.(testStreamedGetEvents in _3FB531AEFF31CC7B9D9A04129A8D6AA9)(limit: Swift.Int) -&gt; ()"
-                  moduleName = "PryvApiSwiftKit_Tests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/saraalemanno/Documents/GitHub/lib-swift/Example/Tests/StreamingTests.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "43"
-                  endingLineNumber = "43"
-                  offsetFromSymbolStart = "702">
-               </Location>
-               <Location
-                  uuid = "7780F300-6D3F-4F20-892F-791298B5A3AF - 49fc29c9f1c55baf"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Dictionary&lt;Swift.String, Any&gt;) -&gt; () in PryvApiSwiftKit_Tests.StreamingTests.(testStreamedGetEvents in _3FB531AEFF31CC7B9D9A04129A8D6AA9)(limit: Swift.Int) -&gt; ()"
-                  moduleName = "PryvApiSwiftKit_Tests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/saraalemanno/Documents/GitHub/lib-swift/Example/Tests/StreamingTests.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "43"
-                  endingLineNumber = "43"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  uuid = "7780F300-6D3F-4F20-892F-791298B5A3AF - caee0fba9b42cc8f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Swift.Result&lt;Swift.String, Swift.Error&gt;) -&gt; () in PryvApiSwiftKit_Tests.StreamingTests.(testStreamedGetEvents in _3FB531AEFF31CC7B9D9A04129A8D6AA9)(limit: Swift.Int) -&gt; ()"
-                  moduleName = "PryvApiSwiftKit_Tests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/saraalemanno/Documents/GitHub/lib-swift/Example/Tests/StreamingTests.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "41"
-                  endingLineNumber = "41"
-                  offsetFromSymbolStart = "126">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "EEAB8B37-3402-46B8-9730-A28946AE2D0E"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../PryvApiSwiftKit/Classes/Connection.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "149"
-            endingLineNumber = "149"
-            landmarkName = "getEventsStreamed(queryParams:forEachEvent:log:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
