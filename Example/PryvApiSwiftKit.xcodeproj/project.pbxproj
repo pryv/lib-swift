@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B316804124A23D030011D142 /* ConnectionWebSocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B316804024A23D030011D142 /* ConnectionWebSocketTests.swift */; };
 		B36C2580249CBE6E0081F976 /* StreamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36C257F249CBE6E0081F976 /* StreamingTests.swift */; };
 		B36DBA16248A7477001A37E4 /* MockedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36DBA13248A7477001A37E4 /* MockedData.swift */; };
 		B36DBA17248A7477001A37E4 /* ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36DBA14248A7477001A37E4 /* ServiceTests.swift */; };
@@ -25,6 +26,7 @@
 		7E8ECFA5D69E3DE1FB8DDE25 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		8FEE9883DE6C6AF084FCF2F3 /* PryvApiSwiftKit.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = PryvApiSwiftKit.podspec; path = ../PryvApiSwiftKit.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9894CAA1F6E1130FAE0114FC /* Pods_PryvApiSwiftKit_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PryvApiSwiftKit_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B316804024A23D030011D142 /* ConnectionWebSocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionWebSocketTests.swift; sourceTree = "<group>"; };
 		B36C257F249CBE6E0081F976 /* StreamingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingTests.swift; sourceTree = "<group>"; };
 		B36DBA13248A7477001A37E4 /* MockedData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockedData.swift; sourceTree = "<group>"; };
 		B36DBA14248A7477001A37E4 /* ServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTests.swift; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 				B36DBA13248A7477001A37E4 /* MockedData.swift */,
 				B3C47C3424A1F997008BDF83 /* corona.jpg */,
 				B36DBA14248A7477001A37E4 /* ServiceTests.swift */,
+				B316804024A23D030011D142 /* ConnectionWebSocketTests.swift */,
 				B36C257F249CBE6E0081F976 /* StreamingTests.swift */,
 				B3EFB205248E4BD2008D6C52 /* ConnectionTests.swift */,
 				B36DBA15248A7477001A37E4 /* UtilsTests.swift */,
@@ -196,12 +199,16 @@
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/Mocker/Mocker.framework",
 				"${BUILT_PRODUCTS_DIR}/PryvApiSwiftKit/PryvApiSwiftKit.framework",
+				"${BUILT_PRODUCTS_DIR}/Socket.IO-Client-Swift/SocketIO.framework",
+				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mocker.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PryvApiSwiftKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketIO.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -242,6 +249,7 @@
 				B36DBA17248A7477001A37E4 /* ServiceTests.swift in Sources */,
 				B36DBA18248A7477001A37E4 /* UtilsTests.swift in Sources */,
 				B3EFB206248E4BD2008D6C52 /* ConnectionTests.swift in Sources */,
+				B316804124A23D030011D142 /* ConnectionWebSocketTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

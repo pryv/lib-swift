@@ -4,16 +4,23 @@ PODS:
   - PryvApiSwiftKit (0.1.2):
     - Alamofire
     - Mocker
+    - Socket.IO-Client-Swift
+  - Socket.IO-Client-Swift (15.2.0):
+    - Starscream (~> 3.1)
+  - Starscream (3.1.1)
 
 DEPENDENCIES:
   - Alamofire
   - Mocker
   - PryvApiSwiftKit (from `../`)
+  - Socket.IO-Client-Swift (~> 15.2.0)
 
 SPEC REPOS:
   trunk:
     - Alamofire
     - Mocker
+    - Socket.IO-Client-Swift
+    - Starscream
 
 EXTERNAL SOURCES:
   PryvApiSwiftKit:
@@ -22,8 +29,10 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Alamofire: e911732990610fe89af59ac0077f923d72dc3dfd
   Mocker: d0ceb340eddd5c28539a691ce67d068674cef9a0
-  PryvApiSwiftKit: 6e12e7fbe6ae74cb047bbe3ef8a3604564b73b32
+  PryvApiSwiftKit: fdf5f9087c9608f625b3ab0e4c9ce0829ec052c1
+  Socket.IO-Client-Swift: 1e3e3a1f09f3312a167f0d781eb2f383d477357c
+  Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
 
-PODFILE CHECKSUM: d6b20154117e68eeb9f129c64a4ce9374a28d69b
+PODFILE CHECKSUM: bb628e0f76220c71b1df98193db9ff13588b4237
 
 COCOAPODS: 1.8.4
