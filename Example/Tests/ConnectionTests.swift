@@ -226,6 +226,23 @@ class ConnectionTests: XCTestCase {
         */
     }
     
+    private func mockGetEvents(expectedParameters: Json) {
+        var mockGetEvents = Mock(url: URL(string: apiEndpoint + "events")!, dataType: .json, statusCode: 200, data: [
+            .get: MockedData.getEventsResponse
+        ])
+        
+        mockGetEvents.onRequest = { request, getBodyArguments in
+            XCTAssertEqual(request.url, mockGetEvents.request.url)
+            XCTAssertNotNil(getBodyArguments)
+            
+            let limit = getBodyArguments!["limit"] as? Int
+            XCTAssertNotNil(limit)
+            XCTAssertEqual(limit, expectedParameters["limit"] as? Int)
+        }
+        
+        mockGetEvents.register()
+    }
+    
     private func mockHFEvent(expectedParameters: [String: Any]) {
         var mockAddPointsToHFEvent = Mock(url: URL(string: apiEndpoint + "events/\(eventId)/series")!, dataType: .json, statusCode: 200, data: [
             .post: MockedData.okResponse

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Alamofire
 
 public typealias Event = Json
 public typealias Parameters = [String: String]
@@ -23,7 +24,7 @@ public class Connection {
     /// - Parameter apiEndpoint
     public init(apiEndpoint: String) {
         self.apiEndpoint = apiEndpoint
-        (self.endpoint, self.token) = utils.extractTokenAndEndpoint(apiEndpoint: apiEndpoint) ?? ("", nil)
+        (self.endpoint, self.token) = utils.extractTokenAndEndpoint(from: apiEndpoint) ?? ("", nil)
     }
     
     // MARK: - public library
@@ -114,6 +115,40 @@ public class Connection {
         }
         
         task.resume()
+    }
+
+    /// Streamed [get event](https://api.pryv.com/reference/#get-events)
+    /// - Parameters:
+    ///   - queryParams: see `events.get` parameters
+    ///   - forEachEvent: function taking one event as parameter, will be called for each event
+    ///   - log: function taking the result of the request as parameter
+    /// - Returns: the two escaping callbacks to handle the results: the events and the success/failure of the request 
+    public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), log: @escaping (Result<String, Error>) -> ()) {
+        let parameters: Json = [
+            "method": "events.get",
+            "params": queryParams!
+        ]
+        
+        var request = URLRequest(url: URL(string: endpoint)!)
+        request.httpMethod = "POST"
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(token ?? "", forHTTPHeaderField: "Authorization")
+        request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
+        
+        var partialChunk: String? = nil
+        AF.streamRequest(request).responseStream { stream in
+            switch stream.event {
+            case let .stream(result):
+                switch result {
+                case let .success(data):
+                    guard let string = String(data: data, encoding: .utf8) else { return }
+                    let remaining = self.parseEventsChunked(string: (partialChunk ?? "") + string, forEachEvent: forEachEvent)
+                    partialChunk = remaining
+                }
+            case .complete(_):
+                log(.success("Streaming completed"))
+            }
+        }
     }
     
     /// Create an event with attached file
@@ -286,6 +321,58 @@ public class Connection {
         body.append("--\(boundary)--\r\n")
         
         return body
+    }
+    
+    /// Parse a string containing a chunk of the `events.get` response
+    /// - Parameters:
+    ///   - string: the string corresponding to the chunk of the `events.get` response
+    ///   - forEachEvent: function taking one event as parameter, will be called for each event
+    /// - Returns: the remaining string, if an event if not entirely received and whether the response was entirely received, i.e. streaming is completed
+    private func parseEventsChunked(string: String, forEachEvent: @escaping (Event) -> ()) -> String? {
+        let prefix = "\"results\":[{\"events\":["
+        var eventsString = string
+        if string.contains(prefix) {
+            while(!eventsString.hasPrefix(prefix)) {
+                eventsString = String(eventsString.dropFirst())
+            }
+        }
+        
+        var eventsStrings = [String]()
+        var stack = [Character]()
+        var event = ""
+        var remaining: String? = nil
+        for character in eventsString.replacingOccurrences(of: prefix, with: "") {
+            event.append(character)
+            if character == "{" {
+                stack.append(character)
+            }
+            if character == "}" {
+                let _ = stack.popLast()
+            }
+            if stack.isEmpty {
+                if event != "," {
+                    eventsStrings.append(event)
+                }
+                event = ""
+            }
+        }
+        if !stack.isEmpty {
+            remaining = event
+        }
+
+        let eventsOpt: [Event?] = eventsStrings.map { event in
+            if let data = event.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event {
+                return dictionary } else {  return nil }
+        }
+        
+        let events: [Event] = eventsOpt.filter({$0 != nil}).map({$0!})
+        events.forEach({forEachEvent($0)})
+        
+        #if DEBUG
+        print("--------------------- Batch size: \(events.count)")
+        #endif
+        
+        return remaining
     }
     
 }
