@@ -168,6 +168,19 @@ class ConnectionTests: XCTestCase {
         XCTAssertNotNil(readToken)
         XCTAssertEqual(readToken!, "ckb6fn2p9000s4y0slij89se5-JGZ6xx1vFDvSFsCxdoO4ptM7gc8")
     }
+    
+    func testGetImagePreview() {
+        mockImagePreview()
+        let data = connection?.getImagePreview(eventId: "eventId")
+        XCTAssertEqual(data, MockedData.imagePreview)
+    }
+    
+    private func mockImagePreview() {
+        let mockGet = Mock(url: URL(string: apiEndpoint + "previews/events/eventId?w=256&h=256&auth=token")!, dataType: .imagePNG, statusCode: 200, data: [
+            .get: MockedData.imagePreview
+        ])
+        mockGet.register()
+    }
 
     private func mockCreateEventWithAttachment(expectedParameters: [String: Any]) {
         var mockCreateEvent = Mock(url: URL(string: apiEndpoint + "events")!, dataType: .json, statusCode: 200, data: [
