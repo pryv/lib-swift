@@ -169,6 +169,16 @@ public class Connection {
         return nil
     }
     
+    /// Get an image preview for a given event, if this event contains an image attachment
+    /// - Parameter eventId
+    /// - Returns: the data containing the preview
+    public func getImagePreview(eventId: String) -> Data? {
+        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "previews/events/\(eventId)" : apiEndpoint + "/previews/events/\(eventId)"
+        guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return nil }
+        let nsData = NSData(contentsOf: url)
+        return nsData as Data?
+    }
+    
     // MARK: - private helpers functions for the library
         
     /// Send an `events.create` request
