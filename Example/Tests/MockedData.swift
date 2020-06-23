@@ -151,5 +151,5 @@ public final class MockedData {
         }
     """.data(using: .utf8)!
     
-    public static let imagePreview = try! Data(contentsOf: Bundle.main.url(forResource: "corona", withExtension: "jpg")!)
+    public static let imagePreview = Bundle(for: MockedData.self).url(forResource: "corona", withExtension: "jpg")!.dataRepresentation
 }

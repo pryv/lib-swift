@@ -176,7 +176,7 @@ class ConnectionTests: XCTestCase {
     }
     
     private func mockImagePreview() {
-        var mockGet = Mock(url: URL(string: apiEndpoint + "previews/events/?w=256&h=256&auth=token)")!, dataType: .imagePNG, statusCode: 200, data: [
+        let mockGet = Mock(url: URL(string: apiEndpoint + "previews/events/eventId?w=256&h=256&auth=token")!, dataType: .imagePNG, statusCode: 200, data: [
             .get: MockedData.imagePreview
         ])
         mockGet.register()
