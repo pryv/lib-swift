@@ -369,7 +369,7 @@ public class Connection {
         events.forEach({forEachEvent($0)})
         
         #if DEBUG
-        print("Batch size: \(events.count)")
+        print("--------------------- Batch size: \(events.count)")
         #endif
         
         return remaining

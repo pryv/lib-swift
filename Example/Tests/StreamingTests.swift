@@ -33,23 +33,25 @@ class StreamingTests: XCTestCase {
         testStreamedGetEvents(limit: 10000) 
     }
     
-    private func testStreamedGetEvents(limit: Int) {
+    private func testStreamedGetEvents(limit: Int, timeout: Double = 7.0) {
         let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
         let conn = service.login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
+        let expectation = self.expectation(description: "Streaming")
         
-        var events = [Event]()
         var error = false
+        var events = [Event]()
         let params = ["limit": limit]
-        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in events.append(event) ; return }) { result in
+        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in events.append(event)/* ; print(event) */ }) { result in
             switch result {
-            case .failure(_): error = true
-            case .success(let message): print(message)
+            case .failure(_):
+                error = true
+            case .success(_):
+                expectation.fulfill()
             }
         }
         
-        sleep(2)
-        // FIXME
-//        XCTAssertFalse(error)
-//        XCTAssertEqual(events.count, limit)
+        waitForExpectations(timeout: timeout, handler: nil)
+        XCTAssertFalse(error)
+        XCTAssertEqual(events.count, limit)
     }
 }
