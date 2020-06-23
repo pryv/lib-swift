@@ -172,6 +172,8 @@ public class Connection {
     /// Get an image preview for a given event, if this event contains an image attachment
     /// - Parameter eventId
     /// - Returns: the data containing the preview
+    /// # Note
+    ///     This function is only applicable for events that contain image. In case the event does not have any image attached, its behavior is undefined.
     public func getImagePreview(eventId: String) -> Data? {
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "previews/events/\(eventId)" : apiEndpoint + "/previews/events/\(eventId)"
         guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return nil }
