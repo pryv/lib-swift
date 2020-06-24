@@ -131,7 +131,7 @@ public class Service {
     /// Sends an auth request to the `access` field of the service info and polls the received url
     /// such that the callback function is called when the state of the connection is changed
     /// - Parameters:
-    ///   - authPayload: the auth request json formatted according to [the API reference](https://api.pryv.com/reference/#auth-request)
+    ///   - authSettings: the auth request json formatted according to [the API reference](https://api.pryv.com/reference/#auth-request)
     ///   - stateChangedCallback: function that will be called as soon as the state of the authentication changes
     /// - Returns: the `authUrl` field from the response to the service info
     ///
@@ -154,12 +154,12 @@ public class Service {
     ///            }
     ///    }
     ///    ```
-    public func setUpAuth(authPayload: Json, stateChangedCallback: @escaping (AuthResult) -> ()) -> String? {
+    public func setUpAuth(authSettings: Json, stateChangedCallback: @escaping (AuthResult) -> ()) -> String? {
         let serviceInfo = pryvServiceInfo ?? info()
         guard let registerUrl = serviceInfo?.register else { print("problem encountered when getting the register url") ; return nil }
         let endpoint = registerUrl.hasSuffix("/") ? registerUrl + authPath : registerUrl + "/" + authPath
         
-        guard let (authUrl, poll, poll_ms) = sendAuthRequest(endpoint: endpoint, payload: authPayload) else { print("problem encountered when getting the result for auth request") ; return nil }
+        guard let (authUrl, poll, poll_ms) = sendAuthRequest(endpoint: endpoint, payload: authSettings) else { print("problem encountered when getting the result for auth request") ; return nil }
         self.pollingInfo = (poll: poll, poll_ms: poll_ms, callback: stateChangedCallback)
         
         return authUrl

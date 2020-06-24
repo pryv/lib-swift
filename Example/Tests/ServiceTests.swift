@@ -99,7 +99,7 @@ class ServiceTests: XCTestCase {
             "languageCode": "fr"
        ]
     
-        let authUrl = service?.setUpAuth(authPayload: authPayload, stateChangedCallback: { _ in return })
+        let authUrl = service?.setUpAuth(authSettings: authPayload, stateChangedCallback: { _ in return })
         XCTAssertEqual(authUrl, "https://sw.pryv.me/access/access.html?poll=https://reg.pryv.me/access/6CInm4R2TLaoqtl4")
         
         // The test for the callback function is done in the [app example](https://github.com/pryv/app-swift-example)
