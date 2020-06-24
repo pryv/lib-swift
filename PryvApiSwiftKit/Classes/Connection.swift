@@ -11,7 +11,7 @@ import Alamofire
 
 public typealias Event = Json
 public typealias Parameters = [String: String]
-public typealias APICall = [String: Any]
+public typealias APICall = Json
 
 public class Connection {
     private let utils = Utils()
@@ -49,7 +49,7 @@ public class Connection {
         request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.httpBody = try! JSONSerialization.data(withJSONObject: APICalls)
         
-        var events: [Event]? = nil
+        var events = [Event]()
         let group = DispatchGroup()
         let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
             if let _ = error, data == nil { print("problem encountered when requesting call batch") ; group.leave() ; return }
@@ -71,7 +71,10 @@ public class Connection {
             }
             // if format of response if {"results": {"events": [{"streamId": ..., ...}, {"streamId": ..., ...}, ...]}}
             else if let getResults = dictionary["results"] as? [[String: [Event]]] {
-                events = getResults.first?["events"]
+                let eventsNotDeleted = getResults.first?["events"]
+                let eventsDeleted = getResults.first?["eventDeletions"]
+                events.append(contentsOf: eventsNotDeleted ?? [Event]())
+                events.append(contentsOf: eventsDeleted ?? [Event]())
             }
             
             group.leave()
@@ -81,14 +84,14 @@ public class Connection {
         task.resume()
         group.wait()
         
-        guard let callbacks = handleResults, let result = events else { return events }
+        guard let callbacks = handleResults else { return events }
         
         for (i, callback) in callbacks {
-            if i >= result.count { print("problem encountered when applying the callback \(i): index out of bounds") ; return result }
-            callback(result[i])
+            if i >= events.count { print("problem encountered when applying the callback \(i): index out of bounds") ; return events }
+            callback(events[i])
         }
         
-        return result
+        return events
     }
     
     /// Add Data Points to HFEvent (flatJSON format) as described in the [reference API](https://api.pryv.com/reference/#add-hf-series-data-points)

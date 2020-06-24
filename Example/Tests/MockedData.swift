@@ -116,56 +116,41 @@ public final class MockedData {
     
     public static let getEventsResponse = """
         {
-          "events": [
-            {
-              "id": "\(eventId)",
-              "time": 1591274234.916,
-              "streamIds": [
-                "weight"
-              ],
-              "streamId": "weight",
-              "tags": [],
-              "type": "mass/kg",
-              "content": 90,
-              "created": 1591274234.916,
-              "createdBy": "ckb0rldr90001q6pv8zymgvpr",
-              "modified": 1591274234.916,
-              "modifiedBy": "ckb0rldr90001q6pv8zymgvpr"
-            },
-            {
-              "id": "ckbatu7ty000oogpvhm88wso1",
-              "time": 1591882668.07,
-              "streamIds": [
-                "jogging"
-              ],
-              "streamId": "jogging",
-              "tags": [],
-              "type": "activity/pryv",
-              "content": null,
-              "created": 1591882668.07,
-              "createdBy": "ckbatu7s50001ogpvbpifcevf",
-              "modified": 1591882668.07,
-              "modifiedBy": "ckbatu7s50001ogpvbpifcevf"
-            },
-            {
-              "id": "ckbatu7ty0014ogpvm8upugcr",
-              "time": 1350373077.359,
-              "streamIds": [
-                "diary"
-              ],
-              "streamId": "diary",
-              "tags": [],
-              "type": "position/wgs84",
-              "content": {
-                "latitude": 40.714728,
-                "longitude": -73.998672
-              },
-              "created": 1591875468.07,
-              "createdBy": "ckbatu7s50000ogpvvqhnpst2",
-              "modified": 1591875468.07,
-              "modifiedBy": "ckbatu7s50000ogpvvqhnpst2"
-            }
-          ]
+            "results": [
+                {
+                  "events": [
+                    {
+                      "id": "ckbs1xuph000wuq0sn9clev8t",
+                      "time": 1592924199.605,
+                      "streamIds": [
+                        "weight"
+                      ],
+                      "streamId": "weight",
+                      "tags": [],
+                      "type": "mass/kg",
+                      "content": 90,
+                      "created": 1592924199.605,
+                      "createdBy": "ckbs1xumw0001uq0sj26o31t8",
+                      "modified": 1592924199.605,
+                      "modifiedBy": "ckbs1xumw0001uq0sj26o31t8"
+                    }
+                  ],
+                  "eventDeletions": [
+                    {
+                      "id": "ckbs1xupw001cuq0s5smh0d4p",
+                      "deleted": 1592920599.62
+                    },
+                    {
+                      "id": "ckbs1xupw001duq0s8va1rc4j",
+                      "deleted": 1592888199.62
+                    },
+                    {
+                      "id": "ckbs1xupw001euq0sm3ibrpkp",
+                      "deleted": 1592852199.62
+                    }
+                  ]
+                }
+            ]
         }
     """.data(using: .utf8)!
     

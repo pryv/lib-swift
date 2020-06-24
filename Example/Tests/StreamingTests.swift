@@ -33,7 +33,7 @@ class StreamingTests: XCTestCase {
     }
     
     func testStreamedGetEventsBigBatch() { // big set of events, streaming and chunks for sure
-        testStreamedGetEvents(limit: 10000) 
+        testStreamedGetEvents(limit: 10000, timeout: 10.0) 
     }
     
     func testStreamedGetEventsWithDeletions() {
