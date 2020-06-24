@@ -333,7 +333,7 @@ public class Connection {
     ///   - string: the string corresponding to the chunk of the `events.get` response
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
     /// - Returns: the remaining string, if an event if not entirely received and whether the response was entirely received, i.e. streaming is completed and the number of events received in this chunk
-    private func parseEventsChunked(string: String, forEachEvent: @escaping (Event) -> ()) -> (eventsCount: Int, remaining: String?) {
+    private func parseEventsChunked(string: String, forEachEvent: @escaping (Event) -> ()) -> (eventsCount: Int, remaining: String?) {        
         let prefix = "\"results\":[{\"events\":["
         var eventsString = string
         if string.contains(prefix) {

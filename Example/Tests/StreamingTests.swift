@@ -33,18 +33,33 @@ class StreamingTests: XCTestCase {
         testStreamedGetEvents(limit: 10000) 
     }
     
-    private func testStreamedGetEvents(limit: Int, timeout: Double = 7.0) {
+    func testStreamedGetEventsWithDeletions() {
+        testStreamedGetEvents(includeDeletions: true)
+    }
+    
+    private func testStreamedGetEvents(includeDeletions: Bool = false, limit: Int = 20, timeout: Double = 7.0) {
         let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
         let conn = service.login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
         let expectation = self.expectation(description: "Streaming")
         
         var error = false
         var eventsCount = 0
-        let params = ["limit": limit]
-        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) }) { result in
+        var eventDeletionsCount = 0
+        let params: Json = ["includeDeletions": includeDeletions, "limit": limit]
+        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) ;  return }) { result in
             if let count = result["eventsCount"] as? Int {
                 eventsCount = count
-                expectation.fulfill()
+                if includeDeletions {
+                    if let delCount = result["eventDeletionsCount"] as? Int {
+                        eventDeletionsCount = delCount
+                        expectation.fulfill()
+                    } else {
+                        error = true // FIXME: no deletions
+                        expectation.fulfill()
+                    }
+                } else {
+                    expectation.fulfill()
+                }
             } else {
                 error = true
                 expectation.fulfill()
@@ -54,5 +69,8 @@ class StreamingTests: XCTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
         XCTAssertFalse(error)
         XCTAssertEqual(eventsCount, limit)
+        if includeDeletions {
+            XCTAssertGreaterThan(eventDeletionsCount, 0)
+        }
     }
 }
