@@ -15,17 +15,16 @@ class ConnectionWebSocketTests: XCTestCase {
     
     func testExample() {
         connection.subscribe(message: .eventsChanged) { data, ack in
-            print("Ack: \(ack)")
+            print("Events changed")
             self.connection.emitWithData(methodId: "events.get", params: Json()) { data in
+                print("New (updated) events!")
                 data.forEach {
                     print(String(describing: $0))
                 }
             }
-            ack.with("Got the new event(s)")
         }
         
         connection.connect()
-        
         sleep(15)
         connection.disconnect()
     }
