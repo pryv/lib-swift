@@ -1,5 +1,5 @@
 //
-//  PryvError.swift
+//  ConnectionError.swift
 //  Alamofire
 //
 //  Created by Sara Alemanno on 24.06.20.

@@ -54,7 +54,7 @@ public class Connection {
                 let response = JSON as! NSDictionary
                 
                 if let error = response.object(forKey: "error") {
-                    completionHandler(nil, PryvError.responseError(String(describing: error)))
+                    completionHandler(nil, ConnectionError.responseError(String(describing: error)))
                 }
                 
                 if let results = response.object(forKey: "results"), let json = results as? [Json] {
@@ -66,11 +66,11 @@ public class Connection {
                     }
                     completionHandler(json, nil)
                 } else {
-                    completionHandler(nil, PryvError.decodingError)
+                    completionHandler(nil, ConnectionError.decodingError)
                 }
 
             case .failure(let error):
-                completionHandler(nil, PryvError.requestError(error.localizedDescription))
+                completionHandler(nil, ConnectionError.requestError(error.localizedDescription))
             }
         }
     }
@@ -101,7 +101,7 @@ public class Connection {
             case .success(_):
                 completionHandler(nil)
             case .failure(let error):
-                completionHandler(PryvError.requestError(error.localizedDescription))
+                completionHandler(ConnectionError.requestError(error.localizedDescription))
             }
         }
     }
@@ -188,7 +188,7 @@ public class Connection {
             case .success(let JSON):
                 let response = JSON as! NSDictionary
                 let event = response.object(forKey: "event") as? Event
-                guard let eventId = event?["id"] as? String else { completionHandler(nil, PryvError.decodingError) ; return }
+                guard let eventId = event?["id"] as? String else { completionHandler(nil, ConnectionError.decodingError) ; return }
                 
                 let boundary = "Boundary-\(UUID().uuidString)"
                 let httpBody = self.createData(with: boundary, from: parameters, and: files)
@@ -196,7 +196,7 @@ public class Connection {
                     completionHandler(event, err)
                 }
             case .failure(let error):
-                completionHandler(nil, PryvError.requestError(error.localizedDescription))
+                completionHandler(nil, ConnectionError.requestError(error.localizedDescription))
             }
         }
     }
@@ -256,7 +256,7 @@ public class Connection {
                 let event = response.object(forKey: "event") as? Event
                 completionHandler(event, nil)
             case .failure(let error):
-                completionHandler(nil, PryvError.requestError(error.localizedDescription))
+                completionHandler(nil, ConnectionError.requestError(error.localizedDescription))
             }
         }
     }
