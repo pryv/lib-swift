@@ -50,7 +50,7 @@ class ConnectionTests: XCTestCase {
     }
     
     func testCallBatchCreate() {
-        let expectation = self.expectation(description: "call-batch")
+        let expectation = self.expectation(description: "call-batch-create")
         var events = [Event]()
         var results: [Json]? = nil
         var error = false
@@ -118,7 +118,7 @@ class ConnectionTests: XCTestCase {
             ]
         ]]
         
-        let expectation = self.expectation(description: "call-batch-deletion")
+        let expectation = self.expectation(description: "call-batch-get")
         var results: [Json]? = nil
         var error = false
         var events = [Event]()
@@ -156,17 +156,16 @@ class ConnectionTests: XCTestCase {
     func testAddPointsToHFEvent() {
         let fields = ["deltaTime", "latitude", "longitude", "altitude"]
         let points = [[0, 10.2, 11.2, 500], [1, 10.2, 11.2, 510], [2, 10.2, 11.2, 520]]
+        let expectation = self.expectation(description: "add-points-hf")
         
-        let expectedParameters: Json = [
-            "format": "flatJSON",
-            "fields": fields,
-            "points": points
-        ]
-        mockHFEvent(expectedParameters: expectedParameters)
-        
-        c?.addPointsToHFEvent(eventId: eventId, fields: fields, points: points)
-        
-        // Note: as the function `addPointsToHFEvent` does not return anything, we cannot check its correctness. We will only check that it does not raise an exception; otherwise this test will fail
+        var error = false
+        connection?.addPointsToHFEvent(eventId: eventId, fields: fields, points: points)  { err in
+           error = err != nil
+           expectation.fulfill()
+        }
+       
+        waitForExpectations(timeout: 5.0, handler: nil)
+        XCTAssertFalse(error)
     }
     
     func testCreateEvent() {

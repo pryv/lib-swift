@@ -39,6 +39,7 @@ public class Connection {
     /// - Parameters:
     ///   - APICalls: array of method calls in json formatted string
     ///   - handleResults: callbacks indexed by the api calls indexes, i.e. `[0: func]` means "apply function `func` to result of api call 0"
+    ///   - completionHandler: callback called upon completion on the array of results and the potential error
     /// - Returns: array of results matching each method call in order 
     public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil, completionHandler: @escaping (_ results: [Json]?, _ error: Error?) -> Void) {
         var request = URLRequest(url: URL(string: endpoint)!)
@@ -79,25 +80,24 @@ public class Connection {
     ///   - eventId
     ///   - fields
     ///   - points
-    public func addPointsToHFEvent(eventId: String, fields: [String], points: [[Any]]) {
-        let payload: Json = [
+    ///   - completionHandler: callback called upon completion on the result (nil if no error, error otherwise)
+    /// - Returns: a potential error, if encountered
+    public func addPointsToHFEvent(eventId: String, fields: [String], points: [[Any]], completionHandler: @escaping (Error?) -> ()) {
+        let parameters: Json = [
             "format": "flatJSON",
             "fields": fields,
             "points": points
         ]
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)/series" : apiEndpoint + "/events/\(eventId)/series"
-        guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return }
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
-        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
-        
-        let task = URLSession.shared.dataTask(with: request) { (_, response, error) in
-            if let _ = error, let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 { print("problem encountered when requesting to add a high frequency event") ; return }
+        AF.request(string, method: .post, parameters: parameters, headers: ["Authorization": token ?? ""]).response { response in
+            switch response.result {
+            case .success(_):
+                completionHandler(nil)
+            case .failure(let error):
+                completionHandler(PryvError.requestError(error.localizedDescription))
+            }
         }
-        
-        task.resume()
     }
 
     /// Streamed [get event](https://api.pryv.com/reference/#get-events)
