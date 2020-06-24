@@ -4,6 +4,6 @@
 
 ### Xcode ###
 build
-*.xcodeproj/*
-!*.xcodeproj/project.pbxproj
-!*.xcworkspace/contents.xcworkspacedata
+Example/*.xcodeproj/*
+Example/!*.xcodeproj/project.pbxproj
+Example/!*.xcworkspace/contents.xcworkspacedata
