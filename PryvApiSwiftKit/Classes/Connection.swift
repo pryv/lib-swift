@@ -104,9 +104,9 @@ public class Connection {
     /// - Parameters:
     ///   - queryParams: see `events.get` parameters
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
-    ///   - log: function taking the result of the request as parameter
-    /// - Returns: the two escaping callbacks to handle the results: the events and the success/failure of the request 
-    public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), completion: @escaping (Json) -> ()) {
+    ///   - completionHandler: callback called upon completion on the number of events and the metadata
+    /// - Returns: the two escaping callbacks to handle the result: the events and the metadata
+    public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), completionHandler: @escaping (Json) -> ()) {
         let parameters: Json = [
             "method": "events.get",
             "params": queryParams!
@@ -140,7 +140,7 @@ public class Connection {
                     "eventsCount": eventsCount,
                     "eventDeletionsCount": eventDeletionsCount
                 ]
-                completion(result)
+                completionHandler(result)
             }
         }
     }

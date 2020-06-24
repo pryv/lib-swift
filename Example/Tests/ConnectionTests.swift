@@ -168,6 +168,16 @@ class ConnectionTests: XCTestCase {
         XCTAssertFalse(error)
     }
     
+    func testStreamedGetEvents() { // big set of events, streaming and chunks for sure
+        print("------ Test streamed get events")
+        testStreamedGetEvents(limit: 10000)
+    }
+    
+    func testStreamedGetEventsWithDeletions() {
+        print("------ Test streamed get events with deletions")
+        testStreamedGetEvents(includeDeletions: true)
+    }
+    
     func testCreateEvent() {
         let payload: Event = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
         mockCreateEventWithAttachment(expectedParameters: payload)
@@ -339,6 +349,54 @@ class ConnectionTests: XCTestCase {
         }
         
         mockAddPointsToHFEvent.register()
+    }
+    
+    private func testStreamedGetEvents(includeDeletions: Bool = false, limit: Int = 20, timeout: Double = 10.0) {
+        let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
+        let conn = service.login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
+        let expectation = self.expectation(description: "Streaming")
+        
+        var error = false
+        var eventsCount = 0
+        var eventDeletionsCount = 0
+        var meta: Json? = nil
+        var params: Json = ["includeDeletions": includeDeletions, "limit": limit]
+        if includeDeletions {
+            params["modifiedSince"] = 1592837799.925
+        }
+        
+        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) ; return }) { result in
+            if let count = result["eventsCount"] as? Int, let metaData = result["meta"] as? Json {
+                eventsCount = count
+                meta = metaData
+                print("meta: " + String(describing: meta))
+                if includeDeletions {
+                    if let delCount = result["eventDeletionsCount"] as? Int {
+                        eventDeletionsCount = delCount
+                        expectation.fulfill()
+                    } else {
+                        error = true
+                        expectation.fulfill()
+                    }
+                } else {
+                    expectation.fulfill()
+                }
+            } else {
+                error = true
+                expectation.fulfill()
+            }
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        XCTAssertFalse(error)
+        XCTAssertEqual(meta?.count, 3)
+        if includeDeletions {
+            XCTAssertGreaterThan(eventsCount, 0)
+            XCTAssertGreaterThan(eventDeletionsCount, 0)
+        } else {
+            XCTAssertEqual(eventsCount, limit)
+        }
     }
     
 }
