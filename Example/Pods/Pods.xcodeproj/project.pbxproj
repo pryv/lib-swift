@@ -51,7 +51,7 @@
 		A06E7BE7BC6A89C4E6906CB50AB4DA68 /* Mocker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E318D1B6D8A13DB68EC4A356266586 /* Mocker.swift */; };
 		A738C2A39C0150BBA7EA5EC19B95F03E /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E890FE643420E2FD05C0A96A3DD4A5E7 /* CFNetwork.framework */; };
 		ABA85887A41495358C83CE3F3030EDEA /* CachedResponseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D2982E834BDC03CB17DC115A6051E6 /* CachedResponseHandler.swift */; };
-		B33D3DE224A384C100D6C5E3 /* ConnectionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33D3DE124A384C100D6C5E3 /* ConnectionError.swift */; };
+		B3B942E424A3ACF4009B8903 /* ConnectionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B942E324A3ACF4009B8903 /* ConnectionError.swift */; };
 		C1C5B050B55C15103ABC81769551A283 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB7C1E5C1DDFCE242A5A5DB78CF3B12 /* Response.swift */; };
 		C1F1DB6A9CBDE584D09BA1613AAD4F9D /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF79008CBDB9EC216BE2F9D4164EEC7A /* Alamofire.swift */; };
 		C6D5A4B4028B2C43380C9FA58BD5C8CA /* Alamofire-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 701F97633EE13D28C48F433C5E5FF92A /* Alamofire-dummy.m */; };
@@ -170,7 +170,7 @@
 		ABB7C1E5C1DDFCE242A5A5DB78CF3B12 /* Response.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Response.swift; path = Source/Response.swift; sourceTree = "<group>"; };
 		AF79008CBDB9EC216BE2F9D4164EEC7A /* Alamofire.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Alamofire.swift; path = Source/Alamofire.swift; sourceTree = "<group>"; };
 		B17E3E591BACAB5404E34D379646F881 /* DispatchQueue+Alamofire.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "DispatchQueue+Alamofire.swift"; path = "Source/DispatchQueue+Alamofire.swift"; sourceTree = "<group>"; };
-		B33D3DE124A384C100D6C5E3 /* ConnectionError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionError.swift; sourceTree = "<group>"; };
+		B3B942E324A3ACF4009B8903 /* ConnectionError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ConnectionError.swift; path = PryvApiSwiftKit/Classes/ConnectionError.swift; sourceTree = "<group>"; };
 		B40CC2ACAAB72FDBF7BFA1B5993A5F3E /* Alamofire.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Alamofire.xcconfig; sourceTree = "<group>"; };
 		B4E318D1B6D8A13DB68EC4A356266586 /* Mocker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Mocker.swift; path = Sources/Mocker.swift; sourceTree = "<group>"; };
 		B65A6F11F9493DD860F5E71E4CE9BF29 /* Mocker-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Mocker-dummy.m"; sourceTree = "<group>"; };
@@ -308,9 +308,9 @@
 		6085C8F9F87931359B127B0782C3FFA3 /* PryvApiSwiftKit */ = {
 			isa = PBXGroup;
 			children = (
+				B3B942E324A3ACF4009B8903 /* ConnectionError.swift */,
 				6695112DFAF1073A13ECDED584889577 /* AuthState.swift */,
 				429E400E62DEBBD8A8992A4A9155173A /* Connection.swift */,
-				B33D3DE124A384C100D6C5E3 /* ConnectionError.swift */,
 				61AC2A72483374B8B8F7537F6F0CF420 /* Data+append.swift */,
 				A067E45C3ACFA58A73F16424E7DD2350 /* Media.swift */,
 				46FB4A49B4E384DCE01811F52250C1D8 /* PryvApiSwiftKit.h */,
@@ -658,7 +658,6 @@
 				4AEC050FA7D5ED52FDA9DF50EA3560DF /* ParameterEncoder.swift in Sources */,
 				D14066FAE94E304798E43651E5886D13 /* ParameterEncoding.swift in Sources */,
 				218C14EAE5AA31C30314AE0289B732A0 /* Protected.swift in Sources */,
-				B33D3DE224A384C100D6C5E3 /* ConnectionError.swift in Sources */,
 				666EC5C8356E6D4448A2FE7BEE77AD88 /* RedirectHandler.swift in Sources */,
 				EDC93BD7B9262119AE145E4C7A9D0212 /* Request.swift in Sources */,
 				6E54F64E8DA73F4B0B46C216F9F93F63 /* RequestInterceptor.swift in Sources */,
@@ -691,6 +690,7 @@
 				11119CF2BAFDEBAD9533CF21F0932894 /* PryvApiSwiftKit.swift in Sources */,
 				6F1DFFAB5632CE382D4E57B5F779FA66 /* PryvServiceInfo.swift in Sources */,
 				0336669A6F131F051E3971DA271EE95A /* Service.swift in Sources */,
+				B3B942E424A3ACF4009B8903 /* ConnectionError.swift in Sources */,
 				E2A9758CE000361F800E770450889E36 /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

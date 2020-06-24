@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'alemannosara' => 'sara.alemanno@epfl.ch' }
-  s.source           = { :git => 'https://github.com/pryv/lib-swift.git', :branch => "get-event-streamed" }
+  s.source           = { :git => 'https://github.com/pryv/lib-swift.git', :branch => "cleaning" }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '10.0'
