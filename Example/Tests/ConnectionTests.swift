@@ -8,12 +8,16 @@
 
 import XCTest
 import Mocker
+import Alamofire
 @testable import PryvApiSwiftKit
 
 class ConnectionTests: XCTestCase {
     
     private let apiEndpoint = "https://token@username.pryv.me/"
-    private var connection: Connection?
+    private var c: Connection? // TODO: remove
+    
+    let connection = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
+        .login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
     private var a: Int?
     
     private let callBatches: [APICall] = [
@@ -30,8 +34,8 @@ class ConnectionTests: XCTestCase {
             "method": "events.create",
             "params": [
               "time": 1385046854.282,
-              "streamIds": ["systolic"],
-              "type": "pressure/mmhg",
+              "streamIds": ["weight"],
+              "type": "mass/kg",
               "content": 120
             ]
         ]
@@ -42,34 +46,62 @@ class ConnectionTests: XCTestCase {
     override func setUp() {
         super.setUp()
         continueAfterFailure = false
-        
-        connection = Connection(apiEndpoint: apiEndpoint)
+        c = Connection(apiEndpoint: apiEndpoint)
     }
     
-    func testCallBatch() {
-        mockCallBatch(expectedParameters: callBatches)
-        let results = connection?.api(APICalls: callBatches, handleResults: [0: { result in
-            self.a = 2
-        }])
-        
-        XCTAssertNotNil(results)
-        XCTAssertEqual(results!.count, 2)
-        
+    func testCallBatchCreate() {
+        let expectation = self.expectation(description: "call-batch")
         var events = [Event]()
-        for result in results! {
-            if let json = result as? [String: Event] {
-                let error = json["error"]
-                XCTAssertNil(error)
-                if let event = json["event"] {
-                    events.append(event)
+        var results: [Json]? = nil
+        var error = false
+        connection?.api(APICalls: callBatches, handleResults: [0: { result in self.a = 2 }]) { res, err in
+            error = err != nil
+            results = res
+            if error || results == nil {
+                expectation.fulfill()
+            } else {
+                for result in results! {
+                    if let json = result as? [String: Event] {
+                        error = error && json["error"] != nil
+                        if let event = json["event"] {
+                            events.append(event)
+                        }
+                    }
                 }
+                expectation.fulfill()
             }
         }
+        
+        waitForExpectations(timeout: 5.0, handler: nil)
+        
+        XCTAssertFalse(error)
+        XCTAssertNotNil(results)
+        XCTAssertEqual(results!.count, 2)
         
         XCTAssertEqual(events.count, 2)
 
         let event0 = events[0]
-        checkEvent(event0)
+        XCTAssertNotNil(event0)
+
+        let time = event0["time"] as? Double
+        XCTAssertNotNil(time)
+        XCTAssertEqual(time!, 1591274234.916)
+
+        let streamIds = event0["streamIds"] as? [String]
+        XCTAssertNotNil(streamIds)
+        XCTAssertEqual(streamIds!, ["weight"])
+
+        let streamId = event0["streamId"] as? String
+        XCTAssertNotNil(streamId)
+        XCTAssertEqual(streamId!, "weight")
+
+        let type = event0["type"] as? String
+        XCTAssertNotNil(type)
+        XCTAssertEqual(type!, "mass/kg")
+
+        let content = event0["content"] as? Int
+        XCTAssertNotNil(content)
+        XCTAssertEqual(content!, 90)
         
         let event1 = events[1]
         XCTAssertNotNil(event1)
@@ -77,9 +109,7 @@ class ConnectionTests: XCTestCase {
         XCTAssertEqual(a, 2)
     }
     
-    func testCallBatchWithDeletions() {
-        mockGetEvents()
-        
+    func testCallBatchGet() {
         let apiCalls: [APICall] = [[
             "method": "events.get",
             "params": [
@@ -88,24 +118,39 @@ class ConnectionTests: XCTestCase {
             ]
         ]]
         
-        let results = connection?.api(APICalls: apiCalls)
-        XCTAssertNotNil(results)
-        XCTAssertEqual(results!.count, 1)
-        
+        let expectation = self.expectation(description: "call-batch-deletion")
+        var results: [Json]? = nil
+        var error = false
         var events = [Event]()
+        connection?.api(APICalls: apiCalls) { res, err in
+            error = err != nil
+            results = res
+            if error || results == nil {
+                expectation.fulfill()
+            } else {
             
-        for result in results! {
-            if let json = result as? [String: [Event]] {
-                let error = json["error"]
-                XCTAssertNil(error)
+                for result in results! {
+                    if let json = result as? [String: [Event]] {
+                        let error = json["error"]
+                        XCTAssertNil(error)
+                        
+                        events.append(contentsOf: json["events"] ?? [Event]())
+                        events.append(contentsOf: json["eventDeletions"] ?? [Event]())
+                    }
+                }
                 
-                events.append(contentsOf: json["events"] ?? [Event]())
-                events.append(contentsOf: json["eventDeletions"] ?? [Event]())
+                expectation.fulfill()
             }
         }
         
+        waitForExpectations(timeout: 5.0, handler: nil)
+        
+        XCTAssertFalse(error)
+        XCTAssertNotNil(results)
+        XCTAssertEqual(results!.count, 1)
+        
         XCTAssertNotNil(events)
-        XCTAssertEqual(events.count, 4)
+        XCTAssertGreaterThanOrEqual(events.count, 20) // limit + deletions
     }
     
     func testAddPointsToHFEvent() {
@@ -119,7 +164,7 @@ class ConnectionTests: XCTestCase {
         ]
         mockHFEvent(expectedParameters: expectedParameters)
         
-        connection?.addPointsToHFEvent(eventId: eventId, fields: fields, points: points)
+        c?.addPointsToHFEvent(eventId: eventId, fields: fields, points: points)
         
         // Note: as the function `addPointsToHFEvent` does not return anything, we cannot check its correctness. We will only check that it does not raise an exception; otherwise this test will fail
     }
@@ -128,9 +173,28 @@ class ConnectionTests: XCTestCase {
         let payload: Event = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
         mockCreateEventWithAttachment(expectedParameters: payload)
         
-        let event = connection?.createEventWithFormData(event: payload)
-        
-        checkEvent(event)
+        let event = c?.createEventWithFormData(event: payload)
+        XCTAssertNotNil(event)
+
+        let time = event!["time"] as? Double
+        XCTAssertNotNil(time)
+        XCTAssertEqual(time!, 1591274234.916)
+
+        let streamIds = event!["streamIds"] as? [String]
+        XCTAssertNotNil(streamIds)
+        XCTAssertEqual(streamIds!, ["weight"])
+
+        let streamId = event!["streamId"] as? String
+        XCTAssertNotNil(streamId)
+        XCTAssertEqual(streamId!, "weight")
+
+        let type = event!["type"] as? String
+        XCTAssertNotNil(type)
+        XCTAssertEqual(type!, "mass/kg")
+
+        let content = event!["content"] as? Int
+        XCTAssertNotNil(content)
+        XCTAssertEqual(content!, 90)
     }
     
     func testCreateEventWithFile() {
@@ -138,7 +202,7 @@ class ConnectionTests: XCTestCase {
         mockCreateEventWithAttachment(expectedParameters: payload)
         
         let file = Bundle(for: ConnectionTests.self).url(forResource: "sample", withExtension: "pdf")!
-        let event = connection?.createEventWithFile(event: payload, filePath: file.absoluteString, mimeType: "application/pdf")
+        let event = c?.createEventWithFile(event: payload, filePath: file.absoluteString, mimeType: "application/pdf")
         XCTAssertNotNil(event)
         
         let attachments = event!["attachments"] as? [Any]
@@ -174,14 +238,14 @@ class ConnectionTests: XCTestCase {
         let payload: Event = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
         mockCreateEventWithAttachment(expectedParameters: payload)
         
-        var event = connection?.createEventWithFormData(event: payload)
+        var event = c?.createEventWithFormData(event: payload)
         XCTAssertNotNil(event)
         
         let eventId = event!["id"] as? String
         XCTAssertNotNil(eventId)
         
         let file = Bundle(for: ConnectionTests.self).url(forResource: "sample", withExtension: "pdf")!
-        event = connection?.addFileToEvent(eventId: eventId!, filePath: file.absoluteString, mimeType: "application/pdf")
+        event = c?.addFileToEvent(eventId: eventId!, filePath: file.absoluteString, mimeType: "application/pdf")
         XCTAssertNotNil(event)
         
         let attachments = event!["attachments"] as? [Any]
@@ -213,7 +277,7 @@ class ConnectionTests: XCTestCase {
     
     func testGetImagePreview() {
         mockImagePreview()
-        let data = connection?.getImagePreview(eventId: "eventId")
+        let data = c?.getImagePreview(eventId: "eventId")
         XCTAssertEqual(data, MockedData.imagePreview)
     }
     
@@ -253,35 +317,6 @@ class ConnectionTests: XCTestCase {
         mockAddAttachment.register()
     }
     
-    private func mockCallBatch(expectedParameters: [[String: Any]]) {
-        let mockCallBatch = Mock(url: URL(string: apiEndpoint)!, dataType: .json, statusCode: 200, data: [
-            .post: MockedData.callBatchResponse
-        ])
-        mockCallBatch.register()
-        
-        /*
-            # Note
-            The Mocker library does not access arrays, but only dictionnaries as `postBodyArguments`.
-            As the callbatch request sends an array of dictionnaries, the `postBodyArguments` are `nil`.
-            Therefore, it is not possible to assert that the body of the request is correct in this case.
-            We assumed the creation of event is similar, which is why this mock does not check the `postBodyArguments`.
-        */
-    }
-    
-    private func mockGetEvents() {
-        let mockGetEvents = Mock(url: URL(string: apiEndpoint)!, dataType: .json, statusCode: 200, data: [
-            .post: MockedData.getEventsResponse
-        ])
-        mockGetEvents.register()
-        /*
-            # Note
-            The Mocker library does not access arrays, but only dictionnaries as `postBodyArguments`.
-            As the callbatch request sends an array of dictionnaries, the `postBodyArguments` are `nil`.
-            Therefore, it is not possible to assert that the body of the request is correct in this case.
-            We assumed the creation of event is similar, which is why this mock does not check the `postBodyArguments`.
-        */
-    }
-    
     private func mockHFEvent(expectedParameters: [String: Any]) {
         var mockAddPointsToHFEvent = Mock(url: URL(string: apiEndpoint + "events/\(eventId)/series")!, dataType: .json, statusCode: 200, data: [
             .post: MockedData.okResponse
@@ -307,51 +342,4 @@ class ConnectionTests: XCTestCase {
         mockAddPointsToHFEvent.register()
     }
     
-    private func checkEvent(_ event: Event?) {
-        XCTAssertNotNil(event)
-
-        let id = event!["id"] as? String
-        XCTAssertNotNil(id)
-        XCTAssertEqual(id!, eventId)
-
-        let time = event!["time"] as? Double
-        XCTAssertNotNil(time)
-        XCTAssertEqual(time!, 1591274234.916)
-
-        let streamIds = event!["streamIds"] as? [String]
-        XCTAssertNotNil(streamIds)
-        XCTAssertEqual(streamIds!, ["weight"])
-
-        let streamId = event!["streamId"] as? String
-        XCTAssertNotNil(streamId)
-        XCTAssertEqual(streamId!, "weight")
-
-        let tags = event!["tags"] as? [String]
-        XCTAssertNotNil(tags)
-        XCTAssertTrue(tags!.isEmpty)
-
-        let type = event!["type"] as? String
-        XCTAssertNotNil(type)
-        XCTAssertEqual(type!, "mass/kg")
-
-        let content = event!["content"] as? Int
-        XCTAssertNotNil(content)
-        XCTAssertEqual(content!, 90)
-
-        let created = event!["created"] as? Double
-        XCTAssertNotNil(created)
-        XCTAssertEqual(created!, 1591274234.916)
-
-        let createdBy = event!["createdBy"] as? String
-        XCTAssertNotNil(createdBy)
-        XCTAssertEqual(createdBy!, "ckb0rldr90001q6pv8zymgvpr")
-
-        let modified = event!["modified"] as? Double
-        XCTAssertNotNil(modified)
-        XCTAssertEqual(modified!, 1591274234.916)
-
-        let modifiedBy = event!["modifiedBy"] as? String
-        XCTAssertNotNil(modifiedBy)
-        XCTAssertEqual(modifiedBy!, "ckb0rldr90001q6pv8zymgvpr")
-    }
 }

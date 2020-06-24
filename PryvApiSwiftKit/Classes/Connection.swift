@@ -20,14 +20,14 @@ public class Connection {
     private var endpoint: String
     private var token: String?
     
+    // MARK: - public library
+    
     /// Creates a connection object from the api endpoint
     /// - Parameter apiEndpoint
     public init(apiEndpoint: String) {
         self.apiEndpoint = apiEndpoint
         (self.endpoint, self.token) = utils.extractTokenAndEndpoint(from: apiEndpoint) ?? ("", nil)
     }
-    
-    // MARK: - public library
     
     /// Getter for the field `apiEndpoint`
     /// - Returns: the api endpoint given in the constructor
@@ -39,45 +39,39 @@ public class Connection {
     /// - Parameters:
     ///   - APICalls: array of method calls in json formatted string
     ///   - handleResults: callbacks indexed by the api calls indexes, i.e. `[0: func]` means "apply function `func` to result of api call 0"
-    ///   - progress: return percentage of progress (0 - 100) // TODO
     /// - Returns: array of results matching each method call in order 
-    public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil, progress: ((Double) -> ())? = nil) -> [Json]? {
-        guard let url = URL(string: apiEndpoint) else { print("problem encountered: cannot access register url \(apiEndpoint)") ; return nil }
-        
-        var request = URLRequest(url: url)
+    public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil, completionHandler: @escaping (_ results: [Json]?, _ error: Error?) -> Void) {
+        var request = URLRequest(url: URL(string: endpoint)!)
         request.httpMethod = "POST"
         request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
         request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.httpBody = try! JSONSerialization.data(withJSONObject: APICalls)
         
-        var results = [Json]()
-        let group = DispatchGroup()
-        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            if let _ = error, data == nil { print("problem encountered when requesting call batch") ; group.leave() ; return }
-            
-            guard let callBatchResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: callBatchResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the call batch response") ; group.leave() ; return }
-            
-            if let _ = dictionary["error"] { print("problem encountered when requesting call batch") ; group.leave() ; return }
-            
-            if let res = dictionary["results"] as? [Json] {
-                results = res
+        AF.request(request).responseJSON { response in
+            switch response.result {
+            case .success(let JSON):
+                let response = JSON as! NSDictionary
+                
+                if let error = response.object(forKey: "error") {
+                    completionHandler(nil, PryvError.responseError(String(describing: error)))
+                }
+                
+                if let results = response.object(forKey: "results"), let json = results as? [Json] {
+                    if let callbacks = handleResults {
+                        for (i, callback) in callbacks {
+                            if i >= json.count { print("problem encountered when applying the callback \(i): index out of bounds") }
+                            callback(json[i])
+                        }
+                    }
+                    completionHandler(json, nil)
+                } else {
+                    completionHandler(nil, PryvError.decodingError)
+                }
+
+            case .failure(let error):
+                completionHandler(nil, PryvError.requestError(error.localizedDescription))
             }
-            
-            group.leave()
         }
-        
-        group.enter()
-        task.resume()
-        group.wait()
-        
-        guard let callbacks = handleResults else { return results }
-        
-        for (i, callback) in callbacks {
-            if i >= results.count { print("problem encountered when applying the callback \(i): index out of bounds") ; return results }
-            callback(results[i])
-        }
-        
-        return results
     }
     
     /// Add Data Points to HFEvent (flatJSON format) as described in the [reference API](https://api.pryv.com/reference/#add-hf-series-data-points)
@@ -113,7 +107,6 @@ public class Connection {
     ///   - log: function taking the result of the request as parameter
     /// - Returns: the two escaping callbacks to handle the results: the events and the success/failure of the request 
     public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), completion: @escaping (Json) -> ()) {
-        
         let parameters: Json = [
             "method": "events.get",
             "params": queryParams!
