@@ -1,3 +1,9 @@
-*/.DS_Store
+### .DS_Store ###
 .DS_Store
-PryvApiSwiftKit.xcodeproj/project.xcworkspace/xcuserdata/saraalemanno.xcuserdatad/*
+
+
+### Xcode ###
+build
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcworkspace/contents.xcworkspacedata
