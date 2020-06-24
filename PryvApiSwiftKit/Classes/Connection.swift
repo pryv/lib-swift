@@ -137,6 +137,7 @@ public class Connection {
         
         var partialChunk: String? = nil
         var eventsCount = 0
+        var meta = Json()
         AF.streamRequest(request).responseStream { stream in
             switch stream.event {
             case let .stream(result):
@@ -146,9 +147,11 @@ public class Connection {
                     let parsedResult = self.parseEventsChunked(string: (partialChunk ?? "") + string, forEachEvent: forEachEvent)
                     eventsCount += parsedResult.eventsCount
                     partialChunk = parsedResult.remaining
+                    meta = parsedResult.meta != nil ? parsedResult.meta! : meta
                 }
             case .complete(_):
                 let result: Json = [
+                    "meta": meta,
                     "eventsCount": eventsCount
                 ]
                 completion(result)
@@ -333,12 +336,21 @@ public class Connection {
     ///   - string: the string corresponding to the chunk of the `events.get` response
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
     /// - Returns: the remaining string, if an event if not entirely received and whether the response was entirely received, i.e. streaming is completed and the number of events received in this chunk
-    private func parseEventsChunked(string: String, forEachEvent: @escaping (Event) -> ()) -> (eventsCount: Int, remaining: String?) {        
-        let prefix = "\"results\":[{\"events\":["
-        var eventsString = string
-        if string.contains(prefix) {
-            while(!eventsString.hasPrefix(prefix)) {
-                eventsString = String(eventsString.dropFirst())
+    private func parseEventsChunked(string: String, forEachEvent: @escaping (Event) -> ()) -> (meta: Json?, eventsCount: Int, remaining: String?) {
+        var metaString = ""
+        var chunk = string
+        
+        let metaPrefix = "{\"meta\":"
+        let eventsPrefix = ",\"results\":[{\"events\":["
+        
+        if chunk.hasPrefix(metaPrefix) {
+            chunk.removeFirst(metaPrefix.count)
+        }
+        
+        if chunk.contains(eventsPrefix) {
+            while(!chunk.hasPrefix(eventsPrefix)) {
+                metaString.append(chunk.first!)
+                chunk = String(chunk.dropFirst())
             }
         }
         
@@ -346,7 +358,7 @@ public class Connection {
         var stack = [Character]()
         var event = ""
         var remaining: String? = nil
-        for character in eventsString.replacingOccurrences(of: prefix, with: "") {
+        for character in chunk.replacingOccurrences(of: eventsPrefix, with: "") {
             event.append(character)
             if character == "{" {
                 stack.append(character)
@@ -365,6 +377,8 @@ public class Connection {
             remaining = event
         }
 
+        // Strings to json
+        
         let eventsOpt: [Event?] = eventsStrings.map { event in
             if let data = event.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event {
                 return dictionary } else {  return nil }
@@ -373,7 +387,12 @@ public class Connection {
         let events: [Event] = eventsOpt.filter({$0 != nil}).map({$0!})
         events.forEach({forEachEvent($0)})
         
-        return (eventsCount: events.count, remaining: remaining)
+        var meta: Json? = nil
+        if let data = metaString.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event {
+            meta = dictionary
+        }
+        
+        return (meta: meta, eventsCount: events.count, remaining: remaining)
     }
     
 }

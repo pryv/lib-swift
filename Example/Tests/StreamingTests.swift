@@ -45,10 +45,13 @@ class StreamingTests: XCTestCase {
         var error = false
         var eventsCount = 0
         var eventDeletionsCount = 0
+        var meta: Json? = nil
         let params: Json = ["includeDeletions": includeDeletions, "limit": limit]
-        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) ;  return }) { result in
-            if let count = result["eventsCount"] as? Int {
+        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) ; return }) { result in // TODO: uncomment
+            if let count = result["eventsCount"] as? Int, let metaData = result["meta"] as? Json {
                 eventsCount = count
+                meta = metaData
+                print("meta: " + String(describing: meta))
                 if includeDeletions {
                     if let delCount = result["eventDeletionsCount"] as? Int {
                         eventDeletionsCount = delCount
@@ -68,6 +71,7 @@ class StreamingTests: XCTestCase {
         
         waitForExpectations(timeout: timeout, handler: nil)
         XCTAssertFalse(error)
+        XCTAssertEqual(meta?.count, 3)
         XCTAssertEqual(eventsCount, limit)
         if includeDeletions {
             XCTAssertGreaterThan(eventDeletionsCount, 0)
