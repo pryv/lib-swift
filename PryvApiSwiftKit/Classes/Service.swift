@@ -98,15 +98,18 @@ public class Service {
     ///   - username
     ///   - password
     ///   - appId
-    ///   - domain: domain parameter for the `Origin` header, according to the [trusted apps verification](https://api.pryv.com/reference/#trusted-apps-verification)
+    ///   - domain: domain parameter for the `Origin` header, according to the [trusted apps verification](https://api.pryv.com/reference/#trusted-apps-verification/)
     /// - Returns: the user's connection to the appId or nil if problem is encountered
-    public func login(username: String, password: String, appId: String, domain: String) -> Connection? {
+    public func login(username: String, password: String, appId: String, domain: String? = nil) -> Connection? {
         var connection: Connection? = nil
         let loginPayload: Json = ["username": username, "password": password, "appId": appId]
         
         guard let apiEndpoint = apiEndpointFor(username: username) else { return nil }
         let endpoint = apiEndpoint.hasSuffix("/") ? apiEndpoint + loginPath : apiEndpoint + "/" + loginPath
-        let origin = "https://login.\(domain)"
+        var origin: String? = nil
+        if let _ = domain {
+            origin = "https://login.\(domain!)"
+        }
         
         if let token = sendLoginRequest(endpoint: endpoint, payload: loginPayload, origin: origin) {
             if let apiEndpoint = self.apiEndpointFor(username: username, token: token) {
@@ -219,14 +222,16 @@ public class Service {
     ///   - payload: the json formatted payload for the request: username, password and app id
     ///   - origin: the field of the form `https://login.{domain}` to add to the `Origin` header
     /// - Returns: the token received from the request
-    private func sendLoginRequest(endpoint: String, payload: Json, origin: String) -> String? {
+    private func sendLoginRequest(endpoint: String, payload: Json, origin: String? = nil) -> String? {
         guard let url = URL(string: endpoint) else { print("problem encountered: cannot access register url \(endpoint)") ; return nil }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.addValue(origin, forHTTPHeaderField: "Origin")
         request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+        if let _ = origin {
+            request.addValue(origin!, forHTTPHeaderField: "Origin")
+        }
 
         var token: String? = nil
         let group = DispatchGroup()
