@@ -79,6 +79,14 @@ public class Service {
         return pryvServiceInfo
     }
     
+    /// Returns service info parameters
+    /// - Returns: the cached content of the service info
+    /// # Note
+    ///     service.info() needs to be called first, otherwise returns `nil`
+    public func infoSync() -> PryvServiceInfo? {
+        return pryvServiceInfo
+    }
+    
     /// Constructs the API endpoint from this service and the username and token
     /// - Parameters:
     ///   - username
