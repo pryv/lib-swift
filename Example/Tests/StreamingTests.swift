@@ -39,19 +39,20 @@ class StreamingTests: XCTestCase {
         let expectation = self.expectation(description: "Streaming")
         
         var error = false
-        var events = [Event]()
+        var eventsCount = 0
         let params = ["limit": limit]
-        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in events.append(event)/* ; print(event) */ }) { result in
-            switch result {
-            case .failure(_):
+        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) }) { result in
+            if let count = result["eventsCount"] as? Int {
+                eventsCount = count
+                expectation.fulfill()
+            } else {
                 error = true
-            case .success(_):
                 expectation.fulfill()
             }
         }
         
         waitForExpectations(timeout: timeout, handler: nil)
         XCTAssertFalse(error)
-        XCTAssertEqual(events.count, limit)
+        XCTAssertEqual(eventsCount, limit)
     }
 }

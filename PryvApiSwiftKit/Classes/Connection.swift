@@ -123,7 +123,7 @@ public class Connection {
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
     ///   - log: function taking the result of the request as parameter
     /// - Returns: the two escaping callbacks to handle the results: the events and the success/failure of the request 
-    public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), log: @escaping (Result<String, Error>) -> ()) {
+    public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), completion: @escaping (Json) -> ()) {
         let parameters: Json = [
             "method": "events.get",
             "params": queryParams!
@@ -136,17 +136,22 @@ public class Connection {
         request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
         
         var partialChunk: String? = nil
+        var eventsCount = 0
         AF.streamRequest(request).responseStream { stream in
             switch stream.event {
             case let .stream(result):
                 switch result {
                 case let .success(data):
                     guard let string = String(data: data, encoding: .utf8) else { return }
-                    let remaining = self.parseEventsChunked(string: (partialChunk ?? "") + string, forEachEvent: forEachEvent)
-                    partialChunk = remaining
+                    let parsedResult = self.parseEventsChunked(string: (partialChunk ?? "") + string, forEachEvent: forEachEvent)
+                    eventsCount += parsedResult.eventsCount
+                    partialChunk = parsedResult.remaining
                 }
             case .complete(_):
-                log(.success("Streaming completed"))
+                let result: Json = [
+                    "eventsCount": eventsCount
+                ]
+                completion(result)
             }
         }
     }
@@ -327,8 +332,8 @@ public class Connection {
     /// - Parameters:
     ///   - string: the string corresponding to the chunk of the `events.get` response
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
-    /// - Returns: the remaining string, if an event if not entirely received and whether the response was entirely received, i.e. streaming is completed
-    private func parseEventsChunked(string: String, forEachEvent: @escaping (Event) -> ()) -> String? {
+    /// - Returns: the remaining string, if an event if not entirely received and whether the response was entirely received, i.e. streaming is completed and the number of events received in this chunk
+    private func parseEventsChunked(string: String, forEachEvent: @escaping (Event) -> ()) -> (eventsCount: Int, remaining: String?) {
         let prefix = "\"results\":[{\"events\":["
         var eventsString = string
         if string.contains(prefix) {
@@ -368,11 +373,7 @@ public class Connection {
         let events: [Event] = eventsOpt.filter({$0 != nil}).map({$0!})
         events.forEach({forEachEvent($0)})
         
-        #if DEBUG
-        print("--------------------- Batch size: \(events.count)")
-        #endif
-        
-        return remaining
+        return (eventsCount: events.count, remaining: remaining)
     }
     
 }
