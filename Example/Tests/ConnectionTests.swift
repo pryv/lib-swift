@@ -13,9 +13,6 @@ import Alamofire
 
 class ConnectionTests: XCTestCase {
     
-    private let apiEndpoint = "https://token@username.pryv.me/"
-    private var c: Connection? // TODO: remove
-    
     let connection = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
         .login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
     private var a: Int?
@@ -40,13 +37,10 @@ class ConnectionTests: XCTestCase {
             ]
         ]
     ]
-        
-    private let eventId = MockedData.eventId
     
     override func setUp() {
         super.setUp()
         continueAfterFailure = false
-        c = Connection(apiEndpoint: apiEndpoint)
     }
     
     func testCallBatchCreate() {
@@ -114,7 +108,7 @@ class ConnectionTests: XCTestCase {
             "method": "events.get",
             "params": [
                 "includeDeletions": true,
-                "modifiedSince": 1592837799.925
+                "modifiedSince": 1546297200.0
             ]
         ]]
         
@@ -175,7 +169,7 @@ class ConnectionTests: XCTestCase {
     
     func testStreamedGetEventsWithDeletions() {
         print("------ Test streamed get events with deletions")
-        testStreamedGetEvents(includeDeletions: true)
+        testStreamedGetEvents(includeDeletions: true) // Note: make sure there are deletion before running this test
     }
     
     func testCreateEvent() {
@@ -292,76 +286,18 @@ class ConnectionTests: XCTestCase {
     }
     
     func testGetImagePreview() {
-        mockImagePreview()
-        let data = c?.getImagePreview(eventId: "eventId")
-        XCTAssertEqual(data, MockedData.imagePreview)
-    }
-    
-    private func mockImagePreview() {
-        let mockGet = Mock(url: URL(string: apiEndpoint + "previews/events/eventId?w=256&h=256&auth=token")!, dataType: .imagePNG, statusCode: 200, data: [
-            .get: MockedData.imagePreview
-        ])
+        let apiEndpoint = "https://token@username.pryv.me/"
+        let expectedData = Bundle(for: ConnectionTests.self).url(forResource: "corona", withExtension: "jpg")!.dataRepresentation
+        let mockGet = Mock(url: URL(string: apiEndpoint + "previews/events/eventId?w=256&h=256&auth=token")!, dataType: .imagePNG, statusCode: 200, data: [.get: expectedData])
         mockGet.register()
-    }
-
-    private func mockCreateEventWithAttachment(expectedParameters: [String: Any]) {
-        var mockCreateEvent = Mock(url: URL(string: apiEndpoint + "events")!, dataType: .json, statusCode: 200, data: [
-            .post: MockedData.createEventResponse
-        ])
-        let mockAddAttachment = Mock(url: URL(string: apiEndpoint + "events/\(eventId)")!, dataType: .json, statusCode: 200, data: [
-            .post: MockedData.addAttachmentResponse
-        ])
         
-        mockCreateEvent.onRequest = { request, postBodyArguments in
-            XCTAssertEqual(request.url, mockCreateEvent.request.url)
-            XCTAssertNotNil(postBodyArguments)
-            
-            let type = postBodyArguments!["type"] as? String
-            XCTAssertNotNil(type)
-            XCTAssertEqual(type, expectedParameters["type"] as? String)
-            
-            let content = postBodyArguments!["content"] as? Int
-            XCTAssertNotNil(content)
-            XCTAssertEqual(content, expectedParameters["content"] as? Int)
-            
-            let streamIds = postBodyArguments!["streamIds"] as? [String]
-            XCTAssertNotNil(streamIds)
-            XCTAssertEqual(streamIds, expectedParameters["streamIds"] as? [String])
-        }
-        
-        mockCreateEvent.register()
-        mockAddAttachment.register()
+        let c = Connection(apiEndpoint: apiEndpoint)
+        let data = c.getImagePreview(eventId: "eventId")
+        XCTAssertEqual(data, expectedData)
     }
     
-    private func mockHFEvent(expectedParameters: [String: Any]) {
-        var mockAddPointsToHFEvent = Mock(url: URL(string: apiEndpoint + "events/\(eventId)/series")!, dataType: .json, statusCode: 200, data: [
-            .post: MockedData.okResponse
-        ])
-        
-        mockAddPointsToHFEvent.onRequest = { request, postBodyArguments in
-            XCTAssertEqual(request.url, mockAddPointsToHFEvent.request.url)
-            XCTAssertNotNil(postBodyArguments)
-            
-            let format = postBodyArguments!["format"] as? String
-            XCTAssertNotNil(format)
-            XCTAssertEqual(format, expectedParameters["format"] as? String)
-            
-            let fields = postBodyArguments!["fields"] as? [String]
-            XCTAssertNotNil(fields)
-            XCTAssertEqual(fields, expectedParameters["fields"] as? [String])
-            
-            let points = postBodyArguments!["points"] as? [[Double]]
-            XCTAssertNotNil(points)
-            XCTAssertEqual(points, expectedParameters["points"] as? [[Double]])
-        }
-        
-        mockAddPointsToHFEvent.register()
-    }
-    
-    private func testStreamedGetEvents(includeDeletions: Bool = false, limit: Int = 20, timeout: Double = 10.0) {
-        let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
-        let conn = service.login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
-        let expectation = self.expectation(description: "Streaming")
+    private func testStreamedGetEvents(includeDeletions: Bool = false, limit: Int = 20, timeout: Double = 15.0) {
+        let expectation = self.expectation(description: "streaming")
         
         var error = false
         var eventsCount = 0
@@ -372,7 +308,7 @@ class ConnectionTests: XCTestCase {
             params["modifiedSince"] = 1592837799.925
         }
         
-        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) ; return }) { result in
+        connection?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) ; return }) { result in
             if let count = result["eventsCount"] as? Int, let metaData = result["meta"] as? Json {
                 eventsCount = count
                 meta = metaData
@@ -400,7 +336,7 @@ class ConnectionTests: XCTestCase {
         XCTAssertEqual(meta?.count, 3)
         if includeDeletions {
             XCTAssertGreaterThan(eventsCount, 0)
-            XCTAssertGreaterThan(eventDeletionsCount, 0)
+            XCTAssertGreaterThanOrEqual(eventDeletionsCount, 0)
         } else {
             XCTAssertEqual(eventsCount, limit)
         }

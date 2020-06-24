@@ -110,7 +110,7 @@ public class Connection {
     /// - Parameters:
     ///   - queryParams: see `events.get` parameters
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
-    ///   - completionHandler: callback called upon completion on the number of events and the metadata
+    ///   - completionHandler: callback called upon completion on the number of events and the metadata, or on the error
     /// - Returns: the two escaping callbacks to handle the result: the events and the metadata
     public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), completionHandler: @escaping (Json) -> ()) {
         let parameters: Json = [
@@ -156,7 +156,7 @@ public class Connection {
     ///   - event: description of the new event to create
     ///   - filePath
     ///   - mimeType: the mimeType of the file in `filePath`
-    ///   - completionHandler: callback called upon completion on the new event
+    ///   - completionHandler: callback called upon completion on the new event, or on the error
     /// - Returns: a new created event with attachement corresponding to the file in `filePath`
     public func createEventWithFile(event: Event, filePath: String, mimeType: String, completionHandler: @escaping (Event?, Error?) -> ()) {
         let url = NSURL(fileURLWithPath: filePath)
@@ -172,7 +172,7 @@ public class Connection {
     ///   - event: description of the new event to create
     ///   - parameters: the string parameters for the add attachement(s) request (optional)
     ///   - files: the attachement(s) to add (optional)
-    ///   - completionHandler: callback called upon completion on the new event
+    ///   - completionHandler: callback called upon completion on the new event, or on the error
     /// - Returns: a new created event with an optionnal attachment
     public func createEventWithFormData(event: Json, parameters: Parameters? = nil, files: [Media]? = nil, completionHandler: @escaping (Event?, Error?) -> ()) {
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events" : apiEndpoint + "/events"
@@ -206,7 +206,7 @@ public class Connection {
     ///   - eventId
     ///   - filePath
     ///   - mimeType: the mimeType of the file in `filePath`
-    ///   - completionHandler: callback called upon completion on the event with the attachment
+    ///   - completionHandler: callback called upon completion on the event with the attachment, or on the error
     /// - Returns: the given event with `eventId` with attachement corresponding to the file in `filePath`
     public func addFileToEvent(eventId: String, filePath: String, mimeType: String, completionHandler: @escaping (Event?, Error?) -> ()) {
         let url = NSURL(fileURLWithPath: filePath)
@@ -238,7 +238,7 @@ public class Connection {
     /// - Parameters:
     ///   - eventId
     ///   - boundary: the boundary corresponding to the attachement to add
-    ///   - httpBody: the data corresponding to the attachement to add
+    ///   - httpBody: the data corresponding to the attachement to add, or on the error
     /// - Returns: the event with id `eventId` with an attachement
     private func addFormDataToEvent(eventId: String, boundary: String, httpBody: Data, completionHandler: @escaping (Event?, Error?) -> ()) {
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)" : apiEndpoint + "/events/\(eventId)"
