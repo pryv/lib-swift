@@ -39,8 +39,9 @@ public class Connection {
     /// - Parameters:
     ///   - APICalls: array of method calls in json formatted string
     ///   - handleResults: callbacks indexed by the api calls indexes, i.e. `[0: func]` means "apply function `func` to result of api call 0"
-    /// - Returns: array of results matching each method call in order
-    public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil) -> [Event]? {
+    ///   - progress: return percentage of progress (0 - 100) // TODO
+    /// - Returns: array of results matching each method call in order 
+    public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil, progress: ((Double) -> ())? = nil) -> [Json]? {
         guard let url = URL(string: apiEndpoint) else { print("problem encountered: cannot access register url \(apiEndpoint)") ; return nil }
         
         var request = URLRequest(url: url)
@@ -49,7 +50,7 @@ public class Connection {
         request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.httpBody = try! JSONSerialization.data(withJSONObject: APICalls)
         
-        var events = [Event]()
+        var results = [Json]()
         let group = DispatchGroup()
         let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
             if let _ = error, data == nil { print("problem encountered when requesting call batch") ; group.leave() ; return }
@@ -58,23 +59,8 @@ public class Connection {
             
             if let _ = dictionary["error"] { print("problem encountered when requesting call batch") ; group.leave() ; return }
             
-            // if format of response if {"results": [{"event": {...}}, {"event": {...}}, ...]}
-            if let creationResults = dictionary["results"] as? [[String: Event]] {
-                events = creationResults.map { result in
-                    if let error = result["error"] {
-                        print("error encountered when getting the event from callbatch")
-                        print(error)
-                        return error
-                    }
-                    return result["event"] ?? Event()
-                }
-            }
-            // if format of response if {"results": {"events": [{"streamId": ..., ...}, {"streamId": ..., ...}, ...]}}
-            else if let getResults = dictionary["results"] as? [[String: [Event]]] {
-                let eventsNotDeleted = getResults.first?["events"]
-                let eventsDeleted = getResults.first?["eventDeletions"]
-                events.append(contentsOf: eventsNotDeleted ?? [Event]())
-                events.append(contentsOf: eventsDeleted ?? [Event]())
+            if let res = dictionary["results"] as? [Json] {
+                results = res
             }
             
             group.leave()
@@ -84,14 +70,14 @@ public class Connection {
         task.resume()
         group.wait()
         
-        guard let callbacks = handleResults else { return events }
+        guard let callbacks = handleResults else { return results }
         
         for (i, callback) in callbacks {
-            if i >= events.count { print("problem encountered when applying the callback \(i): index out of bounds") ; return events }
-            callback(events[i])
+            if i >= results.count { print("problem encountered when applying the callback \(i): index out of bounds") ; return results }
+            callback(results[i])
         }
         
-        return events
+        return results
     }
     
     /// Add Data Points to HFEvent (flatJSON format) as described in the [reference API](https://api.pryv.com/reference/#add-hf-series-data-points)

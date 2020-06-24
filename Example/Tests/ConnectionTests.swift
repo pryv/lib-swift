@@ -14,7 +14,7 @@ class ConnectionTests: XCTestCase {
     
     private let apiEndpoint = "https://token@username.pryv.me/"
     private var connection: Connection?
-    private var a: String?
+    private var a: Int?
     
     private let callBatches: [APICall] = [
         [
@@ -48,25 +48,33 @@ class ConnectionTests: XCTestCase {
     
     func testCallBatch() {
         mockCallBatch(expectedParameters: callBatches)
-        let events = connection?.api(APICalls: callBatches)
-    
-        let event0 = events?[0]
-        checkEvent(event0)
-        
-        let event1 = events?[1]
-        XCTAssertNotNil(event1)
-    }
-    
-    func testCallBatchCallback() {
-        mockCallBatch(expectedParameters: callBatches)
-        let _ = connection?.api(APICalls: callBatches, handleResults: [0: { event in
-            self.a = event["id"] as? String
+        let results = connection?.api(APICalls: callBatches, handleResults: [0: { result in
+            self.a = 2
         }])
         
-        XCTAssertNotNil(a)
-        XCTAssertEqual(a, eventId)
+        XCTAssertNotNil(results)
+        XCTAssertEqual(results!.count, 2)
         
-        // Note: this test only checks that a simple callback is executed. A more precise test for call batch is `testCallBatch`
+        var events = [Event]()
+        for result in results! {
+            if let json = result as? [String: Event] {
+                let error = json["error"]
+                XCTAssertNil(error)
+                if let event = json["event"] {
+                    events.append(event)
+                }
+            }
+        }
+        
+        XCTAssertEqual(events.count, 2)
+
+        let event0 = events[0]
+        checkEvent(event0)
+        
+        let event1 = events[1]
+        XCTAssertNotNil(event1)
+        XCTAssertNotNil(a)
+        XCTAssertEqual(a, 2)
     }
     
     func testCallBatchWithDeletions() {
@@ -80,9 +88,24 @@ class ConnectionTests: XCTestCase {
             ]
         ]]
         
-        let events = connection?.api(APICalls: apiCalls)
+        let results = connection?.api(APICalls: apiCalls)
+        XCTAssertNotNil(results)
+        XCTAssertEqual(results!.count, 1)
+        
+        var events = [Event]()
+            
+        for result in results! {
+            if let json = result as? [String: [Event]] {
+                let error = json["error"]
+                XCTAssertNil(error)
+                
+                events.append(contentsOf: json["events"] ?? [Event]())
+                events.append(contentsOf: json["eventDeletions"] ?? [Event]())
+            }
+        }
+        
         XCTAssertNotNil(events)
-        XCTAssertEqual(events!.count, 4)
+        XCTAssertEqual(events.count, 4)
     }
     
     func testAddPointsToHFEvent() {
