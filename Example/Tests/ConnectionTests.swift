@@ -159,7 +159,7 @@ class ConnectionTests: XCTestCase {
         let expectation = self.expectation(description: "add-points-hf")
         
         var error = false
-        connection?.addPointsToHFEvent(eventId: eventId, fields: fields, points: points)  { err in
+        connection?.addPointsToHFEvent(eventId: "cj3wro4aj80yrx0yqmtm5cfxc", fields: fields, points: points)  { err in
            error = err != nil
            expectation.fulfill()
         }
@@ -179,15 +179,21 @@ class ConnectionTests: XCTestCase {
     }
     
     func testCreateEvent() {
-        let payload: Event = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
-        mockCreateEventWithAttachment(expectedParameters: payload)
+        let payload: Json = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
+        let expectation = self.expectation(description: "create-event")
         
-        let event = c?.createEventWithFormData(event: payload)
+        var event: Event? = nil
+        var error = false
+        connection?.createEventWithFormData(event: payload) { res, err in
+            error = err != nil
+            event = res
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5.0, handler: nil)
+        
+        XCTAssertFalse(error)
         XCTAssertNotNil(event)
-
-        let time = event!["time"] as? Double
-        XCTAssertNotNil(time)
-        XCTAssertEqual(time!, 1591274234.916)
 
         let streamIds = event!["streamIds"] as? [String]
         XCTAssertNotNil(streamIds)
@@ -208,53 +214,66 @@ class ConnectionTests: XCTestCase {
     
     func testCreateEventWithFile() {
         let payload: Event = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
-        mockCreateEventWithAttachment(expectedParameters: payload)
-        
         let file = Bundle(for: ConnectionTests.self).url(forResource: "sample", withExtension: "pdf")!
-        let event = c?.createEventWithFile(event: payload, filePath: file.absoluteString, mimeType: "application/pdf")
-        XCTAssertNotNil(event)
+        let expectation = self.expectation(description: "create-event-file")
         
+        var error = false
+        var event: Event? = nil
+        connection?.createEventWithFile(event: payload, filePath: file.absoluteString, mimeType: "application/pdf") { res, err in
+            error = err != nil
+            event = res
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5.0, handler: nil)
+        
+        XCTAssertNotNil(event)
+        XCTAssertFalse(error)
+
         let attachments = event!["attachments"] as? [Any]
         XCTAssertNotNil(attachments)
-        
+
         let attachment = attachments![0] as? [String: Any]
         XCTAssertNotNil(attachment)
-        
-        let id = attachment!["id"] as? String
-        XCTAssertNotNil(id)
-        XCTAssertEqual(id!, "ckb6fn2p9000r4y0s51ve4cx8")
-        
+
         let fileName = attachment!["fileName"] as? String
         XCTAssertNotNil(fileName)
         XCTAssertEqual(fileName!, "sample.pdf")
-        
+
         let type = attachment!["type"] as? String
         XCTAssertNotNil(type)
         XCTAssertEqual(type!, "application/pdf")
-        
-        let size = attachment!["size"] as? Int
-        XCTAssertNotNil(size)
-        XCTAssertEqual(size!, 111)
-        
-        let readToken = attachment!["readToken"] as? String
-        XCTAssertNotNil(readToken)
-        XCTAssertEqual(readToken!, "ckb6fn2p9000s4y0slij89se5-JGZ6xx1vFDvSFsCxdoO4ptM7gc8")
-        
+
         // Note: No test for the function `createEventWithFormData` is done as the function `createEventWithFile` uses already this function.
     }
     
     func testAddFileToEvent() {
         let payload: Event = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
-        mockCreateEventWithAttachment(expectedParameters: payload)
+        let expectationCreate = self.expectation(description: "create-event")
+        let file = Bundle(for: ConnectionTests.self).url(forResource: "sample", withExtension: "pdf")!
         
-        var event = c?.createEventWithFormData(event: payload)
+        var event: Event? = nil
+        connection?.createEventWithFormData(event: payload) { res, _ in
+            event = res
+            expectationCreate.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5.0, handler: nil)
         XCTAssertNotNil(event)
         
         let eventId = event!["id"] as? String
         XCTAssertNotNil(eventId)
         
-        let file = Bundle(for: ConnectionTests.self).url(forResource: "sample", withExtension: "pdf")!
-        event = c?.addFileToEvent(eventId: eventId!, filePath: file.absoluteString, mimeType: "application/pdf")
+        var error = false
+        let expectationAddFile = self.expectation(description: "add-file-event")
+        connection?.addFileToEvent(eventId: eventId!, filePath: file.absoluteString, mimeType: "application/pdf") { res, err in
+            error = err != nil
+            event = res
+            expectationAddFile.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5.0, handler: nil)
+        XCTAssertFalse(error)
         XCTAssertNotNil(event)
         
         let attachments = event!["attachments"] as? [Any]
@@ -263,10 +282,6 @@ class ConnectionTests: XCTestCase {
         let attachment = attachments![0] as? [String: Any]
         XCTAssertNotNil(attachment)
         
-        let id = attachment!["id"] as? String
-        XCTAssertNotNil(id)
-        XCTAssertEqual(id!, "ckb6fn2p9000r4y0s51ve4cx8")
-        
         let fileName = attachment!["fileName"] as? String
         XCTAssertNotNil(fileName)
         XCTAssertEqual(fileName!, "sample.pdf")
@@ -274,14 +289,6 @@ class ConnectionTests: XCTestCase {
         let type = attachment!["type"] as? String
         XCTAssertNotNil(type)
         XCTAssertEqual(type!, "application/pdf")
-        
-        let size = attachment!["size"] as? Int
-        XCTAssertNotNil(size)
-        XCTAssertEqual(size!, 111)
-        
-        let readToken = attachment!["readToken"] as? String
-        XCTAssertNotNil(readToken)
-        XCTAssertEqual(readToken!, "ckb6fn2p9000s4y0slij89se5-JGZ6xx1vFDvSFsCxdoO4ptM7gc8")
     }
     
     func testGetImagePreview() {

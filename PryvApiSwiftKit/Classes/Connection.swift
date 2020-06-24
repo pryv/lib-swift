@@ -150,12 +150,15 @@ public class Connection {
     ///   - event: description of the new event to create
     ///   - filePath
     ///   - mimeType: the mimeType of the file in `filePath`
-    /// - Returns: the newly created event with attachement corresponding to the file in `filePath`
-    public func createEventWithFile(event: Event, filePath: String, mimeType: String) -> Event? {
+    ///   - completionHandler: callback called upon completion on the new event
+    /// - Returns: a new created event with attachement corresponding to the file in `filePath`
+    public func createEventWithFile(event: Event, filePath: String, mimeType: String, completionHandler: @escaping (Event?, Error?) -> ()) {
         let url = NSURL(fileURLWithPath: filePath)
         let media = Media(key: "file-\(UUID().uuidString)-\(String(describing: token))", filename: filePath, data: url.dataRepresentation, mimeType: mimeType)
         
-        return createEventWithFormData(event: event, parameters: nil, files: [media])
+        createEventWithFormData(event: event, parameters: nil, files: [media]) { event, err in
+            completionHandler(event, err)
+        }
     }
     
     /// Create an event with attached file encoded as [multipart/form-data content](https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData)
@@ -163,20 +166,33 @@ public class Connection {
     ///   - event: description of the new event to create
     ///   - parameters: the string parameters for the add attachement(s) request (optional)
     ///   - files: the attachement(s) to add (optional)
-    /// - Returns: the newly created event with attachment(s) corresponding to `parameters` and `files`
-    /// # Note
-    /// If no `parameters`, nor `files` are given, the method will just create a new event.
-    public func createEventWithFormData(event: Event, parameters: Parameters? = nil, files: [Media]? = nil) -> Event? {
-        var event = sendCreateEventRequest(payload: event)
-        guard let eventId = event?["id"] as? String else { print("problem encountered when creating the event") ; return nil }
-    
-        let boundary = "Boundary-\(UUID().uuidString)"
-        let httpBody = createData(with: boundary, from: parameters, and: files)
-        if let result = addFormDataToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) {
-            event = result
-        }
+    ///   - completionHandler: callback called upon completion on the new event
+    /// - Returns: a new created event with an optionnal attachment
+    public func createEventWithFormData(event: Json, parameters: Parameters? = nil, files: [Media]? = nil, completionHandler: @escaping (Event?, Error?) -> ()) {
+        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events" : apiEndpoint + "/events"
         
-        return event
+        var request = URLRequest(url: URL(string: string)!)
+        request.httpMethod = "POST"
+        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try! JSONSerialization.data(withJSONObject: event)
+        
+        AF.request(request).responseJSON { response in
+            switch response.result {
+            case .success(let JSON):
+                let response = JSON as! NSDictionary
+                let event = response.object(forKey: "event") as? Event
+                guard let eventId = event?["id"] as? String else { completionHandler(nil, PryvError.decodingError) ; return }
+                
+                let boundary = "Boundary-\(UUID().uuidString)"
+                let httpBody = self.createData(with: boundary, from: parameters, and: files)
+                self.addFormDataToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) { event, err in
+                    completionHandler(event, err)
+                }
+            case .failure(let error):
+                completionHandler(nil, PryvError.requestError(error.localizedDescription))
+            }
+        }
     }
     
     /// Adds an attached file to an event with id `eventId`
@@ -184,18 +200,17 @@ public class Connection {
     ///   - eventId
     ///   - filePath
     ///   - mimeType: the mimeType of the file in `filePath`
-    /// - Returns: the newly created event with attachement corresponding to the file in `filePath`
-    public func addFileToEvent(eventId: String, filePath: String, mimeType: String) -> Event? {
+    ///   - completionHandler: callback called upon completion on the event with the attachment
+    /// - Returns: the given event with `eventId` with attachement corresponding to the file in `filePath`
+    public func addFileToEvent(eventId: String, filePath: String, mimeType: String, completionHandler: @escaping (Event?, Error?) -> ()) {
         let url = NSURL(fileURLWithPath: filePath)
         let media = Media(key: "file-\(UUID().uuidString)-\(String(describing: token))", filename: filePath, data: url.dataRepresentation, mimeType: mimeType)
         let boundary = "Boundary-\(UUID().uuidString)"
         let httpBody = createData(with: boundary, from: nil, and: [media])
         
-        if let event = addFormDataToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) {
-            return event
+        addFormDataToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) { event, err in
+            completionHandler(event, err)
         }
-        
-        return nil
     }
     
     /// Get an image preview for a given event, if this event contains an image attachment
@@ -212,42 +227,6 @@ public class Connection {
     }
     
     // MARK: - private helpers functions for the library
-        
-    /// Send an `events.create` request
-    /// - Parameter payload: description of the new event to create
-    /// - Returns: the newly created event
-    private func sendCreateEventRequest(payload: Json) -> Event? {
-        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events" : apiEndpoint + "/events"
-        guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return nil }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
-        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
-        
-        var result: [String: Any]? = nil
-        let group = DispatchGroup()
-        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            if let _ = error, data == nil { print("problem encountered when requesting event") ; group.leave() ; return }
-            
-            guard let eventResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: eventResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the event response") ; group.leave() ; return }
-            
-            result = dictionary["event"] as? Event
-            /*
-                Note: this result can only be an event.
-                If the result is an error, the returned value will be nil.
-                The function that calls this function is responsible for checking that the result is ≠ nil.
-            */
-            group.leave()
-        }
-        
-        group.enter()
-        task.resume()
-        group.wait()
-        
-        return result
-    }
     
     /// Send a request to add an attachment to an existing event with id `eventId`
     /// - Parameters:
@@ -255,35 +234,26 @@ public class Connection {
     ///   - boundary: the boundary corresponding to the attachement to add
     ///   - httpBody: the data corresponding to the attachement to add
     /// - Returns: the event with id `eventId` with an attachement
-    private func addFormDataToEvent(eventId: String, boundary: String, httpBody: Data) -> Event? {
-        var result: Event? = nil
-        
+    private func addFormDataToEvent(eventId: String, boundary: String, httpBody: Data, completionHandler: @escaping (Event?, Error?) -> ()) {
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)" : apiEndpoint + "/events/\(eventId)"
-        guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return nil }
         
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: URL(string: string)!)
         request.httpMethod = "POST"
         request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         request.httpBody = httpBody
         
-        let group = DispatchGroup()
-        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            if let _ = error, data == nil { print("problem encountered when requesting event from form data") ; group.leave() ; return }
-            
-            guard let eventResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: eventResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the event response") ; group.leave() ; return }
-            
-            result = dictionary["event"] as? Event
-            group.leave()
+        AF.request(request).responseJSON { response in
+            switch response.result {
+            case .success(let JSON):
+                let response = JSON as! NSDictionary
+                let event = response.object(forKey: "event") as? Event
+                completionHandler(event, nil)
+            case .failure(let error):
+                completionHandler(nil, PryvError.requestError(error.localizedDescription))
+            }
         }
-        
-        group.enter()
-        task.resume()
-        group.wait()
-        
-        return result
     }
-    
     
     /// Create `Data` from the `parameters` and the `files` encoded as [multipart/form-data content](https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData)
     /// - Parameters:
