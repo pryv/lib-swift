@@ -14,7 +14,7 @@ class ConnectionWebSocketTests: XCTestCase {
     let connection = ConnectionWebSocket(apiEndpoint: "https://ckbrz1pmj009o1vd38iqvavv5@testuser.pryv.me")
     
     func testExample() {
-        connection.subscribe(message: .eventsChanged) { data, ack in
+        connection.subscribe(message: .all) { data, ack in
             print("Events changed")
             self.connection.emitWithData(methodId: "events.get", params: Json()) { data in
                 print("New (updated) events!")
@@ -26,7 +26,7 @@ class ConnectionWebSocketTests: XCTestCase {
         
         connection.connect()
         sleep(15)
-        connection.disconnect()
+//        connection.disconnect()
     }
     
 }

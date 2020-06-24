@@ -12,6 +12,7 @@ public enum Message: String {
     case eventsChanged
     case streamsChanged
     case accessesChanged
+    case all = "*"
 }
 
 /// This class proposes the almost same functions as `Connection`, but with real time updates and notifications with [socket.io](https://api.pryv.com/reference/#call-with-websockets)
