@@ -40,6 +40,9 @@ class ConnectionTests: XCTestCase {
     private let eventId = MockedData.eventId
     
     override func setUp() {
+        super.setUp()
+        continueAfterFailure = false
+        
         connection = Connection(apiEndpoint: apiEndpoint)
     }
     

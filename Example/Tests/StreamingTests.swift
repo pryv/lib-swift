@@ -14,6 +14,9 @@ import Mocker
 class StreamingTests: XCTestCase {
     
     override func setUp() {
+        super.setUp()
+        continueAfterFailure = false
+        
         let ignoredURLs = [
             URL(string: "https://testuser.pryv.me/auth/login")!,
             URL(string: "https://reg.pryv.me/service/info")!

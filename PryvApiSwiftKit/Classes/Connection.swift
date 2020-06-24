@@ -124,6 +124,7 @@ public class Connection {
     ///   - log: function taking the result of the request as parameter
     /// - Returns: the two escaping callbacks to handle the results: the events and the success/failure of the request 
     public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), completion: @escaping (Json) -> ()) {
+        
         let parameters: Json = [
             "method": "events.get",
             "params": queryParams!

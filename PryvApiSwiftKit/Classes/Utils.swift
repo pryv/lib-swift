@@ -85,11 +85,10 @@ public class Utils {
     /// - Parameter string
     /// - Returns: the json formatted dictionnary corresponding to the string
     public func stringToJson(_ string: String) -> Json? {
-        if let data = string.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event {
-            return dictionary
-            
-        }
-        return nil
+        guard let data = string.data(using: .utf8) else { return nil }
+        guard let json = try? JSONSerialization.jsonObject(with: data) else { return nil }
+        guard let dictionary = json as? Event else { return nil }
+        return dictionary
     }
     
     /// Reproduces the behavior of regex.exec() in javascript to split the string according to a given pattern

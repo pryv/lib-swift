@@ -31,6 +31,9 @@ class ServiceTests: XCTestCase {
     private var customService: Service?
     
     override func setUp() {
+        super.setUp()
+        continueAfterFailure = false
+        
         mockServiceInfo()
         
         service = Service(pryvServiceInfoUrl: pryvServiceInfoUrl)
