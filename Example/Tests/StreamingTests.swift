@@ -51,7 +51,7 @@ class StreamingTests: XCTestCase {
             params["modifiedSince"] = 1592837799.925
         }
         
-        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in /*print(event) ; */return }) { result in // TODO: uncomment
+        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) ; return }) { result in
             if let count = result["eventsCount"] as? Int, let metaData = result["meta"] as? Json {
                 eventsCount = count
                 meta = metaData
@@ -77,9 +77,11 @@ class StreamingTests: XCTestCase {
         
         XCTAssertFalse(error)
         XCTAssertEqual(meta?.count, 3)
-        XCTAssertEqual(eventsCount, limit)
         if includeDeletions {
+            XCTAssertGreaterThan(eventsCount, 0)
             XCTAssertGreaterThan(eventDeletionsCount, 0)
+        } else {
+            XCTAssertEqual(eventsCount, limit)
         }
     }
 }

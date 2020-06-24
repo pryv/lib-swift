@@ -137,6 +137,7 @@ public class Connection {
         
         var partialChunk: String? = nil
         var eventsCount = 0
+        var eventDeletionsCount = 0
         var meta = Json()
         AF.streamRequest(request).responseStream { stream in
             switch stream.event {
@@ -146,13 +147,15 @@ public class Connection {
                     guard let string = String(data: data, encoding: .utf8) else { return }
                     let parsedResult = self.parseEventsChunked(string: (partialChunk ?? "") + string, forEachEvent: forEachEvent)
                     eventsCount += parsedResult.eventsCount
+                    eventDeletionsCount += parsedResult.eventDeletionsCount
                     partialChunk = parsedResult.remaining
                     meta = parsedResult.meta != nil ? parsedResult.meta! : meta
                 }
             case .complete(_):
                 let result: Json = [
                     "meta": meta,
-                    "eventsCount": eventsCount
+                    "eventsCount": eventsCount,
+                    "eventDeletionsCount": eventDeletionsCount
                 ]
                 completion(result)
             }
@@ -362,23 +365,21 @@ public class Connection {
         var remaining: String? = nil
 
         var event = ""
-        if eventsStr.contains(deletedEventsPrefix) { // FIXME eventStrs filled only if deletedevents
-            while(!eventsStr.hasPrefix(deletedEventsPrefix)) {
-                let character = eventsStr.first!
-                eventsStr = String(eventsStr.dropFirst())
-                event.append(character)
-                if character == "{" {
-                    stack.append(character)
+        while(!eventsStr.hasPrefix(deletedEventsPrefix) && !eventsStr.isEmpty) {
+            let character = eventsStr.first!
+            eventsStr = String(eventsStr.dropFirst())
+            event.append(character)
+            if character == "{" {
+                stack.append(character)
+            }
+            if character == "}" {
+                let _ = stack.popLast()
+            }
+            if stack.isEmpty {
+                if event != "," {
+                    eventsStrs.append(event)
                 }
-                if character == "}" {
-                    let _ = stack.popLast()
-                }
-                if stack.isEmpty {
-                    if event != "," {
-                        eventsStrs.append(event)
-                    }
-                    event = ""
-                }
+                event = ""
             }
         }
         
@@ -404,8 +405,8 @@ public class Connection {
         }
         
         let meta = utils.stringToJson(metaStr)
-        let events: [Event] = eventsStrs.map({ utils.stringToJson($0) ?? Json() })
-        let eventsDeleted: [Event] = deletedEventsStrs.map({ utils.stringToJson($0) ?? Json() })
+        let events: [Event] = eventsStrs.map({ utils.stringToJson($0) }).filter({ $0 != nil }).map({ $0! })
+        let eventsDeleted: [Event] = deletedEventsStrs.map({ utils.stringToJson($0) }).filter({ $0 != nil }).map({ $0! })
         
         events.forEach(forEachEvent)
         eventsDeleted.forEach(forEachEvent)
