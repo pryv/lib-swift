@@ -47,7 +47,7 @@ class StreamingTests: XCTestCase {
         var eventDeletionsCount = 0
         var meta: Json? = nil
         let params: Json = ["includeDeletions": includeDeletions, "limit": limit]
-        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) ; return }) { result in // TODO: uncomment
+        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) ; return }) { result in 
             if let count = result["eventsCount"] as? Int, let metaData = result["meta"] as? Json {
                 eventsCount = count
                 meta = metaData

@@ -170,11 +170,6 @@ public class Service {
         timer?.invalidate()
     }
     
-    /// This function will be implemented later, according to the documentation on [lib-js](https://github.com/pryv/lib-js#pryvbrowser--visual-assets)
-    public func assets() {
-        // TODO
-    }
-    
     // MARK: - private helpers functions for the library
     
     /// Customizes the service info parameters
