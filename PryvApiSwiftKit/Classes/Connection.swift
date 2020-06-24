@@ -90,7 +90,13 @@ public class Connection {
         ]
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)/series" : apiEndpoint + "/events/\(eventId)/series"
         
-        AF.request(string, method: .post, parameters: parameters, headers: ["Authorization": token ?? ""]).response { response in
+        var request = URLRequest(url: URL(string: string)!)
+        request.httpMethod = "POST"
+        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
+        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try! JSONSerialization.data(withJSONObject: parameters)
+        
+        AF.request(request).response { response in
             switch response.result {
             case .success(_):
                 completionHandler(nil)
