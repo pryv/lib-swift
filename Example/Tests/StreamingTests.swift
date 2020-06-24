@@ -46,8 +46,12 @@ class StreamingTests: XCTestCase {
         var eventsCount = 0
         var eventDeletionsCount = 0
         var meta: Json? = nil
-        let params: Json = ["includeDeletions": includeDeletions, "limit": limit]
-        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) ; return }) { result in 
+        var params: Json = ["includeDeletions": includeDeletions, "limit": limit]
+        if includeDeletions {
+            params["modifiedSince"] = 1592837799.925
+        }
+        
+        conn?.getEventsStreamed(queryParams: params, forEachEvent: { event in /*print(event) ; */return }) { result in // TODO: uncomment
             if let count = result["eventsCount"] as? Int, let metaData = result["meta"] as? Json {
                 eventsCount = count
                 meta = metaData
@@ -57,7 +61,7 @@ class StreamingTests: XCTestCase {
                         eventDeletionsCount = delCount
                         expectation.fulfill()
                     } else {
-                        error = true // FIXME: no deletions
+                        error = true
                         expectation.fulfill()
                     }
                 } else {
@@ -70,6 +74,7 @@ class StreamingTests: XCTestCase {
         }
         
         waitForExpectations(timeout: timeout, handler: nil)
+        
         XCTAssertFalse(error)
         XCTAssertEqual(meta?.count, 3)
         XCTAssertEqual(eventsCount, limit)

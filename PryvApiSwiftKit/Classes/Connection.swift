@@ -336,29 +336,54 @@ public class Connection {
     ///   - string: the string corresponding to the chunk of the `events.get` response
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
     /// - Returns: the remaining string, if an event if not entirely received and whether the response was entirely received, i.e. streaming is completed and the number of events received in this chunk
-    private func parseEventsChunked(string: String, forEachEvent: @escaping (Event) -> ()) -> (meta: Json?, eventsCount: Int, remaining: String?) {
-        var metaString = ""
-        var chunk = string
-        
+    private func parseEventsChunked(string: String, forEachEvent: @escaping (Event) -> ()) -> (meta: Json?, eventsCount: Int, eventDeletionsCount: Int, remaining: String?) {
+        var strCpy = string
         let metaPrefix = "{\"meta\":"
         let eventsPrefix = ",\"results\":[{\"events\":["
-        
-        if chunk.hasPrefix(metaPrefix) {
-            chunk.removeFirst(metaPrefix.count)
+        let deletedEventsPrefix = "],\"eventDeletions\":["
+
+        if strCpy.hasPrefix(metaPrefix) {
+            strCpy = strCpy.replacingOccurrences(of: metaPrefix, with: "")
         }
-        
-        if chunk.contains(eventsPrefix) {
-            while(!chunk.hasPrefix(eventsPrefix)) {
-                metaString.append(chunk.first!)
-                chunk = String(chunk.dropFirst())
+
+        var metaStr = ""
+        if strCpy.contains(eventsPrefix) {
+            while(!strCpy.hasPrefix(eventsPrefix)) {
+                metaStr.append(strCpy.first!)
+                strCpy = String(strCpy.dropFirst())
+            }
+        }
+
+        var eventsStr = strCpy.replacingOccurrences(of: eventsPrefix, with: "") // includes deletions and not deletions
+        var eventsStrs = [String]()
+        var deletedEventsStrs = [String]()
+
+        var stack = [Character]()
+        var remaining: String? = nil
+
+        var event = ""
+        if eventsStr.contains(deletedEventsPrefix) { // FIXME eventStrs filled only if deletedevents
+            while(!eventsStr.hasPrefix(deletedEventsPrefix)) {
+                let character = eventsStr.first!
+                eventsStr = String(eventsStr.dropFirst())
+                event.append(character)
+                if character == "{" {
+                    stack.append(character)
+                }
+                if character == "}" {
+                    let _ = stack.popLast()
+                }
+                if stack.isEmpty {
+                    if event != "," {
+                        eventsStrs.append(event)
+                    }
+                    event = ""
+                }
             }
         }
         
-        var eventsStrings = [String]()
-        var stack = [Character]()
-        var event = ""
-        var remaining: String? = nil
-        for character in chunk.replacingOccurrences(of: eventsPrefix, with: "") {
+        let deletedEventsStr = eventsStr.replacingOccurrences(of: deletedEventsPrefix, with: "")
+        for character in deletedEventsStr {
             event.append(character)
             if character == "{" {
                 stack.append(character)
@@ -368,31 +393,24 @@ public class Connection {
             }
             if stack.isEmpty {
                 if event != "," {
-                    eventsStrings.append(event)
+                    deletedEventsStrs.append(event)
                 }
                 event = ""
             }
         }
+        
         if !stack.isEmpty {
             remaining = event
         }
-
-        // Strings to json
         
-        let eventsOpt: [Event?] = eventsStrings.map { event in
-            if let data = event.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event {
-                return dictionary } else {  return nil }
-        }
+        let meta = utils.stringToJson(metaStr)
+        let events: [Event] = eventsStrs.map({ utils.stringToJson($0) ?? Json() })
+        let eventsDeleted: [Event] = deletedEventsStrs.map({ utils.stringToJson($0) ?? Json() })
         
-        let events: [Event] = eventsOpt.filter({$0 != nil}).map({$0!})
-        events.forEach({forEachEvent($0)})
+        events.forEach(forEachEvent)
+        eventsDeleted.forEach(forEachEvent)
         
-        var meta: Json? = nil
-        if let data = metaString.data(using: .utf8), let json = try? JSONSerialization.jsonObject(with: data), let dictionary = json as? Event {
-            meta = dictionary
-        }
-        
-        return (meta: meta, eventsCount: events.count, remaining: remaining)
+        return (meta: meta, eventsCount: events.count, eventDeletionsCount: eventsDeleted.count, remaining: remaining)
     }
     
 }
