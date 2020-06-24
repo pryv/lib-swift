@@ -7,3 +7,4 @@ build
 Example/*.xcodeproj/*
 Example/!*.xcodeproj/project.pbxproj
 Example/!*.xcworkspace/contents.xcworkspacedata
+Example/!*.xcworkspace/xcuserdata/*.xcuserdatad/*
