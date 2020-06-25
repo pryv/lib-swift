@@ -79,6 +79,14 @@ public class Service {
         return pryvServiceInfo
     }
     
+    /// Returns service info parameters
+    /// - Returns: the cached content of the service info
+    /// # Note
+    ///     service.info() needs to be called first, otherwise returns `nil`
+    public func infoSync() -> PryvServiceInfo? {
+        return pryvServiceInfo
+    }
+    
     /// Constructs the API endpoint from this service and the username and token
     /// - Parameters:
     ///   - username
@@ -98,15 +106,18 @@ public class Service {
     ///   - username
     ///   - password
     ///   - appId
-    ///   - domain: domain parameter for the `Origin` header, according to the [trusted apps verification](https://api.pryv.com/reference/#trusted-apps-verification)
+    ///   - domain: domain parameter for the `Origin` header, according to the [trusted apps verification](https://api.pryv.com/reference/#trusted-apps-verification/)
     /// - Returns: the user's connection to the appId or nil if problem is encountered
-    public func login(username: String, password: String, appId: String, domain: String) -> Connection? {
+    public func login(username: String, password: String, appId: String, domain: String? = nil) -> Connection? {
         var connection: Connection? = nil
         let loginPayload: Json = ["username": username, "password": password, "appId": appId]
         
         guard let apiEndpoint = apiEndpointFor(username: username) else { return nil }
         let endpoint = apiEndpoint.hasSuffix("/") ? apiEndpoint + loginPath : apiEndpoint + "/" + loginPath
-        let origin = "https://login.\(domain)"
+        var origin: String? = nil
+        if let _ = domain {
+            origin = "https://login.\(domain!)"
+        }
         
         if let token = sendLoginRequest(endpoint: endpoint, payload: loginPayload, origin: origin) {
             if let apiEndpoint = self.apiEndpointFor(username: username, token: token) {
@@ -120,7 +131,7 @@ public class Service {
     /// Sends an auth request to the `access` field of the service info and polls the received url
     /// such that the callback function is called when the state of the connection is changed
     /// - Parameters:
-    ///   - authPayload: the auth request json formatted according to [the API reference](https://api.pryv.com/reference/#auth-request)
+    ///   - authSettings: the auth request json formatted according to [the API reference](https://api.pryv.com/reference/#auth-request)
     ///   - stateChangedCallback: function that will be called as soon as the state of the authentication changes
     /// - Returns: the `authUrl` field from the response to the service info
     ///
@@ -143,12 +154,12 @@ public class Service {
     ///            }
     ///    }
     ///    ```
-    public func setUpAuth(authPayload: Json, stateChangedCallback: @escaping (AuthResult) -> ()) -> String? {
+    public func setUpAuth(authSettings: Json, stateChangedCallback: @escaping (AuthResult) -> ()) -> String? {
         let serviceInfo = pryvServiceInfo ?? info()
         guard let registerUrl = serviceInfo?.register else { print("problem encountered when getting the register url") ; return nil }
         let endpoint = registerUrl.hasSuffix("/") ? registerUrl + authPath : registerUrl + "/" + authPath
         
-        guard let (authUrl, poll, poll_ms) = sendAuthRequest(endpoint: endpoint, payload: authPayload) else { print("problem encountered when getting the result for auth request") ; return nil }
+        guard let (authUrl, poll, poll_ms) = sendAuthRequest(endpoint: endpoint, payload: authSettings) else { print("problem encountered when getting the result for auth request") ; return nil }
         self.pollingInfo = (poll: poll, poll_ms: poll_ms, callback: stateChangedCallback)
         
         return authUrl
@@ -157,11 +168,6 @@ public class Service {
     /// Interrupts the timer and stops the polling for the authentication request
     public func interruptAuth() {
         timer?.invalidate()
-    }
-    
-    /// This function will be implemented later, according to the documentation on [lib-js](https://github.com/pryv/lib-js#pryvbrowser--visual-assets)
-    public func assets() {
-        // TODO
     }
     
     // MARK: - private helpers functions for the library
@@ -219,14 +225,16 @@ public class Service {
     ///   - payload: the json formatted payload for the request: username, password and app id
     ///   - origin: the field of the form `https://login.{domain}` to add to the `Origin` header
     /// - Returns: the token received from the request
-    private func sendLoginRequest(endpoint: String, payload: Json, origin: String) -> String? {
+    private func sendLoginRequest(endpoint: String, payload: Json, origin: String? = nil) -> String? {
         guard let url = URL(string: endpoint) else { print("problem encountered: cannot access register url \(endpoint)") ; return nil }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.addValue(origin, forHTTPHeaderField: "Origin")
         request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+        if let _ = origin {
+            request.addValue(origin!, forHTTPHeaderField: "Origin")
+        }
 
         var token: String? = nil
         let group = DispatchGroup()
