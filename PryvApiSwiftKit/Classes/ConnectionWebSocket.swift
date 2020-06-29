@@ -24,14 +24,14 @@ public class ConnectionWebSocket {
     /// Creates a connection object from the api endpoint
     /// - Parameter apiEndpoint
     public init(apiEndpoint: String) {
-        let username = utils.extractUsername(from: apiEndpoint)
+        let username = utils.extractUsername(from: apiEndpoint) ?? ""
         let (endpoint, token) = utils.extractTokenAndEndpoint(from: apiEndpoint) ?? ("", nil)
-        let path = "\(username ?? "")?auth=\(token ?? "")"
+        let path = "\(username)"
         let string = endpoint.hasSuffix("/") ? endpoint + path : endpoint + "/" + path
         
         // Connecting to the socket
-        manager = SocketManager(socketURL: URL(string: string)!, config: [.log(true), .forceWebsockets(true)])
-        socket = manager.defaultSocket
+        manager = SocketManager(socketURL: URL(string: string)!, config: [.log(true), .connectParams(["auth": token ?? ""])])
+        socket = manager.socket(forNamespace: "/" + username + "/" + username)
     }
     
     // MARK: - public library
