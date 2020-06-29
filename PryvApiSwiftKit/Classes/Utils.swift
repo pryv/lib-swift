@@ -62,6 +62,13 @@ public class Utils {
         return res2[0]
     }
     
+    /// Parses the socket io URL and extracts the endpoint, the token and the namespace
+    /// - Parameter url
+    /// - Returns: the endpoint, the token and the namespace
+    public func parseSocketIOURL(url: String) -> (endpoint: String, token: String, namespace: String) {
+        // TODO
+    }
+    
     /// Constructs the API endpoint from the endpoint and the token
     /// - Parameters:
     ///   - endpoint

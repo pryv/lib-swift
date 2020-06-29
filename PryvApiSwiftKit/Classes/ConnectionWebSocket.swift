@@ -21,17 +21,14 @@ public class ConnectionWebSocket {
     private let manager: SocketManager!
     private var socket: SocketIOClient!
     
-    /// Creates a connection object from the api endpoint
-    /// - Parameter apiEndpoint
-    public init(apiEndpoint: String) {
-        let username = utils.extractUsername(from: apiEndpoint) ?? ""
-        let (endpoint, token) = utils.extractTokenAndEndpoint(from: apiEndpoint) ?? ("", nil)
-        let path = "\(username)"
-        let string = endpoint.hasSuffix("/") ? endpoint + path : endpoint + "/" + path
+    /// Initialize the socket io connection with a URL
+    /// - Parameter url
+    public init(url: String) {
+        let (endpoint, token, namespace) = utils.parseSocketIOURL(url)
         
         // Connecting to the socket
-        manager = SocketManager(socketURL: URL(string: string)!, config: [.log(true), .connectParams(["auth": token ?? ""])])
-        socket = manager.socket(forNamespace: "/" + username + "/" + username)
+        manager = SocketManager(socketURL: URL(string: endpoint)!, config: [.log(true), .connectParams(["auth": token])])
+        socket = manager.socket(forNamespace: namespace)
     }
     
     // MARK: - public library
