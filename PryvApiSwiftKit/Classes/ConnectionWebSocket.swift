@@ -22,12 +22,14 @@ public class ConnectionWebSocket {
     private var socket: SocketIOClient!
     
     /// Initialize the socket io connection with a URL
-    /// - Parameter url
-    public init(url: String) {
+    /// - Parameters:
+    ///   - url
+    ///   - log: whether to show the socket io connection logs (false, by default)
+    public init(url: String, log: Bool = false) {
         let (endpoint, connectParams, namespace) = utils.parseSocketIOURL(url: url)
         
         // Connecting to the socket
-        manager = SocketManager(socketURL: URL(string: endpoint)!, config: [.log(true), .connectParams(connectParams)])
+        manager = SocketManager(socketURL: URL(string: endpoint)!, config: [.log(log), .connectParams(connectParams)])
         socket = manager.socket(forNamespace: namespace)
     }
     
