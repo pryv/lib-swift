@@ -1,6 +1,7 @@
 platform :ios, '10.0'
 use_frameworks!
 target 'PryvApiSwiftKit_Tests' do
+  pod 'Mocker'
   pod 'Alamofire'
   pod 'PryvApiSwiftKit', :path => '../'
   pod 'Socket.IO-Client-Swift', '~> 15.2.0'

@@ -12,7 +12,7 @@ import Promises
 public typealias Json = [String: Any]
 
 /// Data structure holding the service info
-public struct PryvServiceInfo: Codable {
+public struct PryvServiceInfo: Codable, Equatable {
     public var register: String
     public var access: String
     public var api: String
@@ -25,7 +25,7 @@ public struct PryvServiceInfo: Codable {
 
 
 @available(iOS 10.0, *)
-public class Service {
+public class Service: Equatable {
     private let utils = Utils()
     private let loginPath = "auth/login"
     private let authPath = "access"
@@ -244,6 +244,13 @@ public class Service {
     /// Interrupts the timer and stops the polling for the authentication request
     public func interruptAuth() {
         timer?.invalidate()
+    }
+    
+    public static func == (lhs: Service, rhs: Service) -> Bool {
+        let lhsValue = try? await(lhs.info())
+        let rhsValue = try? await(rhs.info())
+        
+        return lhsValue == rhsValue
     }
     
     // MARK: - private helpers functions for the library

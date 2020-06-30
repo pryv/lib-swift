@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import Mocker
 @testable import Promises
 @testable import PryvApiSwiftKit
 
@@ -32,6 +33,10 @@ class ServiceTests: XCTestCase {
     override func setUp() {
         super.setUp()
         continueAfterFailure = false
+        
+        Mocker.ignore(URL(string: "https://reg.pryv.me/access")!)
+        Mocker.ignore(URL(string: "https://reg.pryv.me/service/info")!)
+        Mocker.ignore(URL(string: "https://testuser.pryv.me/auth/login")!)
 
         service = Service(pryvServiceInfoUrl: pryvServiceInfoUrl)
         customService = Service(pryvServiceInfoUrl: pryvServiceInfoUrl, serviceCustomization: serviceCustomization)
