@@ -64,11 +64,12 @@ public class Service {
     /// # Example #
     /// - name of the platform: `let serviceName = service.info().name`
     /// See `PryvServiceInfo` for details on available properties
+    /// - Parameter forceFetch: if true, will force fetching service info
     /// - Returns: the fetched service info object, customized if needed, or nil if problem is encountered while fetching
-    public func info() -> PryvServiceInfo? {
-        pryvServiceInfo = sendServiceInfoRequest()
-        if let custom = serviceCustomization {
-            customizeService(with: custom)
+    public func info(forceFetch: Bool = false) -> PryvServiceInfo? {
+        if forceFetch || pryvServiceInfo == nil {
+            pryvServiceInfo = sendServiceInfoRequest()
+            customizeServiceInfo(with: serviceCustomization)
         }
         
         return pryvServiceInfo
@@ -168,15 +169,18 @@ public class Service {
     // MARK: - private helpers functions for the library
     
     /// Customizes the service info parameters
-    private func customizeService(with json: Json) {
-        if let register = json["register"] as? String { pryvServiceInfo?.register = register }
-        if let access = json["access"] as? String { pryvServiceInfo?.access = access }
-        if let api = json["api"] as? String { pryvServiceInfo?.api = api }
-        if let name = json["name"] as? String { pryvServiceInfo?.name = name }
-        if let home = json["home"] as? String { pryvServiceInfo?.home = home }
-        if let support = json["support"] as? String { pryvServiceInfo?.support = support }
-        if let terms = json["terms"] as? String { pryvServiceInfo?.terms = terms }
-        if let eventTypes = json["eventTypes"] as? String { pryvServiceInfo?.eventTypes = eventTypes }
+    /// - Parameter json: the json describing the modifications to apply
+    private func customizeServiceInfo(with json: Json?) {
+        guard let modifications = json else { return }
+        
+        if let register = modifications["register"] as? String { pryvServiceInfo?.register = register }
+        if let access = modifications["access"] as? String { pryvServiceInfo?.access = access }
+        if let api = modifications["api"] as? String { pryvServiceInfo?.api = api }
+        if let name = modifications["name"] as? String { pryvServiceInfo?.name = name }
+        if let home = modifications["home"] as? String { pryvServiceInfo?.home = home }
+        if let support = modifications["support"] as? String { pryvServiceInfo?.support = support }
+        if let terms = modifications["terms"] as? String { pryvServiceInfo?.terms = terms }
+        if let eventTypes = modifications["eventTypes"] as? String { pryvServiceInfo?.eventTypes = eventTypes }
     }
     
     /// Decodes json data into a PryvServiceInfo object
