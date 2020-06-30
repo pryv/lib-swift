@@ -41,4 +41,5 @@ Pod::Spec.new do |s|
    s.dependency 'Mocker'
    s.dependency 'Alamofire'
    s.dependency 'Socket.IO-Client-Swift'
+   s.dependency 'PromisesSwift'
 end

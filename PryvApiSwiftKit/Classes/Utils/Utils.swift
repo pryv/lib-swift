@@ -87,7 +87,7 @@ public class Utils {
     ///   - endpoint
     ///   - token (optionnal)
     /// - Returns: API Endpoint
-    public func buildPryvApiEndPoint(endpoint: String, token: String?) -> String? {
+    public func buildPryvApiEndpoint(endpoint: String, token: String?) -> String {
         var ep = endpoint
         if !ep.hasSuffix("/") { 
           ep += "/" // add a trailing '/' to end point if missing

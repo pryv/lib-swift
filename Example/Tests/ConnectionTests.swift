@@ -10,13 +10,14 @@ import XCTest
 import Mocker
 import Alamofire
 @testable import PryvApiSwiftKit
+@testable import Promises
 
 class ConnectionTests: XCTestCase {
-    
-    let connection = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
-        .login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
     private var a: Int?
-    
+    private var connection: Connection?
+    private let connectionPromise = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
+            .login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
+
     private let callBatches: [APICall] = [
         [
             "method": "events.create",
@@ -37,12 +38,18 @@ class ConnectionTests: XCTestCase {
             ]
         ]
     ]
-    
+
     override func setUp() {
         super.setUp()
         continueAfterFailure = false
+        
+        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssertNotNil(connectionPromise.value)
+        XCTAssertNil(connectionPromise.error)
+        
+        connection = connectionPromise.value
     }
-    
+
     func testCallBatchCreate() {
         let expectation = self.expectation(description: "call-batch-create")
         var events = [Event]()
@@ -65,13 +72,13 @@ class ConnectionTests: XCTestCase {
                 expectation.fulfill()
             }
         }
-        
+
         waitForExpectations(timeout: 5.0, handler: nil)
-        
+
         XCTAssertFalse(error)
         XCTAssertNotNil(results)
         XCTAssertEqual(results!.count, 2)
-        
+
         XCTAssertEqual(events.count, 2)
 
         let event0 = events[0]
@@ -96,13 +103,13 @@ class ConnectionTests: XCTestCase {
         let content = event0["content"] as? Int
         XCTAssertNotNil(content)
         XCTAssertEqual(content!, 90)
-        
+
         let event1 = events[1]
         XCTAssertNotNil(event1)
         XCTAssertNotNil(a)
         XCTAssertEqual(a, 2)
     }
-    
+
     func testCallBatchGet() {
         let apiCalls: [APICall] = [[
             "method": "events.get",
@@ -111,7 +118,7 @@ class ConnectionTests: XCTestCase {
                 "modifiedSince": 1546297200.0
             ]
         ]]
-        
+
         let expectation = self.expectation(description: "call-batch-get")
         var results: [Json]? = nil
         var error = false
@@ -122,60 +129,60 @@ class ConnectionTests: XCTestCase {
             if error || results == nil {
                 expectation.fulfill()
             } else {
-            
+
                 for result in results! {
                     if let json = result as? [String: [Event]] {
                         let error = json["error"]
                         XCTAssertNil(error)
-                        
+
                         events.append(contentsOf: json["events"] ?? [Event]())
                         events.append(contentsOf: json["eventDeletions"] ?? [Event]())
                     }
                 }
-                
+
                 expectation.fulfill()
             }
         }
-        
+
         waitForExpectations(timeout: 5.0, handler: nil)
-        
+
         XCTAssertFalse(error)
         XCTAssertNotNil(results)
         XCTAssertEqual(results!.count, 1)
-        
+
         XCTAssertNotNil(events)
         XCTAssertGreaterThanOrEqual(events.count, 20) // limit + deletions
     }
-    
+
     func testAddPointsToHFEvent() {
         let fields = ["deltaTime", "latitude", "longitude", "altitude"]
         let points = [[0, 10.2, 11.2, 500], [1, 10.2, 11.2, 510], [2, 10.2, 11.2, 520]]
         let expectation = self.expectation(description: "add-points-hf")
-        
+
         var error = false
         connection?.addPointsToHFEvent(eventId: "cj3wro4aj80yrx0yqmtm5cfxc", fields: fields, points: points)  { err in
            error = err != nil
            expectation.fulfill()
         }
-       
+
         waitForExpectations(timeout: 5.0, handler: nil)
         XCTAssertFalse(error)
     }
-    
+
     func testStreamedGetEvents() { // big set of events, streaming and chunks for sure
         print("------ Test streamed get events")
         testStreamedGetEvents(limit: 10000)
     }
-    
+
     func testStreamedGetEventsWithDeletions() {
         print("------ Test streamed get events with deletions")
         testStreamedGetEvents(includeDeletions: true) // Note: make sure there are deletion before running this test
     }
-    
+
     func testCreateEvent() {
         let payload: Json = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
         let expectation = self.expectation(description: "create-event")
-        
+
         var event: Event? = nil
         var error = false
         connection?.createEventWithFormData(event: payload) { res, err in
@@ -183,9 +190,9 @@ class ConnectionTests: XCTestCase {
             event = res
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: 5.0, handler: nil)
-        
+
         XCTAssertFalse(error)
         XCTAssertNotNil(event)
 
@@ -205,12 +212,12 @@ class ConnectionTests: XCTestCase {
         XCTAssertNotNil(content)
         XCTAssertEqual(content!, 90)
     }
-    
+
     func testCreateEventWithFile() {
         let payload: Event = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
         let file = Bundle(for: ConnectionTests.self).url(forResource: "sample", withExtension: "pdf")!
         let expectation = self.expectation(description: "create-event-file")
-        
+
         var error = false
         var event: Event? = nil
         connection?.createEventWithFile(event: payload, filePath: file.absoluteString, mimeType: "application/pdf") { res, err in
@@ -218,9 +225,9 @@ class ConnectionTests: XCTestCase {
             event = res
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: 5.0, handler: nil)
-        
+
         XCTAssertNotNil(event)
         XCTAssertFalse(error)
 
@@ -240,24 +247,24 @@ class ConnectionTests: XCTestCase {
 
         // Note: No test for the function `createEventWithFormData` is done as the function `createEventWithFile` uses already this function.
     }
-    
+
     func testAddFileToEvent() {
         let payload: Event = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
         let expectationCreate = self.expectation(description: "create-event")
         let file = Bundle(for: ConnectionTests.self).url(forResource: "sample", withExtension: "pdf")!
-        
+
         var event: Event? = nil
         connection?.createEventWithFormData(event: payload) { res, _ in
             event = res
             expectationCreate.fulfill()
         }
-        
+
         waitForExpectations(timeout: 5.0, handler: nil)
         XCTAssertNotNil(event)
-        
+
         let eventId = event!["id"] as? String
         XCTAssertNotNil(eventId)
-        
+
         var error = false
         let expectationAddFile = self.expectation(description: "add-file-event")
         connection?.addFileToEvent(eventId: eventId!, filePath: file.absoluteString, mimeType: "application/pdf") { res, err in
@@ -265,40 +272,40 @@ class ConnectionTests: XCTestCase {
             event = res
             expectationAddFile.fulfill()
         }
-        
+
         waitForExpectations(timeout: 5.0, handler: nil)
         XCTAssertFalse(error)
         XCTAssertNotNil(event)
-        
+
         let attachments = event!["attachments"] as? [Any]
         XCTAssertNotNil(attachments)
-        
+
         let attachment = attachments![0] as? [String: Any]
         XCTAssertNotNil(attachment)
-        
+
         let fileName = attachment!["fileName"] as? String
         XCTAssertNotNil(fileName)
         XCTAssertEqual(fileName!, "sample.pdf")
-        
+
         let type = attachment!["type"] as? String
         XCTAssertNotNil(type)
         XCTAssertEqual(type!, "application/pdf")
     }
-    
+
     func testGetImagePreview() {
         let apiEndpoint = "https://token@username.pryv.me/"
         let expectedData = Bundle(for: ConnectionTests.self).url(forResource: "corona", withExtension: "jpg")!.dataRepresentation
         let mockGet = Mock(url: URL(string: apiEndpoint + "previews/events/eventId?w=256&h=256&auth=token")!, dataType: .imagePNG, statusCode: 200, data: [.get: expectedData])
         mockGet.register()
-        
+
         let c = Connection(apiEndpoint: apiEndpoint)
         let data = c.getImagePreview(eventId: "eventId")
         XCTAssertEqual(data, expectedData)
     }
-    
+
     private func testStreamedGetEvents(includeDeletions: Bool = false, limit: Int = 20, timeout: Double = 15.0) {
         let expectation = self.expectation(description: "streaming")
-        
+
         var error = false
         var eventsCount = 0
         var eventDeletionsCount = 0
@@ -307,7 +314,7 @@ class ConnectionTests: XCTestCase {
         if includeDeletions {
             params["modifiedSince"] = 1592837799.925
         }
-        
+
         connection?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) ; return }) { result in
             if let count = result["eventsCount"] as? Int, let metaData = result["meta"] as? Json {
                 eventsCount = count
@@ -329,9 +336,9 @@ class ConnectionTests: XCTestCase {
                 expectation.fulfill()
             }
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         XCTAssertFalse(error)
         XCTAssertEqual(meta?.count, 3)
         if includeDeletions {
@@ -341,7 +348,7 @@ class ConnectionTests: XCTestCase {
             XCTAssertEqual(eventsCount, limit)
         }
     }
-    
+
     // Note: the part of connection using socket.io is tested in the [example application](https://github.com/pryv/app-swift-example)
-    
+
 }
