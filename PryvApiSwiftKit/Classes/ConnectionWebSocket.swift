@@ -24,10 +24,10 @@ public class ConnectionWebSocket {
     /// Initialize the socket io connection with a URL
     /// - Parameter url
     public init(url: String) {
-        let (endpoint, token, namespace) = utils.parseSocketIOURL(url)
+        let (endpoint, connectParams, namespace) = utils.parseSocketIOURL(url: url)
         
         // Connecting to the socket
-        manager = SocketManager(socketURL: URL(string: endpoint)!, config: [.log(true), .connectParams(["auth": token])])
+        manager = SocketManager(socketURL: URL(string: endpoint)!, config: [.log(true), .connectParams(connectParams)])
         socket = manager.socket(forNamespace: namespace)
     }
     
