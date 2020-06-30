@@ -20,7 +20,7 @@ public class Service {
     private var timer: Timer?
     
     private var pryvServiceInfoUrl: String
-    private var serviceCustomization: Json
+    private var serviceCustomization: Json?
     
     private var pryvServiceInfo: PryvServiceInfo? = nil
     
@@ -52,17 +52,10 @@ public class Service {
     // MARK: - public library
     
     /// Inits a service with the service info url and no custom element
-    /// - Parameter pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: `https://access.{domain}/service/info`
-    public init(pryvServiceInfoUrl: String) {
-        self.pryvServiceInfoUrl = pryvServiceInfoUrl
-        self.serviceCustomization = Json()
-    }
-    
-    /// Inits a service with the service info url and custom elements
     /// - Parameters:
     ///   - pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: [https://access.{domain}/service/info](https://access.{domain}/service/info)
     ///   - serviceCustomization: a json formatted dictionary corresponding to the customizations of the service
-    public init(pryvServiceInfoUrl: String, serviceCustomization: Json) {
+    public init(pryvServiceInfoUrl: String, serviceCustomization: Json? = nil) {
         self.pryvServiceInfoUrl = pryvServiceInfoUrl
         self.serviceCustomization = serviceCustomization
     }
@@ -74,7 +67,9 @@ public class Service {
     /// - Returns: the fetched service info object, customized if needed, or nil if problem is encountered while fetching
     public func info() -> PryvServiceInfo? {
         pryvServiceInfo = sendServiceInfoRequest()
-        customizeService()
+        if let custom = serviceCustomization {
+            customizeService(with: custom)
+        }
         
         return pryvServiceInfo
     }
@@ -173,15 +168,15 @@ public class Service {
     // MARK: - private helpers functions for the library
     
     /// Customizes the service info parameters
-    private func customizeService() {
-        if let register = serviceCustomization["register"] as? String { pryvServiceInfo?.register = register }
-        if let access = serviceCustomization["access"] as? String { pryvServiceInfo?.access = access }
-        if let api = serviceCustomization["api"] as? String { pryvServiceInfo?.api = api }
-        if let name = serviceCustomization["name"] as? String { pryvServiceInfo?.name = name }
-        if let home = serviceCustomization["home"] as? String { pryvServiceInfo?.home = home }
-        if let support = serviceCustomization["support"] as? String { pryvServiceInfo?.support = support }
-        if let terms = serviceCustomization["terms"] as? String { pryvServiceInfo?.terms = terms }
-        if let eventTypes = serviceCustomization["eventTypes"] as? String { pryvServiceInfo?.eventTypes = eventTypes }
+    private func customizeService(with json: Json) {
+        if let register = json["register"] as? String { pryvServiceInfo?.register = register }
+        if let access = json["access"] as? String { pryvServiceInfo?.access = access }
+        if let api = json["api"] as? String { pryvServiceInfo?.api = api }
+        if let name = json["name"] as? String { pryvServiceInfo?.name = name }
+        if let home = json["home"] as? String { pryvServiceInfo?.home = home }
+        if let support = json["support"] as? String { pryvServiceInfo?.support = support }
+        if let terms = json["terms"] as? String { pryvServiceInfo?.terms = terms }
+        if let eventTypes = json["eventTypes"] as? String { pryvServiceInfo?.eventTypes = eventTypes }
     }
     
     /// Decodes json data into a PryvServiceInfo object
@@ -376,4 +371,16 @@ public class Service {
         return newState
     }
 
+}
+
+/// Data structure holding the service info
+public struct PryvServiceInfo: Codable {
+    public var register: String
+    public var access: String
+    public var api: String
+    public var name: String
+    public var home: String
+    public var support: String
+    public var terms: String
+    public var eventTypes: String
 }

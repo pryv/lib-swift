@@ -27,7 +27,6 @@
 		26102C252C4B4535F2C3713C8220C64F /* Mocker-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B9CA8533679D7232B8A8FFE812E787 /* Mocker-dummy.m */; };
 		2682171B5485F5CFACFB940AB43E852B /* SocketEngineWebsocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63927C30D2712FD64B12624C104CF773 /* SocketEngineWebsocket.swift */; };
 		27E59A11A2743B0595CDE3A08675EAE1 /* DispatchQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6508DF8ABD9815F861CCBE0DC110358 /* DispatchQueue+Alamofire.swift */; };
-		2884AE6C2881BDA5DC0D0A2F0310F4DC /* Data+append.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0191552EC2E643E100235EC34FD6AFCA /* Data+append.swift */; };
 		2DF9244583CAC3DD2E558E8E8F950528 /* SocketIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA36FFB859329C09C033E1AC1FC2BCA5 /* SocketIO.framework */; };
 		3692EE236383E49E151C18FAE6B4A134 /* Pods-PryvApiSwiftKit_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E4266BBBDBF79AE97FED94EA4580234 /* Pods-PryvApiSwiftKit_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		381FF05F8B4F611EE9C2FDBE4457BB89 /* SessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07F6B9C23B8ACEECD4CE79F29CC851B9 /* SessionDelegate.swift */; };
@@ -40,11 +39,9 @@
 		4A3C9A63B7FFC68192797B6E1A92945A /* SocketPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D09314F278554D010602A1EA469C0A /* SocketPacket.swift */; };
 		4AEC050FA7D5ED52FDA9DF50EA3560DF /* ParameterEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819D34F445DD83CDD12BD40A1AFC25A7 /* ParameterEncoder.swift */; };
 		4C7566ED82F3B39B93854DE5CEA50B23 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C028C0D136FBEC6E79CD19A95EF57A0 /* WebSocket.swift */; };
-		4D852AA2E487FB0EB12A113634F12087 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744A9C516F00C467F0CA9A9CE34FFE4F /* Utils.swift */; };
 		52CC00C1126E944A201462AF39D64810 /* SocketEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9104E8DF49E1589EE96B8B78059DACCE /* SocketEngine.swift */; };
 		5655469A3A78BEC9D531A3763DEB3929 /* PryvApiSwiftKit-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 773E0D78088BEE6E84866931CDE64760 /* PryvApiSwiftKit-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C95B58B7EDBF6800915E00B76A22E44 /* SSLClientCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5B02958E1B6BA389A3841AB12222F1 /* SSLClientCertificate.swift */; };
-		622BEA81DA9C086D4B009184965A6399 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C66341D41EA0E48C82FDFF99A0B103 /* Media.swift */; };
 		628C906D7B045D21542D87A2E244D709 /* SocketEnginePollable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4690FAD459CEBE58E9C6F42C9923EE8 /* SocketEnginePollable.swift */; };
 		6546D728B69398F93B506845141EBD61 /* EventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A87562D96FA4FE4A36719675888D7F2 /* EventMonitor.swift */; };
 		666EC5C8356E6D4448A2FE7BEE77AD88 /* RedirectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAE9B2D19C99F9362611CC57FDF8BFE /* RedirectHandler.swift */; };
@@ -79,8 +76,10 @@
 		ABA85887A41495358C83CE3F3030EDEA /* CachedResponseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD1BF3EAC0EA3A85189DF46E1956973 /* CachedResponseHandler.swift */; };
 		AEDEB2D9BF912E87241C092AB96D6D1D /* Compression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C77595642B049D2200C1ABDD363298E /* Compression.swift */; };
 		B138EA115A4E80168375BBCD64547288 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 696D98D797EEB4DCBE1631E7CA790E7D /* Foundation.framework */; };
+		B37BB19424AB4D0F007D5BE2 /* Data+append.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37BB19124AB4D0F007D5BE2 /* Data+append.swift */; };
+		B37BB19524AB4D0F007D5BE2 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37BB19224AB4D0F007D5BE2 /* Utils.swift */; };
+		B37BB19624AB4D0F007D5BE2 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37BB19324AB4D0F007D5BE2 /* Media.swift */; };
 		B6846314FCC11D6C7DE3E4D03D827F01 /* Mocker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 486D789A0B5F69F00AD9911CE27196E9 /* Mocker.framework */; };
-		BEE3B8CA91AEB4E81DBD74627B5C6C12 /* PryvServiceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8756FA8D61BF96FB42A25D343F2CFE7B /* PryvServiceInfo.swift */; };
 		C1C5B050B55C15103ABC81769551A283 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7313A58DE200CA56C4B52006A877B7DF /* Response.swift */; };
 		C1F1DB6A9CBDE584D09BA1613AAD4F9D /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2FC9FDB22FD348C7EB92A07D1E66CE /* Alamofire.swift */; };
 		C2570081FD1276748D5B58664CABB055 /* SocketAckManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA8E134E8527C0A43DCAC0F486F3AE43 /* SocketAckManager.swift */; };
@@ -177,8 +176,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		001C8144775D2B16B2931F3E78E6DDF7 /* Pods_PryvApiSwiftKit_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_PryvApiSwiftKit_Tests.framework; path = "Pods-PryvApiSwiftKit_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0191552EC2E643E100235EC34FD6AFCA /* Data+append.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Data+append.swift"; path = "PryvApiSwiftKit/Classes/Data+append.swift"; sourceTree = "<group>"; };
+		001C8144775D2B16B2931F3E78E6DDF7 /* Pods_PryvApiSwiftKit_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PryvApiSwiftKit_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		027E61C213BB7B0854ACF7617507FAFB /* ResponseSerialization.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ResponseSerialization.swift; path = Source/ResponseSerialization.swift; sourceTree = "<group>"; };
 		04A216288E0E57F52928352CEE1B128B /* Mocker-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Mocker-umbrella.h"; sourceTree = "<group>"; };
 		05E85B9446509198E6BC86D95398F285 /* AlamofireExtended.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AlamofireExtended.swift; path = Source/AlamofireExtended.swift; sourceTree = "<group>"; };
@@ -198,11 +196,11 @@
 		1B1BA21289C09360C59BCDEE35B218D2 /* StringEncoding+Alamofire.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "StringEncoding+Alamofire.swift"; path = "Source/StringEncoding+Alamofire.swift"; sourceTree = "<group>"; };
 		1C70AD2ACD8B2D456C545556D855ADB8 /* PryvApiSwiftKit-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PryvApiSwiftKit-prefix.pch"; sourceTree = "<group>"; };
 		1C8A2C311F9B7B4EE15E282DF3FA73E9 /* Alamofire-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Alamofire-dummy.m"; sourceTree = "<group>"; };
-		1D4AE396CC91228FE660B84E90FBD20A /* Mocker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Mocker.framework; path = Mocker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D4AE396CC91228FE660B84E90FBD20A /* Mocker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Mocker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF1A300B232AFB3F987CE34872D7F54 /* URLSessionConfiguration+Alamofire.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "URLSessionConfiguration+Alamofire.swift"; path = "Source/URLSessionConfiguration+Alamofire.swift"; sourceTree = "<group>"; };
 		20027CC135891F44F32A84DD57DAB03A /* PryvApiSwiftKit-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "PryvApiSwiftKit-dummy.m"; sourceTree = "<group>"; };
-		2147D56E50BCA0DB07FFEB6B01EA9EEC /* PryvApiSwiftKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PryvApiSwiftKit.framework; path = PryvApiSwiftKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		225BCED4C8D116676384FFFC331FA72E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		2147D56E50BCA0DB07FFEB6B01EA9EEC /* PryvApiSwiftKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PryvApiSwiftKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		225BCED4C8D116676384FFFC331FA72E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		25BFF50871D3BB9B64AB0E17BB97FF04 /* PryvApiSwiftKit.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = PryvApiSwiftKit.modulemap; sourceTree = "<group>"; };
 		25EDFB2BB2807E2E5E0DD5633313957F /* HTTPMethod.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HTTPMethod.swift; path = Source/HTTPMethod.swift; sourceTree = "<group>"; };
 		2C7C9DB1F31F22DDC25F6DECCB11E530 /* SocketManagerSpec.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SocketManagerSpec.swift; path = Source/SocketIO/Manager/SocketManagerSpec.swift; sourceTree = "<group>"; };
@@ -214,7 +212,7 @@
 		3C77595642B049D2200C1ABDD363298E /* Compression.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Compression.swift; path = Sources/Starscream/Compression.swift; sourceTree = "<group>"; };
 		3C98D6DF254E4D9FD3AD6068E5308F0A /* Notifications.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Notifications.swift; path = Source/Notifications.swift; sourceTree = "<group>"; };
 		3DD1BF3EAC0EA3A85189DF46E1956973 /* CachedResponseHandler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CachedResponseHandler.swift; path = Source/CachedResponseHandler.swift; sourceTree = "<group>"; };
-		401F23ABD90B9EFD72AF1ADC1A7CC05D /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		401F23ABD90B9EFD72AF1ADC1A7CC05D /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		43C59F51DF10341965902516A42BAED7 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		44D09314F278554D010602A1EA469C0A /* SocketPacket.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SocketPacket.swift; path = Source/SocketIO/Parse/SocketPacket.swift; sourceTree = "<group>"; };
 		458E8B6E00CD66CA987330DCAE55AF84 /* RequestTaskMap.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RequestTaskMap.swift; path = Source/RequestTaskMap.swift; sourceTree = "<group>"; };
@@ -224,12 +222,12 @@
 		4EAE9B2D19C99F9362611CC57FDF8BFE /* RedirectHandler.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RedirectHandler.swift; path = Source/RedirectHandler.swift; sourceTree = "<group>"; };
 		4FF2C0C87271CB967B20C326942CAC54 /* SocketEngineClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SocketEngineClient.swift; path = Source/SocketIO/Engine/SocketEngineClient.swift; sourceTree = "<group>"; };
 		508CE04EB37399C702084017CFC4FA01 /* PryvApiSwiftKit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = PryvApiSwiftKit.xcconfig; sourceTree = "<group>"; };
-		50C0B0879B7086918A819F704BF40B4B /* SocketIO.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SocketIO.framework; path = "Socket.IO-Client-Swift.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		50C0B0879B7086918A819F704BF40B4B /* SocketIO.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SocketIO.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50CB8177BEB8FD26CCD31F6669679190 /* Socket.IO-Client-Swift.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Socket.IO-Client-Swift.xcconfig"; sourceTree = "<group>"; };
 		55A6CB2077138A13CCEA95B65BCB88B8 /* Connection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Connection.swift; path = PryvApiSwiftKit/Classes/Connection.swift; sourceTree = "<group>"; };
 		599E081599F3E22B87B692E618E2E17D /* Starscream-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Starscream-umbrella.h"; sourceTree = "<group>"; };
 		5C789FA4BEFB6D28AA30C180AD845BB6 /* URLEncodedFormEncoder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = URLEncodedFormEncoder.swift; path = Source/URLEncodedFormEncoder.swift; sourceTree = "<group>"; };
-		5D797E9A5C5782CE845840781FA1CC81 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Alamofire.framework; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D797E9A5C5782CE845840781FA1CC81 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		62852FC143F9204E183E5F28E1F9FAAA /* SSLSecurity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SSLSecurity.swift; path = Source/SocketIO/Util/SSLSecurity.swift; sourceTree = "<group>"; };
 		63927C30D2712FD64B12624C104CF773 /* SocketEngineWebsocket.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SocketEngineWebsocket.swift; path = Source/SocketIO/Engine/SocketEngineWebsocket.swift; sourceTree = "<group>"; };
 		649D38CF147D53BC457118C9088DF640 /* Socket.IO-Client-Swift-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Socket.IO-Client-Swift-prefix.pch"; sourceTree = "<group>"; };
@@ -243,7 +241,6 @@
 		71A4A280A7F1C8CDAF29B2B6BBF13E2E /* URLConvertible+URLRequestConvertible.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "URLConvertible+URLRequestConvertible.swift"; path = "Source/URLConvertible+URLRequestConvertible.swift"; sourceTree = "<group>"; };
 		7313A58DE200CA56C4B52006A877B7DF /* Response.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Response.swift; path = Source/Response.swift; sourceTree = "<group>"; };
 		739D3E6061E5895B3927F0690F3299CC /* Alamofire-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Alamofire-umbrella.h"; sourceTree = "<group>"; };
-		744A9C516F00C467F0CA9A9CE34FFE4F /* Utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = PryvApiSwiftKit/Classes/Utils.swift; sourceTree = "<group>"; };
 		773E0D78088BEE6E84866931CDE64760 /* PryvApiSwiftKit-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PryvApiSwiftKit-umbrella.h"; sourceTree = "<group>"; };
 		77DE4534914520D0204843B6D2F52BEB /* Starscream-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Starscream-prefix.pch"; sourceTree = "<group>"; };
 		79FEDAB72705C8109FA3DFFF1FEAE808 /* Alamofire-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Alamofire-prefix.pch"; sourceTree = "<group>"; };
@@ -253,20 +250,18 @@
 		81FF12430ECAD28FA02A1A4D39241FDC /* Mocker-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Mocker-prefix.pch"; sourceTree = "<group>"; };
 		83DF23EFC3A0AFB99959C6D53B728672 /* AFError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AFError.swift; path = Source/AFError.swift; sourceTree = "<group>"; };
 		86DBCC0F3779D6698A125BF4A6958195 /* Starscream-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Starscream-dummy.m"; sourceTree = "<group>"; };
-		8756FA8D61BF96FB42A25D343F2CFE7B /* PryvServiceInfo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PryvServiceInfo.swift; path = PryvApiSwiftKit/Classes/PryvServiceInfo.swift; sourceTree = "<group>"; };
-		891B2270823847ED23F2ECFC28F935EC /* Starscream.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Starscream.framework; path = Starscream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		891B2270823847ED23F2ECFC28F935EC /* Starscream.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Starscream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A2FC9FDB22FD348C7EB92A07D1E66CE /* Alamofire.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Alamofire.swift; path = Source/Alamofire.swift; sourceTree = "<group>"; };
 		8BA5CE5A08BA5B12800944C2B018C81B /* SocketIOClientOption.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SocketIOClientOption.swift; path = Source/SocketIO/Client/SocketIOClientOption.swift; sourceTree = "<group>"; };
 		8D38F665232EDCA379D855B7381CACF6 /* ConnectionWebSocket.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ConnectionWebSocket.swift; path = PryvApiSwiftKit/Classes/ConnectionWebSocket.swift; sourceTree = "<group>"; };
 		9104E8DF49E1589EE96B8B78059DACCE /* SocketEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SocketEngine.swift; path = Source/SocketIO/Engine/SocketEngine.swift; sourceTree = "<group>"; };
 		95164127782E21A4AE2730B64B4069C1 /* SocketEnginePacketType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SocketEnginePacketType.swift; path = Source/SocketIO/Engine/SocketEnginePacketType.swift; sourceTree = "<group>"; };
 		9624432C10152F1D9C9829D67446F959 /* ConnectionError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ConnectionError.swift; path = PryvApiSwiftKit/Classes/ConnectionError.swift; sourceTree = "<group>"; };
-		97C66341D41EA0E48C82FDFF99A0B103 /* Media.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Media.swift; path = PryvApiSwiftKit/Classes/Media.swift; sourceTree = "<group>"; };
 		9805999845E55DCCC12EDF2C60EB72BD /* URLRequest+Alamofire.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "URLRequest+Alamofire.swift"; path = "Source/URLRequest+Alamofire.swift"; sourceTree = "<group>"; };
 		9A8290AEE4966BF34413E37F85DB1564 /* Mocker.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Mocker.swift; path = Sources/Mocker.swift; sourceTree = "<group>"; };
 		9BAE5ECC48E4992B0CA3833D9EF64805 /* Alamofire.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = Alamofire.modulemap; sourceTree = "<group>"; };
 		9D59377D9BE150804307D2DC95617CD6 /* Starscream.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Starscream.xcconfig; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9F01F588F355823144F3E21F2A93A1D7 /* SocketManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SocketManager.swift; path = Source/SocketIO/Manager/SocketManager.swift; sourceTree = "<group>"; };
 		9F92F56D773F83A6969E691894A5684F /* Session.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Session.swift; path = Source/Session.swift; sourceTree = "<group>"; };
 		A10037A7735766740E97D7E31257896E /* ParameterEncoding.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ParameterEncoding.swift; path = Source/ParameterEncoding.swift; sourceTree = "<group>"; };
@@ -278,6 +273,9 @@
 		ABAC057D9FF5F4F57785CAC3702647B2 /* Mocker.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Mocker.xcconfig; sourceTree = "<group>"; };
 		AC1FDB19AE34BC436E70715ADB31FDB9 /* Mocker.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = Mocker.modulemap; sourceTree = "<group>"; };
 		B0462E86492672D1A3837C61943ABB56 /* PryvApiSwiftKit.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PryvApiSwiftKit.h; path = PryvApiSwiftKit/Classes/PryvApiSwiftKit.h; sourceTree = "<group>"; };
+		B37BB19124AB4D0F007D5BE2 /* Data+append.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Data+append.swift"; path = "../PryvApiSwiftKit/Classes/Utils/Data+append.swift"; sourceTree = "<group>"; };
+		B37BB19224AB4D0F007D5BE2 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = ../PryvApiSwiftKit/Classes/Utils/Utils.swift; sourceTree = "<group>"; };
+		B37BB19324AB4D0F007D5BE2 /* Media.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Media.swift; path = ../PryvApiSwiftKit/Classes/Utils/Media.swift; sourceTree = "<group>"; };
 		B4F69526B65C05752F52A6C18740054A /* Starscream.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Starscream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8C373643D533B94BA173CFAB99791DD /* RetryPolicy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RetryPolicy.swift; path = Source/RetryPolicy.swift; sourceTree = "<group>"; };
 		B9016B748D392EBCD9E654F2DADF9A05 /* SocketLogger.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SocketLogger.swift; path = Source/SocketIO/Util/SocketLogger.swift; sourceTree = "<group>"; };
@@ -297,7 +295,7 @@
 		DBF366DF5274E40A815DD4B5DE4C4C8B /* Alamofire.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Alamofire.xcconfig; sourceTree = "<group>"; };
 		DFF20FC47C655384DD52D815C31DF776 /* SocketRawView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SocketRawView.swift; path = Source/SocketIO/Client/SocketRawView.swift; sourceTree = "<group>"; };
 		E263B589410117BC169C04C7505DE393 /* Pods-PryvApiSwiftKit_Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-PryvApiSwiftKit_Tests-Info.plist"; sourceTree = "<group>"; };
-		E5A50435B4F5E142BD5E469691097A55 /* PryvApiSwiftKit.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = PryvApiSwiftKit.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		E5A50435B4F5E142BD5E469691097A55 /* PryvApiSwiftKit.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = PryvApiSwiftKit.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		EC3856D5BC03FEF24E396FCE910EA599 /* Socket.IO-Client-Swift-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Socket.IO-Client-Swift-dummy.m"; sourceTree = "<group>"; };
 		ECE8A7FC48D4A480624E74A0CF97AC13 /* Combine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Combine.swift; path = Source/Combine.swift; sourceTree = "<group>"; };
 		F147A4C792003AB23C02EE202605E975 /* SocketExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SocketExtensions.swift; path = Source/SocketIO/Util/SocketExtensions.swift; sourceTree = "<group>"; };
@@ -412,7 +410,6 @@
 				62852FC143F9204E183E5F28E1F9FAAA /* SSLSecurity.swift */,
 				2E9C96E4DE40AB90E7C248FEE8F37994 /* Support Files */,
 			);
-			name = "Socket.IO-Client-Swift";
 			path = "Socket.IO-Client-Swift";
 			sourceTree = "<group>";
 		};
@@ -442,17 +439,14 @@
 		44EE17404A77ADBD0098872828ADC045 /* PryvApiSwiftKit */ = {
 			isa = PBXGroup;
 			children = (
+				B37BB19024AB49D1007D5BE2 /* Utils */,
 				C7AF4519C88A6C8A476E0676299E9E74 /* AuthState.swift */,
 				55A6CB2077138A13CCEA95B65BCB88B8 /* Connection.swift */,
 				9624432C10152F1D9C9829D67446F959 /* ConnectionError.swift */,
 				8D38F665232EDCA379D855B7381CACF6 /* ConnectionWebSocket.swift */,
-				0191552EC2E643E100235EC34FD6AFCA /* Data+append.swift */,
-				97C66341D41EA0E48C82FDFF99A0B103 /* Media.swift */,
 				B0462E86492672D1A3837C61943ABB56 /* PryvApiSwiftKit.h */,
 				4A79DA075ABCB157913926D64FD5C656 /* PryvApiSwiftKit.swift */,
-				8756FA8D61BF96FB42A25D343F2CFE7B /* PryvServiceInfo.swift */,
 				FA31F443ED61A019B0F8E905DC566F08 /* Service.swift */,
-				744A9C516F00C467F0CA9A9CE34FFE4F /* Utils.swift */,
 				B281C5C33D00F87F07AA8F90679BC074 /* Pod */,
 				9964A302BFAE0F9E603F5A6CB7784820 /* Support Files */,
 			);
@@ -476,7 +470,6 @@
 				6E5FF485852C4B6AED655A6AC1A20459 /* MockingURLProtocol.swift */,
 				8E498BB78558496FF07B95872627D4C8 /* Support Files */,
 			);
-			name = Mocker;
 			path = Mocker;
 			sourceTree = "<group>";
 		};
@@ -563,7 +556,6 @@
 				A445ED00BEC91D101E145BBD46800D7C /* Validation.swift */,
 				800C9718A3D68DA1CB543D2FC171B960 /* Support Files */,
 			);
-			name = Alamofire;
 			path = Alamofire;
 			sourceTree = "<group>";
 		};
@@ -604,7 +596,6 @@
 				0C028C0D136FBEC6E79CD19A95EF57A0 /* WebSocket.swift */,
 				EFD1D18231580EC3217AF361C11E7FAC /* Support Files */,
 			);
-			name = Starscream;
 			path = Starscream;
 			sourceTree = "<group>";
 		};
@@ -624,6 +615,16 @@
 				225BCED4C8D116676384FFFC331FA72E /* README.md */,
 			);
 			name = Pod;
+			sourceTree = "<group>";
+		};
+		B37BB19024AB49D1007D5BE2 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				B37BB19124AB4D0F007D5BE2 /* Data+append.swift */,
+				B37BB19324AB4D0F007D5BE2 /* Media.swift */,
+				B37BB19224AB4D0F007D5BE2 /* Utils.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		CF1408CF629C7361332E53B88F7BD30C = {
@@ -1017,13 +1018,12 @@
 				82E96E4AE6FD506671B2FC6F5D70CF8F /* Connection.swift in Sources */,
 				918BAE7D6132051F43127E2CE7358FEE /* ConnectionError.swift in Sources */,
 				F8CE5AA22747D406F2384CCF4C5A4560 /* ConnectionWebSocket.swift in Sources */,
-				2884AE6C2881BDA5DC0D0A2F0310F4DC /* Data+append.swift in Sources */,
-				622BEA81DA9C086D4B009184965A6399 /* Media.swift in Sources */,
 				9EF57DE26702DECA94774B24016990F7 /* PryvApiSwiftKit-dummy.m in Sources */,
+				B37BB19424AB4D0F007D5BE2 /* Data+append.swift in Sources */,
 				4181EA97C737994F4F179B112CAC8784 /* PryvApiSwiftKit.swift in Sources */,
-				BEE3B8CA91AEB4E81DBD74627B5C6C12 /* PryvServiceInfo.swift in Sources */,
 				456C1A442C475F1726F912F5137530B5 /* Service.swift in Sources */,
-				4D852AA2E487FB0EB12A113634F12087 /* Utils.swift in Sources */,
+				B37BB19624AB4D0F007D5BE2 /* Media.swift in Sources */,
+				B37BB19524AB4D0F007D5BE2 /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1410,8 +1410,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = NO;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
 			};
