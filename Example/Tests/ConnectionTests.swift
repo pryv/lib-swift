@@ -342,4 +342,6 @@ class ConnectionTests: XCTestCase {
         }
     }
     
+    // Note: the part of connection using socket.io is tested in the [example application](https://github.com/pryv/app-swift-example)
+    
 }
