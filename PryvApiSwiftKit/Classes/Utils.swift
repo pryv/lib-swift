@@ -13,6 +13,7 @@ public class Utils {
     private let regexSchemaAndPath = "(?i)https?:\\/\\/(.+)"
     private let regexTokenUsername = "(?i)https?:\\/\\/(.+)@(.+)\\.(.+)\\.(.+)"
     private let regexUsername = "(?i)https?:\\/\\/(.+)\\.(.+)\\.(.+)"
+    private let regexSocketIO = "(?i)https?:\\/\\/([^\\/]+)\\/(.+)\\?(.+)=(.+)"
     
     public init() { }
 
@@ -60,6 +61,25 @@ public class Utils {
         }
         
         return res2[0]
+    }
+    
+    /// Parses the socket io URL and extracts the endpoint, the connection parameters, such as token, and the namespace
+    /// - Parameter url
+    /// - Returns: the endpoint, the connection parameters and the namespace
+    public func parseSocketIOURL(url: String) -> (endpoint: String, connectionParams: [String: String], namespace: String) {
+        let res = regexExec(pattern: regexSocketIO, string: url)
+        
+        if res.isEmpty || res.count < 3 {
+            print("Problem occurred when extracting the socket io parameters: invalid URL format")
+            return ("", [String: String](), "")
+        }
+        
+        var connectionParams = [String: String]()
+        for i in stride(from: 2, to: res.count, by: 2) {
+            connectionParams[res[i]] = res[i + 1]
+        }
+        
+        return (endpoint: "https://\(res[0])/", connectionParams: connectionParams, namespace: "/\(res[1])")
     }
     
     /// Constructs the API endpoint from the endpoint and the token

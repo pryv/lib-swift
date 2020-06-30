@@ -118,4 +118,25 @@ class UtilsTests: XCTestCase {
         XCTAssertEqual(value3b!, "b")
     }
     
+    func testParseSocketIOURL() {
+        let pryvLabURL = "https://chuangzi.pryv.me/chuangzi?auth=ckbthp5bw0003wlpvxn5doicv"
+        let ownDomainURL = "https://chuangzi.{domain}/chuangzi?auth=ckbthp5bw0003wlpvxn5doicv"
+        let DNSLessURL = "https://host.your-domain.io/chuangzi/chuangzi?auth=ckbthp5bw0003wlpvxn5doicv"
+        
+        var result = utils.parseSocketIOURL(url: pryvLabURL)
+        XCTAssertEqual(result.endpoint, "https://chuangzi.pryv.me/")
+        XCTAssertEqual(result.namespace, "/chuangzi")
+        XCTAssertEqual(result.connectionParams, ["auth": "ckbthp5bw0003wlpvxn5doicv"])
+        
+        result = utils.parseSocketIOURL(url: ownDomainURL)
+        XCTAssertEqual(result.endpoint, "https://chuangzi.{domain}/")
+        XCTAssertEqual(result.namespace, "/chuangzi")
+        XCTAssertEqual(result.connectionParams, ["auth": "ckbthp5bw0003wlpvxn5doicv"])
+        
+        result = utils.parseSocketIOURL(url: DNSLessURL)
+        XCTAssertEqual(result.endpoint, "https://host.your-domain.io/")
+        XCTAssertEqual(result.namespace, "/chuangzi/chuangzi")
+        XCTAssertEqual(result.connectionParams, ["auth": "ckbthp5bw0003wlpvxn5doicv"])
+    }
+    
 }

@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/pryv/lib-swift.git",
-    "branch": "get-event-streamed"
+    "branch": "socket-io"
   },
   "platforms": {
     "ios": "10.0"
@@ -24,6 +24,9 @@
 
     ],
     "Alamofire": [
+
+    ],
+    "Socket.IO-Client-Swift": [
 
     ]
   }
