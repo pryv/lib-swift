@@ -12,3 +12,16 @@ public enum ConnectionError: Error {
     case decodingError
     case requestError(_ message: String)
 }
+
+extension ConnectionError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .responseError(let message):
+            return NSLocalizedString(message, comment: "response-error")
+        case .requestError(let message):
+            return NSLocalizedString(message, comment: "request-error")
+        case .decodingError:
+            return NSLocalizedString("Decoding error", comment: "decoding-error")
+        }
+    }
+}

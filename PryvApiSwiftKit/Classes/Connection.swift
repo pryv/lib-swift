@@ -40,7 +40,7 @@ public class Connection {
     ///   - APICalls: array of method calls in json formatted string
     ///   - handleResults: callbacks indexed by the api calls indexes, i.e. `[0: func]` means "apply function `func` to result of api call 0"
     ///   - completionHandler: callback called upon completion on the array of results and the potential error
-    /// - Returns: array of results matching each method call in order 
+    /// - Returns: array of results matching each method call in order
     public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil, completionHandler: @escaping (_ results: [Json]?, _ error: Error?) -> Void) {
         var request = URLRequest(url: URL(string: endpoint)!)
         request.httpMethod = "POST"
@@ -58,13 +58,17 @@ public class Connection {
                 }
                 
                 if let results = response.object(forKey: "results"), let json = results as? [Json] {
-                    if let callbacks = handleResults {
-                        for (i, callback) in callbacks {
-                            if i >= json.count { print("problem encountered when applying the callback \(i): index out of bounds") }
-                            callback(json[i])
+                    if let error = json[0]["error"] as? Json {
+                        completionHandler(nil, ConnectionError.requestError(error["message"] as! String))
+                    } else {
+                        if let callbacks = handleResults {
+                            for (i, callback) in callbacks {
+                                if i >= json.count { print("problem encountered when applying the callback \(i): index out of bounds") }
+                                callback(json[i])
+                            }
                         }
+                        completionHandler(json, nil)
                     }
-                    completionHandler(json, nil)
                 } else {
                     completionHandler(nil, ConnectionError.decodingError)
                 }
