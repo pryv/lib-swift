@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'alemannosara' => 'sara.alemanno@epfl.ch' }
-  s.source           = { :git => 'https://github.com/pryv/lib-swift.git', :branch => "socket-io" }
+  s.source           = { :git => 'https://github.com/pryv/lib-swift.git', :branch => "fix-interface" }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '10.0'
@@ -41,4 +41,5 @@ Pod::Spec.new do |s|
    s.dependency 'Mocker'
    s.dependency 'Alamofire'
    s.dependency 'Socket.IO-Client-Swift'
+   s.dependency 'PromisesSwift'
 end

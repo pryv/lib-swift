@@ -5,6 +5,7 @@ target 'PryvApiSwiftKit_Tests' do
   pod 'Alamofire'
   pod 'PryvApiSwiftKit', :path => '../'
   pod 'Socket.IO-Client-Swift', '~> 15.2.0'
+  pod 'PromisesSwift'
   
   
 end

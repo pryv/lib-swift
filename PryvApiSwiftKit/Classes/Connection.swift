@@ -8,6 +8,7 @@
 
 import Foundation
 import Alamofire
+import Promises
 
 public typealias Event = Json
 public typealias Parameters = [String: String]
@@ -19,14 +20,27 @@ public class Connection {
     private var apiEndpoint: String
     private var endpoint: String
     private var token: String?
+    private var service: Service?
     
     // MARK: - public library
     
     /// Creates a connection object from the api endpoint
-    /// - Parameter apiEndpoint
-    public init(apiEndpoint: String) {
+    /// - Parameters:
+    ///   - apiEndpoint
+    ///   - service: eventually initialize Connection with a Service
+    public init(apiEndpoint: String, service: PryvServiceInfo? = nil) {
         self.apiEndpoint = apiEndpoint
         (self.endpoint, self.token) = utils.extractTokenAndEndpoint(from: apiEndpoint) ?? ("", nil)
+    }
+    
+    /// Getter for Service object relative to this connection
+    /// - Returns: the service
+    public func getService() -> Service {
+        if let _ = service {
+            return service!
+        }
+        self.service = Service(pryvServiceInfoUrl: endpoint + "service/info")
+        return service!
     }
     
     /// Getter for the field `apiEndpoint`
@@ -35,44 +49,61 @@ public class Connection {
         return apiEndpoint
     }
     
+    /// Getter for the username relative to this connection
+    /// - Returns: the promise containing the username
+    public func username() -> Promise<String> {
+        return getService().info().then { serviceInfo in
+            return self.utils.extractUsername(from: self.apiEndpoint)!
+        }
+    }
+    
     /// Issue a [Batch call](https://api.pryv.com/reference/#call-batch)
     /// - Parameters:
     ///   - APICalls: array of method calls in json formatted string
     ///   - handleResults: callbacks indexed by the api calls indexes, i.e. `[0: func]` means "apply function `func` to result of api call 0"
-    ///   - completionHandler: callback called upon completion on the array of results and the potential error
-    /// - Returns: array of results matching each method call in order 
-    public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil, completionHandler: @escaping (_ results: [Json]?, _ error: Error?) -> Void) {
+    /// - Returns: promise to array of results matching each method call in order
+    public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil) -> Promise<[Json]> {
         var request = URLRequest(url: URL(string: endpoint)!)
         request.httpMethod = "POST"
         request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
         request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.httpBody = try! JSONSerialization.data(withJSONObject: APICalls)
         
-        AF.request(request).responseJSON { response in
-            switch response.result {
-            case .success(let JSON):
-                let response = JSON as! NSDictionary
-                
-                if let error = response.object(forKey: "error") {
-                    completionHandler(nil, ConnectionError.responseError(String(describing: error)))
-                }
-                
-                if let results = response.object(forKey: "results"), let json = results as? [Json] {
+        return Promise<[Json]>(on: .global(qos: .background), { (fullfill, reject) in
+            AF.request(request).responseJSON { response in
+                switch response.result {
+                case .success(let JSON):
+                    let response = JSON as! NSDictionary
+                    
+                    if let error = response.object(forKey: "error") {
+                        let connError = PryvError.responseError(String(describing: error))
+                        reject(connError)
+                        return
+                    }
+                    
+                    guard let results = response.object(forKey: "results"), let json = results as? [Json] else {
+                        reject(PryvError.decodingError)
+                        return
+                    }
+                    
+                    if let error = json[0]["error"] as? Json {
+                        let connError = PryvError.requestError(error["message"] as! String)
+                        reject(connError)
+                        return
+                    }
+                    
                     if let callbacks = handleResults {
                         for (i, callback) in callbacks {
                             if i >= json.count { print("problem encountered when applying the callback \(i): index out of bounds") }
                             callback(json[i])
                         }
                     }
-                    completionHandler(json, nil)
-                } else {
-                    completionHandler(nil, ConnectionError.decodingError)
+                    fullfill(json)
+                case .failure(let error):
+                    reject(error)
                 }
-
-            case .failure(let error):
-                completionHandler(nil, ConnectionError.requestError(error.localizedDescription))
             }
-        }
+        })
     }
     
     /// Add Data Points to HFEvent (flatJSON format) as described in the [reference API](https://api.pryv.com/reference/#add-hf-series-data-points)
@@ -80,9 +111,8 @@ public class Connection {
     ///   - eventId
     ///   - fields
     ///   - points
-    ///   - completionHandler: callback called upon completion on the result (nil if no error, error otherwise)
-    /// - Returns: a potential error, if encountered
-    public func addPointsToHFEvent(eventId: String, fields: [String], points: [[Any]], completionHandler: @escaping (Error?) -> ()) {
+    /// - Returns: a promise containing the response, or an error if a problem occurred
+    public func addPointsToHFEvent(eventId: String, fields: [String], points: [[Any]]) -> Promise<Json> {
         let parameters: Json = [
             "format": "flatJSON",
             "fields": fields,
@@ -90,65 +120,70 @@ public class Connection {
         ]
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)/series" : apiEndpoint + "/events/\(eventId)/series"
         
-        var request = URLRequest(url: URL(string: string)!)
-        request.httpMethod = "POST"
-        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
-        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try! JSONSerialization.data(withJSONObject: parameters)
-        
-        AF.request(request).response { response in
-            switch response.result {
-            case .success(_):
-                completionHandler(nil)
-            case .failure(let error):
-                completionHandler(ConnectionError.requestError(error.localizedDescription))
+        return Promise<Json>(on: .global(qos: .background), { (fullfill, reject) in
+            var request = URLRequest(url: URL(string: string)!)
+            request.httpMethod = "POST"
+            request.addValue(self.token ?? "", forHTTPHeaderField: "Authorization")
+            request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+            request.httpBody = try! JSONSerialization.data(withJSONObject: parameters)
+            
+            AF.request(request).responseJSON { response in
+                switch response.result {
+                case .success(let JSON):
+                    let response = JSON as! Json
+                    fullfill(response)
+                case .failure(let error):
+                    let connError = PryvError.requestError(error.localizedDescription)
+                    reject(connError)
+                }
             }
-        }
+        })
     }
 
     /// Streamed [get event](https://api.pryv.com/reference/#get-events)
     /// - Parameters:
     ///   - queryParams: see `events.get` parameters
     ///   - forEachEvent: function taking one event as parameter, will be called for each event
-    ///   - completionHandler: callback called upon completion on the number of events and the metadata, or on the error
-    /// - Returns: the two escaping callbacks to handle the result: the events and the metadata
-    public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> (), completionHandler: @escaping (Json) -> ()) {
+    /// - Returns: promise to result.body transformed with `eventsCount: {count}` replacing `events: [...]`
+    public func getEventsStreamed(queryParams: Json? = Json(), forEachEvent: @escaping (Event) -> ()) -> Promise<Json> {
         let parameters: Json = [
             "method": "events.get",
             "params": queryParams!
         ]
         
-        var request = URLRequest(url: URL(string: endpoint)!)
-        request.httpMethod = "POST"
-        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.setValue(token ?? "", forHTTPHeaderField: "Authorization")
-        request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
-        
-        var partialChunk: String? = nil
-        var eventsCount = 0
-        var eventDeletionsCount = 0
-        var meta = Json()
-        AF.streamRequest(request).responseStream { stream in
-            switch stream.event {
-            case let .stream(result):
-                switch result {
-                case let .success(data):
-                    guard let string = String(data: data, encoding: .utf8) else { return }
-                    let parsedResult = self.parseEventsChunked(string: (partialChunk ?? "") + string, forEachEvent: forEachEvent)
-                    eventsCount += parsedResult.eventsCount
-                    eventDeletionsCount += parsedResult.eventDeletionsCount
-                    partialChunk = parsedResult.remaining
-                    meta = parsedResult.meta != nil ? parsedResult.meta! : meta
+        return Promise<Json>(on: .global(qos: .background), { (fullfill, reject) in
+            var request = URLRequest(url: URL(string: self.endpoint)!)
+            request.httpMethod = "POST"
+            request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+            request.setValue(self.token ?? "", forHTTPHeaderField: "Authorization")
+            request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
+            
+            var partialChunk: String? = nil
+            var eventsCount = 0
+            var eventDeletionsCount = 0
+            var meta = Json()
+            AF.streamRequest(request).responseStream { stream in
+                switch stream.event {
+                case let .stream(result):
+                    switch result {
+                    case let .success(data):
+                        guard let string = String(data: data, encoding: .utf8) else { return }
+                        let parsedResult = self.parseEventsChunked(string: (partialChunk ?? "") + string, forEachEvent: forEachEvent)
+                        eventsCount += parsedResult.eventsCount
+                        eventDeletionsCount += parsedResult.eventDeletionsCount
+                        partialChunk = parsedResult.remaining
+                        meta = parsedResult.meta != nil ? parsedResult.meta! : meta
+                    }
+                case .complete(_):
+                    let result: Json = [
+                        "meta": meta,
+                        "eventsCount": eventsCount,
+                        "eventDeletionsCount": eventDeletionsCount
+                    ]
+                    fullfill(result)
                 }
-            case .complete(_):
-                let result: Json = [
-                    "meta": meta,
-                    "eventsCount": eventsCount,
-                    "eventDeletionsCount": eventDeletionsCount
-                ]
-                completionHandler(result)
             }
-        }
+        })
     }
     
     /// Create an event with attached file
@@ -156,15 +191,12 @@ public class Connection {
     ///   - event: description of the new event to create
     ///   - filePath
     ///   - mimeType: the mimeType of the file in `filePath`
-    ///   - completionHandler: callback called upon completion on the new event, or on the error
-    /// - Returns: a new created event with attachement corresponding to the file in `filePath`
-    public func createEventWithFile(event: Event, filePath: String, mimeType: String, completionHandler: @escaping (Event?, Error?) -> ()) {
+    /// - Returns: promise containing the new created event with attachement corresponding to the file in `filePath`
+    public func createEventWithFile(event: Event, filePath: String, mimeType: String) -> Promise<Event> {
         let url = NSURL(fileURLWithPath: filePath)
         let media = Media(key: "file-\(UUID().uuidString)-\(String(describing: token))", filename: filePath, data: url.dataRepresentation, mimeType: mimeType)
         
-        createEventWithFormData(event: event, parameters: nil, files: [media]) { event, err in
-            completionHandler(event, err)
-        }
+        return createEventWithFormData(event: event, parameters: nil, files: [media])
     }
     
     /// Create an event with attached file encoded as [multipart/form-data content](https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData)
@@ -172,32 +204,39 @@ public class Connection {
     ///   - event: description of the new event to create
     ///   - parameters: the string parameters for the add attachement(s) request (optional)
     ///   - files: the attachement(s) to add (optional)
-    ///   - completionHandler: callback called upon completion on the new event, or on the error
-    /// - Returns: a new created event with an optionnal attachment
-    public func createEventWithFormData(event: Json, parameters: Parameters? = nil, files: [Media]? = nil, completionHandler: @escaping (Event?, Error?) -> ()) {
+    /// - Returns: promise containing the new created event with an optionnal attachment
+    public func createEventWithFormData(event: Json, parameters: Parameters? = nil, files: [Media]? = nil) -> Promise<Event> {
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events" : apiEndpoint + "/events"
         
-        var request = URLRequest(url: URL(string: string)!)
-        request.httpMethod = "POST"
-        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try! JSONSerialization.data(withJSONObject: event)
-        
-        AF.request(request).responseJSON { response in
-            switch response.result {
-            case .success(let JSON):
-                let response = JSON as! NSDictionary
-                let event = response.object(forKey: "event") as? Event
-                guard let eventId = event?["id"] as? String else { completionHandler(nil, ConnectionError.decodingError) ; return }
-                
-                let boundary = "Boundary-\(UUID().uuidString)"
-                let httpBody = self.createData(with: boundary, from: parameters, and: files)
-                self.addFormDataToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) { event, err in
-                    completionHandler(event, err)
+        let eventId = Promise<String>(on: .global(qos: .background), { (fullfill, reject) in
+            var request = URLRequest(url: URL(string: string)!)
+            request.httpMethod = "POST"
+            request.addValue(self.token ?? "", forHTTPHeaderField: "Authorization")
+            request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+            request.httpBody = try! JSONSerialization.data(withJSONObject: event)
+            
+            AF.request(request).responseJSON { response in
+                switch response.result {
+                case .success(let JSON):
+                    let response = JSON as! NSDictionary
+                    let event = response.object(forKey: "event") as? Event
+                    guard let eventId = event?["id"] as? String else {
+                        let connError = PryvError.decodingError
+                        reject(connError)
+                        return
+                    }
+                    fullfill(eventId)
+                case .failure(let error):
+                    let connError = PryvError.requestError(error.localizedDescription)
+                    reject(connError)
                 }
-            case .failure(let error):
-                completionHandler(nil, ConnectionError.requestError(error.localizedDescription))
             }
+        })
+        
+        return eventId.then { eventId in
+            let boundary = "Boundary-\(UUID().uuidString)"
+            let httpBody = self.createData(with: boundary, from: parameters, and: files)
+            return self.addFormDataToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody)
         }
     }
     
@@ -206,17 +245,14 @@ public class Connection {
     ///   - eventId
     ///   - filePath
     ///   - mimeType: the mimeType of the file in `filePath`
-    ///   - completionHandler: callback called upon completion on the event with the attachment, or on the error
-    /// - Returns: the given event with `eventId` with attachement corresponding to the file in `filePath`
-    public func addFileToEvent(eventId: String, filePath: String, mimeType: String, completionHandler: @escaping (Event?, Error?) -> ()) {
+    /// - Returns: promise containing the given event with `eventId` with attachement corresponding to the file in `filePath`
+    public func addFileToEvent(eventId: String, filePath: String, mimeType: String) -> Promise<Event> {
         let url = NSURL(fileURLWithPath: filePath)
         let media = Media(key: "file-\(UUID().uuidString)-\(String(describing: token))", filename: filePath, data: url.dataRepresentation, mimeType: mimeType)
         let boundary = "Boundary-\(UUID().uuidString)"
         let httpBody = createData(with: boundary, from: nil, and: [media])
         
-        addFormDataToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody) { event, err in
-            completionHandler(event, err)
-        }
+        return addFormDataToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody)
     }
     
     /// Get an image preview for a given event, if this event contains an image attachment
@@ -239,26 +275,33 @@ public class Connection {
     ///   - eventId
     ///   - boundary: the boundary corresponding to the attachement to add
     ///   - httpBody: the data corresponding to the attachement to add, or on the error
-    /// - Returns: the event with id `eventId` with an attachement
-    private func addFormDataToEvent(eventId: String, boundary: String, httpBody: Data, completionHandler: @escaping (Event?, Error?) -> ()) {
+    /// - Returns: a promise containing the event with id `eventId` with an attachement
+    private func addFormDataToEvent(eventId: String, boundary: String, httpBody: Data) -> Promise<Event> {
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)" : apiEndpoint + "/events/\(eventId)"
         
-        var request = URLRequest(url: URL(string: string)!)
-        request.httpMethod = "POST"
-        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.httpBody = httpBody
-        
-        AF.request(request).responseJSON { response in
-            switch response.result {
-            case .success(let JSON):
-                let response = JSON as! NSDictionary
-                let event = response.object(forKey: "event") as? Event
-                completionHandler(event, nil)
-            case .failure(let error):
-                completionHandler(nil, ConnectionError.requestError(error.localizedDescription))
+        return Promise<Event>(on: .global(qos: .background), { (fullfill, reject) in
+            var request = URLRequest(url: URL(string: string)!)
+            request.httpMethod = "POST"
+            request.addValue(self.token ?? "", forHTTPHeaderField: "Authorization")
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            request.httpBody = httpBody
+            
+            AF.request(request).responseJSON { response in
+                switch response.result {
+                case .success(let JSON):
+                    let response = JSON as! NSDictionary
+                    guard let event = response.object(forKey: "event") as? Event else {
+                        let error = PryvError.decodingError
+                        reject(error)
+                        return
+                    }
+                    fullfill(event)
+                case .failure(let error):
+                    let connError = PryvError.requestError(error.localizedDescription)
+                    reject(connError)
+                }
             }
-        }
+        })
     }
     
     /// Create `Data` from the `parameters` and the `files` encoded as [multipart/form-data content](https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData)

@@ -51,14 +51,14 @@ class UtilsTests: XCTestCase {
         let endpoint = "https://username.pryv.me/"
         let token = "token"
         
-        let builtApiEndpoint = utils.buildPryvApiEndPoint(endpoint: endpoint, token: token)
+        let builtApiEndpoint = utils.buildPryvApiEndpoint(endpoint: endpoint, token: token)
         
         XCTAssertEqual(builtApiEndpoint, apiEndpoint + "/")
     }
     
     func testBuildPryvApiEndPointWithoutToken() {
         let apiEndpoint = "https://username.pryv.me"
-        let builtApiEndpoint = utils.buildPryvApiEndPoint(endpoint: apiEndpoint, token: nil)
+        let builtApiEndpoint = utils.buildPryvApiEndpoint(endpoint: apiEndpoint, token: nil)
         
         XCTAssertEqual(builtApiEndpoint, apiEndpoint + "/")
     }

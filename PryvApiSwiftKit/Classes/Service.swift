@@ -7,11 +7,26 @@
 //
 
 import Foundation
+import Promises
+import Alamofire
 
 public typealias Json = [String: Any]
 
+/// Data structure holding the service info
+public struct PryvServiceInfo: Codable, Equatable {
+    public var register: String
+    public var access: String
+    public var api: String
+    public var name: String
+    public var home: String
+    public var support: String
+    public var terms: String
+    public var eventTypes: String
+}
+
+
 @available(iOS 10.0, *)
-public class Service {
+public class Service: Equatable {
     private let utils = Utils()
     private let loginPath = "auth/login"
     private let authPath = "access"
@@ -20,9 +35,9 @@ public class Service {
     private var timer: Timer?
     
     private var pryvServiceInfoUrl: String
-    private var serviceCustomization: Json
+    private var serviceCustomization: Json?
     
-    private var pryvServiceInfo: PryvServiceInfo? = nil
+    private var pryvServiceInfo: Promise<PryvServiceInfo>?
     
     private var pollingInfo: (poll: String, poll_ms: Double, callback: (AuthResult) -> ())? {
         didSet {
@@ -52,17 +67,10 @@ public class Service {
     // MARK: - public library
     
     /// Inits a service with the service info url and no custom element
-    /// - Parameter pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: `https://access.{domain}/service/info`
-    public init(pryvServiceInfoUrl: String) {
-        self.pryvServiceInfoUrl = pryvServiceInfoUrl
-        self.serviceCustomization = Json()
-    }
-    
-    /// Inits a service with the service info url and custom elements
     /// - Parameters:
     ///   - pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: [https://access.{domain}/service/info](https://access.{domain}/service/info)
     ///   - serviceCustomization: a json formatted dictionary corresponding to the customizations of the service
-    public init(pryvServiceInfoUrl: String, serviceCustomization: Json) {
+    public init(pryvServiceInfoUrl: String, serviceCustomization: Json? = nil) {
         self.pryvServiceInfoUrl = pryvServiceInfoUrl
         self.serviceCustomization = serviceCustomization
     }
@@ -71,32 +79,60 @@ public class Service {
     /// # Example #
     /// - name of the platform: `let serviceName = service.info().name`
     /// See `PryvServiceInfo` for details on available properties
-    /// - Returns: the fetched service info object, customized if needed, or nil if problem is encountered while fetching
-    public func info() -> PryvServiceInfo? {
-        pryvServiceInfo = sendServiceInfoRequest()
-        customizeService()
+    /// - Parameter forceFetch: if true, will force fetching service info
+    /// - Returns: promise to service info object, customized if needed
+    public func info(forceFetch: Bool = false) -> Promise<PryvServiceInfo> {
+        if forceFetch || pryvServiceInfo == nil {
+            pryvServiceInfo = Promise<PryvServiceInfo>(on: .global(qos: .background), { (fullfill, reject) in
+                AF.request(URL(string: self.pryvServiceInfoUrl)!).responseDecodable(of: PryvServiceInfo.self) { response in
+                    switch response.result {
+                    case .success(var serviceInfo):
+                        serviceInfo = self.customize(serviceInfo: serviceInfo, with: self.serviceCustomization)
+                        fullfill(serviceInfo)
+                    case .failure(let error):
+                        let servError = PryvError.requestError(error.localizedDescription)
+                        reject(servError)
+                    }
+                }
+            })
+        }
         
-        return pryvServiceInfo
+        return pryvServiceInfo!
     }
     
-    /// Returns service info parameters
+    /// Return service info parameters
     /// - Returns: the cached content of the service info
     /// # Note
     ///     service.info() needs to be called first, otherwise returns `nil`
     public func infoSync() -> PryvServiceInfo? {
-        return pryvServiceInfo
+        if pryvServiceInfo == nil {
+            return nil
+        }
+        return try? await(pryvServiceInfo!)
     }
     
-    /// Constructs the API endpoint from this service and the username and token
+    /// Return an API Endpoint from a username and token and a PryvServiceInfo
+    /// This is method is rarely used. See `apiEndpointFor` as an alternative.
+    /// - Parameters:
+    ///   - serviceInfo
+    ///   - username
+    ///   - token
+    /// - Returns: the API endpoint
+    public func buildApiEndpoint(serviceInfo: PryvServiceInfo, username: String, token: String? = nil) -> String {
+        let endpoint = serviceInfo.api.replacingOccurrences(of: "{username}", with: username)
+        return utils.buildPryvApiEndpoint(endpoint: endpoint, token: token)
+    }
+    
+    /// Construct the API endpoint from this service and the username and token
     /// - Parameters:
     ///   - username
     ///   - token (optionnal)
     /// - Returns: API Endpoint from a username and token and the PryvServiceInfo
-    public func apiEndpointFor(username: String, token: String? = nil) -> String? {
-        let serviceInfo = pryvServiceInfo ?? info()
-        guard let apiEndpoint = serviceInfo?.api.replacingOccurrences(of: "{username}", with: username) else { print("problem encountered when building the service info api") ; return nil }
-        
-        return utils.buildPryvApiEndPoint(endpoint: apiEndpoint, token: token)
+    public func apiEndpointFor(username: String, token: String? = nil) -> Promise<String> {
+        let serviceInfoPromise = pryvServiceInfo ?? info()
+        return serviceInfoPromise.then { serviceInfo in
+            return self.buildApiEndpoint(serviceInfo: serviceInfo, username: username, token: token)
+        }
     }
     
     /// Issue a "login call on the Service" return a Connection on success
@@ -108,24 +144,22 @@ public class Service {
     ///   - appId
     ///   - domain: domain parameter for the `Origin` header, according to the [trusted apps verification](https://api.pryv.com/reference/#trusted-apps-verification/)
     /// - Returns: the user's connection to the appId or nil if problem is encountered
-    public func login(username: String, password: String, appId: String, domain: String? = nil) -> Connection? {
-        var connection: Connection? = nil
+    public func login(username: String, password: String, appId: String, domain: String? = nil) -> Promise<Connection> {
         let loginPayload: Json = ["username": username, "password": password, "appId": appId]
         
-        guard let apiEndpoint = apiEndpointFor(username: username) else { return nil }
-        let endpoint = apiEndpoint.hasSuffix("/") ? apiEndpoint + loginPath : apiEndpoint + "/" + loginPath
-        var origin: String? = nil
-        if let _ = domain {
-            origin = "https://login.\(domain!)"
-        }
-        
-        if let token = sendLoginRequest(endpoint: endpoint, payload: loginPayload, origin: origin) {
-            if let apiEndpoint = self.apiEndpointFor(username: username, token: token) {
-               connection = Connection(apiEndpoint: apiEndpoint)
+        return apiEndpointFor(username: username).then { apiEndpoint in
+            let endpoint = apiEndpoint.hasSuffix("/") ? apiEndpoint + self.loginPath : apiEndpoint + "/" + self.loginPath
+            var origin: String? = nil
+            if let _ = domain {
+                origin = "https://login.\(domain!)"
+            }
+            
+            return self.sendLoginRequest(endpoint: endpoint, payload: loginPayload, origin: origin).then { token in
+                self.apiEndpointFor(username: username, token: token).then { apiEndpoint in
+                   return Connection(apiEndpoint: apiEndpoint)
+                }
             }
         }
-        
-        return connection
     }
     
     /// Sends an auth request to the `access` field of the service info and polls the received url
@@ -133,7 +167,7 @@ public class Service {
     /// - Parameters:
     ///   - authSettings: the auth request json formatted according to [the API reference](https://api.pryv.com/reference/#auth-request)
     ///   - stateChangedCallback: function that will be called as soon as the state of the authentication changes
-    /// - Returns: the `authUrl` field from the response to the service info
+    /// - Returns: a promise containing the `authUrl` field from the response to the service info
     ///
     ///  # Use case example
     ///    ```
@@ -154,15 +188,40 @@ public class Service {
     ///            }
     ///    }
     ///    ```
-    public func setUpAuth(authSettings: Json, stateChangedCallback: @escaping (AuthResult) -> ()) -> String? {
-        let serviceInfo = pryvServiceInfo ?? info()
-        guard let registerUrl = serviceInfo?.register else { print("problem encountered when getting the register url") ; return nil }
-        let endpoint = registerUrl.hasSuffix("/") ? registerUrl + authPath : registerUrl + "/" + authPath
-        
-        guard let (authUrl, poll, poll_ms) = sendAuthRequest(endpoint: endpoint, payload: authSettings) else { print("problem encountered when getting the result for auth request") ; return nil }
-        self.pollingInfo = (poll: poll, poll_ms: poll_ms, callback: stateChangedCallback)
-        
-        return authUrl
+    public func setUpAuth(authSettings: Json, stateChangedCallback: @escaping (AuthResult) -> ()) -> Promise<String> {
+        let serviceInfoPromise = pryvServiceInfo ?? info()
+        return serviceInfoPromise.then { serviceInfo in
+            let endpoint = serviceInfo.register.hasSuffix("/") ? serviceInfo.register + self.authPath : serviceInfo.register + "/" + self.authPath
+            
+            return Promise<String>(on: .global(qos: .background), { (fullfill, reject) in
+                var request = URLRequest(url: URL(string: endpoint)!)
+                request.httpMethod = "POST"
+                request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+                request.httpBody = try? JSONSerialization.data(withJSONObject: authSettings)
+                
+                AF.request(request).responseJSON { response in
+                    switch response.result {
+                    case .success(let JSON):
+                        let response = JSON as! NSDictionary
+                        
+                        let authURL = response.object(forKey: "authUrl") as? String
+                        let poll = response.object(forKey: "poll") as? String
+                        let poll_rate_ms = response.object(forKey: "poll_rate_ms") as? Double
+                        
+                        if let authURL = authURL, let poll = poll, let poll_rate_ms = poll_rate_ms {
+                            self.pollingInfo = (poll: poll, poll_ms: poll_rate_ms, callback: stateChangedCallback)
+                            fullfill(authURL)
+                        } else {
+                            let servError = PryvError.decodingError
+                            reject(servError)
+                        }
+                    case .failure(let error):
+                        let servError = PryvError.requestError(error.localizedDescription)
+                        reject(servError)
+                    }
+                }
+            })
+        }
     }
     
     /// Interrupts the timer and stops the polling for the authentication request
@@ -170,51 +229,33 @@ public class Service {
         timer?.invalidate()
     }
     
+    /// Compares two services based uniquely on their service info url
+    /// - Parameters:
+    ///   - lhs
+    ///   - rhs
+    /// - Returns: true if url is the same, false otherwise
+    public static func == (lhs: Service, rhs: Service) -> Bool {
+        return lhs.pryvServiceInfoUrl == rhs.pryvServiceInfoUrl
+    }
+    
     // MARK: - private helpers functions for the library
     
     /// Customizes the service info parameters
-    private func customizeService() {
-        if let register = serviceCustomization["register"] as? String { pryvServiceInfo?.register = register }
-        if let access = serviceCustomization["access"] as? String { pryvServiceInfo?.access = access }
-        if let api = serviceCustomization["api"] as? String { pryvServiceInfo?.api = api }
-        if let name = serviceCustomization["name"] as? String { pryvServiceInfo?.name = name }
-        if let home = serviceCustomization["home"] as? String { pryvServiceInfo?.home = home }
-        if let support = serviceCustomization["support"] as? String { pryvServiceInfo?.support = support }
-        if let terms = serviceCustomization["terms"] as? String { pryvServiceInfo?.terms = terms }
-        if let eventTypes = serviceCustomization["eventTypes"] as? String { pryvServiceInfo?.eventTypes = eventTypes }
-    }
-    
-    /// Decodes json data into a PryvServiceInfo object
-    /// - Parameter json: json encoded data structured as a service info object
-    /// - Returns: the PryvServiceInfo object corresponding to the json or nil if problem is encountered
-    private func decodeServiceInfo(from json: Data) -> PryvServiceInfo? {
-        let decoder = JSONDecoder()
+    /// - Parameter json: the json describing the modifications to apply
+    /// - Parameter serviceInfo: the service info to customize
+    /// - Returns: the modified service info with the values of the given json
+    private func customize(serviceInfo: PryvServiceInfo, with json: Json?) -> PryvServiceInfo {
+        guard let modifications = json else { return serviceInfo }
+        var result = serviceInfo
         
-        do {
-            let service = try decoder.decode(PryvServiceInfo.self, from: json)
-            return service
-        } catch {
-            print("problem encountered when parsing the service info response: " + error.localizedDescription)
-            return nil
-        }
-    }
-    
-    /// Fetches the service info from the service info url
-    /// - Returns: the service info received from the request
-    private func sendServiceInfoRequest() -> PryvServiceInfo? {
-        guard let url = URL(string: pryvServiceInfoUrl) else { print("problem encountered: cannot access url \(pryvServiceInfoUrl)") ; return nil }
-        
-        var result: PryvServiceInfo? = nil
-        let group = DispatchGroup()
-        let task = URLSession.shared.dataTask(with: url) { (data, _, error) in
-            if let _ = error, data == nil { print("problem encountered when requesting the service info") ; group.leave() ; return }
-            result = self.decodeServiceInfo(from: data!)
-            group.leave()
-        }
-        
-        group.enter()
-        task.resume()
-        group.wait()
+        if let register = modifications["register"] as? String { result.register = register }
+        if let access = modifications["access"] as? String { result.access = access }
+        if let api = modifications["api"] as? String { result.api = api }
+        if let name = modifications["name"] as? String { result.name = name }
+        if let home = modifications["home"] as? String { result.home = home }
+        if let support = modifications["support"] as? String { result.support = support }
+        if let terms = modifications["terms"] as? String { result.terms = terms }
+        if let eventTypes = modifications["eventTypes"] as? String { result.eventTypes = eventTypes }
         
         return result
     }
@@ -224,77 +265,43 @@ public class Service {
     ///   - endpoint: the api endpoint given by the service info
     ///   - payload: the json formatted payload for the request: username, password and app id
     ///   - origin: the field of the form `https://login.{domain}` to add to the `Origin` header
-    /// - Returns: the token received from the request
-    private func sendLoginRequest(endpoint: String, payload: Json, origin: String? = nil) -> String? {
-        guard let url = URL(string: endpoint) else { print("problem encountered: cannot access register url \(endpoint)") ; return nil }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
-        if let _ = origin {
-            request.addValue(origin!, forHTTPHeaderField: "Origin")
-        }
-
-        var token: String? = nil
-        let group = DispatchGroup()
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let _ = error, data == nil { print("problem encountered when requesting login") ; group.leave() ; return }
-
-            guard let loginResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: loginResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when parsing the login response") ; group.leave() ; return }
+    /// - Returns: promise containg the token received from the request
+    private func sendLoginRequest(endpoint: String, payload: Json, origin: String? = nil) -> Promise<String> {
+        return Promise<String>(on: .global(qos: .background), { (fullfill, reject) in
+            var request = URLRequest(url: URL(string: endpoint)!)
+            request.httpMethod = "POST"
+            request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+            request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+            if let _ = origin {
+                request.addValue(origin!, forHTTPHeaderField: "Origin")
+            }
             
-            token = dictionary["token"] as? String
-            if let problem = dictionary["error"] as? [String: Any] {
-                if let message = problem["message"] {
-                    print("problem encountered when requesting login: \(String(describing: message))")
+            AF.request(request).responseJSON { response in
+                switch response.result {
+                case .success(let JSON):
+                    let response = JSON as! NSDictionary
+                    
+                    if let problem = response.object(forKey: "error") as? Json {
+                        if let message = problem["message"] as? String {
+                            let servError = PryvError.responseError(message)
+                            reject(servError)
+                            return
+                        }
+                    }
+                    
+                    guard let token = response.object(forKey: "token") as? String else {
+                        let servError = PryvError.decodingError
+                        reject(servError)
+                        return
+                    }
+                    
+                    fullfill(token)
+                case .failure(let error):
+                    let servError = PryvError.requestError(error.localizedDescription)
+                    reject(servError)
                 }
             }
-            group.leave()
-        }
-
-        group.enter()
-        task.resume()
-        group.wait()
-        
-        return token
-    }
-    
-    /// Sends an authentication request to the access url from the service info and returns the `authUrl`, `poll` and `poll_ms` fields
-    /// - Parameters:
-    ///   - endpoint: the field `register` of the service info concatenated with "/access"
-    ///   - payload: the json formatted payload for the request according to [the API reference](https://api.pryv.com/reference/#auth-request)
-    /// - Returns: the fields `authUrl`, `poll` and `poll_ms`
-    private func sendAuthRequest(endpoint: String, payload: Json) -> (String, String, Double)? {
-        guard let url = URL(string: endpoint) else { print("problem encountered: cannot access register url \(endpoint)") ; return nil }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
-        
-        var result: (String, String, Double)? = nil
-        let group = DispatchGroup()
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let _ = error, data == nil { print("problem encountered when sending the auth request") ; group.leave() ; return }
-
-            guard let authResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: authResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when decoding the auth response") ; group.leave() ; return }
-            
-            let authURL = dictionary["authUrl"] as? String
-            let poll = dictionary["poll"] as? String
-            let poll_rate_ms = dictionary["poll_rate_ms"] as? Double
-            
-            if let authURL = authURL, let poll = poll, let poll_rate_ms = poll_rate_ms {
-                result = (authURL, poll, poll_rate_ms)
-            }
-            
-            group.leave()
-        }
-
-        group.enter()
-        task.resume()
-        group.wait()
-        
-        return result
+        })
     }
     
     /// Sends a polling request to the `poll` field from the auth request and returns the status and, if any, the api endpoint
@@ -303,21 +310,17 @@ public class Service {
     ///   - completion: closure containing the parsed data, if any, from the response of the request
     /// - Returns: the closure `completion` is called after the function returns to access the fields `status` and `apiEndpoint`
     private func sendPollingRequest(poll: String, completion: @escaping ((String, String?)?) -> ()) {
-        var request = URLRequest(url: URL(string: poll)!)
-        request.httpMethod = "GET"
-        
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let _ = error, data == nil { print("problem encountered when polling") ; return completion(nil) }
-
-            guard let pollResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: pollResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when decoding the poll response") ; return completion(nil) }
-            
-            guard let status = dictionary["status"] as? String else { return completion(nil) }
-            let pryvApiEndpoint = dictionary["apiEndpoint"] as? String
-            
-            return completion((status, pryvApiEndpoint))
+        AF.request(poll, method: .get).responseJSON { response in
+            switch response.result {
+            case .success(let JSON):
+                let response = JSON as! NSDictionary
+                guard let status = response.object(forKey: "status") as? String else { return completion(nil) }
+                let pryvApiEndpoint = response.object(forKey: "apiEndpoint") as? String
+                completion((status, pryvApiEndpoint))
+            case .failure(_):
+                completion(nil)
+            }
         }
-
-        task.resume()
     }
     
     /// Sends a request to the polling url and calls the callback function from the setUpAuth function if the state changes

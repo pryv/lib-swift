@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B35D5B6B24A4A5BD00D5B046 /* MockedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D5B6A24A4A5BD00D5B046 /* MockedData.swift */; };
 		B36DBA17248A7477001A37E4 /* ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36DBA14248A7477001A37E4 /* ServiceTests.swift */; };
 		B36DBA18248A7477001A37E4 /* UtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36DBA15248A7477001A37E4 /* UtilsTests.swift */; };
 		B38CD4E6249A37AB00A8A507 /* sample.pdf in Resources */ = {isa = PBXBuildFile; fileRef = B38CD4E5249A37AB00A8A507 /* sample.pdf */; };
@@ -24,8 +23,6 @@
 		7E8ECFA5D69E3DE1FB8DDE25 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		8FEE9883DE6C6AF084FCF2F3 /* PryvApiSwiftKit.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = PryvApiSwiftKit.podspec; path = ../PryvApiSwiftKit.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9894CAA1F6E1130FAE0114FC /* Pods_PryvApiSwiftKit_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PryvApiSwiftKit_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B35D5B6A24A4A5BD00D5B046 /* MockedData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockedData.swift; sourceTree = "<group>"; };
-		B36C257F249CBE6E0081F976 /* StreamingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingTests.swift; sourceTree = "<group>"; };
 		B36DBA14248A7477001A37E4 /* ServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceTests.swift; sourceTree = "<group>"; };
 		B36DBA15248A7477001A37E4 /* UtilsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilsTests.swift; sourceTree = "<group>"; };
 		B38CD4E5249A37AB00A8A507 /* sample.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = sample.pdf; sourceTree = "<group>"; };
@@ -71,8 +68,6 @@
 				B38CD4E5249A37AB00A8A507 /* sample.pdf */,
 				B3C47C3424A1F997008BDF83 /* corona.jpg */,
 				B36DBA14248A7477001A37E4 /* ServiceTests.swift */,
-				B35D5B6A24A4A5BD00D5B046 /* MockedData.swift */,
-				B36C257F249CBE6E0081F976 /* StreamingTests.swift */,
 				B3EFB205248E4BD2008D6C52 /* ConnectionTests.swift */,
 				B36DBA15248A7477001A37E4 /* UtilsTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
@@ -194,6 +189,8 @@
 				"${PODS_ROOT}/Target Support Files/Pods-PryvApiSwiftKit_Tests/Pods-PryvApiSwiftKit_Tests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/Mocker/Mocker.framework",
+				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
+				"${BUILT_PRODUCTS_DIR}/PromisesSwift/Promises.framework",
 				"${BUILT_PRODUCTS_DIR}/PryvApiSwiftKit/PryvApiSwiftKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Socket.IO-Client-Swift/SocketIO.framework",
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
@@ -202,6 +199,8 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mocker.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Promises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PryvApiSwiftKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketIO.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
@@ -240,7 +239,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B35D5B6B24A4A5BD00D5B046 /* MockedData.swift in Sources */,
 				B36DBA17248A7477001A37E4 /* ServiceTests.swift in Sources */,
 				B36DBA18248A7477001A37E4 /* UtilsTests.swift in Sources */,
 				B3EFB206248E4BD2008D6C52 /* ConnectionTests.swift in Sources */,
