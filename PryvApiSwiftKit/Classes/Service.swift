@@ -8,6 +8,7 @@
 
 import Foundation
 import Promises
+import Alamofire
 
 public typealias Json = [String: Any]
 
@@ -83,28 +84,18 @@ public class Service: Equatable {
     public func info(forceFetch: Bool = false) -> Promise<PryvServiceInfo> {
         if forceFetch || pryvServiceInfo == nil {
             pryvServiceInfo = Promise<PryvServiceInfo>(on: .global(qos: .background), { (fullfill, reject) in
-                URLSession.shared.dataTask(with: URL(string: self.pryvServiceInfoUrl)!) { (data, response, error) in
-                    if let error = error {
-                        reject(error)
+                AF.request(URL(string: self.pryvServiceInfoUrl)!).responseDecodable(of: PryvServiceInfo.self) { response in
+                    switch response.result {
+                    case .success(var serviceInfo):
+                        serviceInfo = self.customize(serviceInfo: serviceInfo, with: self.serviceCustomization)
+                        fullfill(serviceInfo)
+                        return
+                    case .failure(let error):
+                        let connError = ConnectionError.requestError(error.localizedDescription)
+                        reject(connError)
                         return
                     }
-                    
-                    guard let data = data else {
-                        let error = NSError(domain: "", code: 100, userInfo: nil)
-                        reject(error)
-                        return
-                    }
-                    
-                    let decoder = JSONDecoder()
-                    guard var serviceInfo = try? decoder.decode(PryvServiceInfo.self, from: data) else {
-                        let error = NSError(domain: "", code: 100, userInfo: nil)
-                        reject(error)
-                        return
-                    }
-
-                    serviceInfo = self.customize(serviceInfo: serviceInfo, with: self.serviceCustomization)
-                    fullfill(serviceInfo)
-                }.resume()
+                }
             })
         }
         
@@ -210,33 +201,23 @@ public class Service: Equatable {
                 request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
                 request.httpBody = try? JSONSerialization.data(withJSONObject: authSettings)
                 
-                URLSession.shared.dataTask(with: request) { (data, response, error) in
-                    if let error = error {
+                AF.request(request).responseJSON { response in
+                    switch response.result {
+                    case .success(let JSON):
+                        let response = JSON as! NSDictionary
+                        
+                        let authURL = response.object(forKey: "authUrl") as? String
+                        let poll = response.object(forKey: "poll") as? String
+                        let poll_rate_ms = response.object(forKey: "poll_rate_ms") as? Double
+                        
+                        if let authURL = authURL, let poll = poll, let poll_rate_ms = poll_rate_ms {
+                            self.pollingInfo = (poll: poll, poll_ms: poll_rate_ms, callback: stateChangedCallback)
+                            fullfill(authURL)
+                        }
+                    case .failure(let error):
                         reject(error)
-                        return
                     }
-                    
-                    guard let data = data else {
-                        let error = NSError(domain: "", code: 100, userInfo: nil)
-                        reject(error)
-                        return
-                    }
-                    
-                    guard let jsonResponse = try? JSONSerialization.jsonObject(with: data), let dictionary = jsonResponse as? Json else {
-                        let error = NSError(domain: "", code: 100, userInfo: nil)
-                        reject(error)
-                        return
-                    }
-                    
-                    let authURL = dictionary["authUrl"] as? String
-                    let poll = dictionary["poll"] as? String
-                    let poll_rate_ms = dictionary["poll_rate_ms"] as? Double
-                    
-                    if let authURL = authURL, let poll = poll, let poll_rate_ms = poll_rate_ms {
-                        self.pollingInfo = (poll: poll, poll_ms: poll_rate_ms, callback: stateChangedCallback)
-                        fullfill(authURL)
-                    }
-                }.resume()
+                }
             })
         }
     }
@@ -291,40 +272,31 @@ public class Service: Equatable {
                 request.addValue(origin!, forHTTPHeaderField: "Origin")
             }
             
-            URLSession.shared.dataTask(with: request) { (data, response, error) in
-                if let error = error {
-                    reject(error)
-                    return
-                }
-                
-                guard let data = data else {
-                    let error = NSError(domain: "", code: 100, userInfo: nil)
-                    reject(error)
-                    return
-                }
-                
-                guard let jsonResponse = try? JSONSerialization.jsonObject(with: data), let dictionary = jsonResponse as? Json else {
-                    let error = NSError(domain: "", code: 100, userInfo: nil)
-                    reject(error)
-                    return
-                }
-                
-                if let problem = dictionary["error"] as? [String: Any] {
-                    if let message = problem["message"] {
+            AF.request(request).responseJSON { response in
+                switch response.result {
+                case .success(let JSON):
+                    let response = JSON as! NSDictionary
+                    
+                    if let problem = response.object(forKey: "error") as? Json {
+                        if let message = problem["message"] {
+                            let error = NSError(domain: "", code: 100, userInfo: nil)
+                            print("problem encountered when requesting login: \(String(describing: message))")
+                            reject(error)
+                            return
+                        }
+                    }
+                    
+                    guard let token = response.object(forKey: "token") as? String else {
                         let error = NSError(domain: "", code: 100, userInfo: nil)
-                        print("problem encountered when requesting login: \(String(describing: message))")
                         reject(error)
                         return
                     }
-                }
-                
-                guard let token = dictionary["token"] as? String else {
-                    let error = NSError(domain: "", code: 100, userInfo: nil)
+                    
+                    fullfill(token)
+                case .failure(let error):
                     reject(error)
-                    return
                 }
-                fullfill(token)
-            }.resume()
+            }
         })
     }
     
@@ -334,21 +306,18 @@ public class Service: Equatable {
     ///   - completion: closure containing the parsed data, if any, from the response of the request
     /// - Returns: the closure `completion` is called after the function returns to access the fields `status` and `apiEndpoint`
     private func sendPollingRequest(poll: String, completion: @escaping ((String, String?)?) -> ()) {
-        var request = URLRequest(url: URL(string: poll)!)
-        request.httpMethod = "GET"
-        
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let _ = error, data == nil { print("problem encountered when polling") ; return completion(nil) }
-
-            guard let pollResponse = data, let jsonResponse = try? JSONSerialization.jsonObject(with: pollResponse), let dictionary = jsonResponse as? Json else { print("problem encountered when decoding the poll response") ; return completion(nil) }
-            
-            guard let status = dictionary["status"] as? String else { return completion(nil) }
-            let pryvApiEndpoint = dictionary["apiEndpoint"] as? String
-            
-            return completion((status, pryvApiEndpoint))
+        AF.request(poll, method: .get).responseJSON { response in
+            switch response.result {
+            case .success(let JSON):
+                let response = JSON as! NSDictionary
+                
+                guard let status = response.object(forKey: "status") as? String else { return completion(nil) }
+                let pryvApiEndpoint = response.object(forKey: "apiEndpoint") as? String
+                completion((status, pryvApiEndpoint))
+            case .failure(_):
+                completion(nil)
+            }
         }
-
-        task.resume()
     }
     
     /// Sends a request to the polling url and calls the callback function from the setUpAuth function if the state changes
