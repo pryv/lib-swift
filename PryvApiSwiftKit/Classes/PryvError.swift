@@ -1,5 +1,5 @@
 //
-//  ConnectionError.swift
+//  PryvError.swift
 //  PryvApiSwiftKit
 //
 //  Created by Sara Alemanno on 24.06.20.
@@ -7,13 +7,13 @@
 
 import Foundation
 
-public enum ConnectionError: Error {
+public enum PryvError: Error {
     case responseError(_ message: String)
     case decodingError
     case requestError(_ message: String)
 }
 
-extension ConnectionError: LocalizedError {
+extension PryvError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .responseError(let message):

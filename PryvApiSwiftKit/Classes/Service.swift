@@ -89,11 +89,9 @@ public class Service: Equatable {
                     case .success(var serviceInfo):
                         serviceInfo = self.customize(serviceInfo: serviceInfo, with: self.serviceCustomization)
                         fullfill(serviceInfo)
-                        return
                     case .failure(let error):
-                        let connError = ConnectionError.requestError(error.localizedDescription)
-                        reject(connError)
-                        return
+                        let servError = PryvError.requestError(error.localizedDescription)
+                        reject(servError)
                     }
                 }
             })
@@ -213,9 +211,13 @@ public class Service: Equatable {
                         if let authURL = authURL, let poll = poll, let poll_rate_ms = poll_rate_ms {
                             self.pollingInfo = (poll: poll, poll_ms: poll_rate_ms, callback: stateChangedCallback)
                             fullfill(authURL)
+                        } else {
+                            let servError = PryvError.decodingError
+                            reject(servError)
                         }
                     case .failure(let error):
-                        reject(error)
+                        let servError = PryvError.requestError(error.localizedDescription)
+                        reject(servError)
                     }
                 }
             })
@@ -227,11 +229,13 @@ public class Service: Equatable {
         timer?.invalidate()
     }
     
+    /// Compares two services based uniquely on their service info url
+    /// - Parameters:
+    ///   - lhs
+    ///   - rhs
+    /// - Returns: true if url is the same, false otherwise
     public static func == (lhs: Service, rhs: Service) -> Bool {
-        let lhsValue = try? await(lhs.info())
-        let rhsValue = try? await(rhs.info())
-        
-        return lhsValue == rhsValue
+        return lhs.pryvServiceInfoUrl == rhs.pryvServiceInfoUrl
     }
     
     // MARK: - private helpers functions for the library
@@ -278,23 +282,23 @@ public class Service: Equatable {
                     let response = JSON as! NSDictionary
                     
                     if let problem = response.object(forKey: "error") as? Json {
-                        if let message = problem["message"] {
-                            let error = NSError(domain: "", code: 100, userInfo: nil)
-                            print("problem encountered when requesting login: \(String(describing: message))")
-                            reject(error)
+                        if let message = problem["message"] as? String {
+                            let servError = PryvError.responseError(message)
+                            reject(servError)
                             return
                         }
                     }
                     
                     guard let token = response.object(forKey: "token") as? String else {
-                        let error = NSError(domain: "", code: 100, userInfo: nil)
-                        reject(error)
+                        let servError = PryvError.decodingError
+                        reject(servError)
                         return
                     }
                     
                     fullfill(token)
                 case .failure(let error):
-                    reject(error)
+                    let servError = PryvError.requestError(error.localizedDescription)
+                    reject(servError)
                 }
             }
         })
@@ -310,7 +314,6 @@ public class Service: Equatable {
             switch response.result {
             case .success(let JSON):
                 let response = JSON as! NSDictionary
-                
                 guard let status = response.object(forKey: "status") as? String else { return completion(nil) }
                 let pryvApiEndpoint = response.object(forKey: "apiEndpoint") as? String
                 completion((status, pryvApiEndpoint))

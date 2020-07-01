@@ -56,7 +56,7 @@ class ConnectionTests: XCTestCase {
     
     func testService() {
         let service = connection?.getService()
-        XCTAssertEqual(service, Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info"))
+        XCTAssertEqual(service, Service(pryvServiceInfoUrl: "https://testuser.pryv.me/service/info"))
     }
     
     func testUsername() {

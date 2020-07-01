@@ -76,18 +76,18 @@ public class Connection {
                     let response = JSON as! NSDictionary
                     
                     if let error = response.object(forKey: "error") {
-                        let connError = ConnectionError.responseError(String(describing: error))
+                        let connError = PryvError.responseError(String(describing: error))
                         reject(connError)
                         return
                     }
                     
                     guard let results = response.object(forKey: "results"), let json = results as? [Json] else {
-                        reject(ConnectionError.decodingError)
+                        reject(PryvError.decodingError)
                         return
                     }
                     
                     if let error = json[0]["error"] as? Json {
-                        let connError = ConnectionError.requestError(error["message"] as! String)
+                        let connError = PryvError.requestError(error["message"] as! String)
                         reject(connError)
                         return
                     }
@@ -132,11 +132,9 @@ public class Connection {
                 case .success(let JSON):
                     let response = JSON as! Json
                     fullfill(response)
-                    return
                 case .failure(let error):
-                    let connError = ConnectionError.requestError(error.localizedDescription)
+                    let connError = PryvError.requestError(error.localizedDescription)
                     reject(connError)
-                    return
                 }
             }
         })
@@ -223,15 +221,14 @@ public class Connection {
                     let response = JSON as! NSDictionary
                     let event = response.object(forKey: "event") as? Event
                     guard let eventId = event?["id"] as? String else {
-                        let connError = ConnectionError.decodingError
+                        let connError = PryvError.decodingError
                         reject(connError)
                         return
                     }
                     fullfill(eventId)
                 case .failure(let error):
-                    let connError = ConnectionError.requestError(error.localizedDescription)
+                    let connError = PryvError.requestError(error.localizedDescription)
                     reject(connError)
-                    return
                 }
             }
         })
@@ -294,16 +291,14 @@ public class Connection {
                 case .success(let JSON):
                     let response = JSON as! NSDictionary
                     guard let event = response.object(forKey: "event") as? Event else {
-                        let error = NSError(domain: "", code: 100, userInfo: nil)
+                        let error = PryvError.decodingError
                         reject(error)
                         return
                     }
                     fullfill(event)
-                    return
                 case .failure(let error):
-                    let connError = ConnectionError.requestError(error.localizedDescription)
+                    let connError = PryvError.requestError(error.localizedDescription)
                     reject(connError)
-                    return
                 }
             }
         })
