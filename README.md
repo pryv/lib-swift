@@ -438,6 +438,7 @@ connection.subscribe(message: .eventsChanged) { _, _ in // upon a notification t
         }
     }
 }
+connection.connect()
 ```
   
 ### Service Information

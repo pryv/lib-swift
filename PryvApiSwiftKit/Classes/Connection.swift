@@ -66,45 +66,47 @@ public class Connection {
     public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil) -> Promise<[Json]> {
         var request = URLRequest(url: URL(string: endpoint)!)
         request.httpMethod = "POST"
-        request.addValue(token ?? "", forHTTPHeaderField: "Authorization")
         request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.httpBody = try! JSONSerialization.data(withJSONObject: APICalls)
+        if let _ = token {
+            request.addValue(token!, forHTTPHeaderField: "Authorization")
+        }
         
-        return Promise<[Json]>(on: .global(qos: .background), { (fullfill, reject) in
+        return Promise<[Json]>(on: .global(qos: .background)) { (fullfill, reject) in
             AF.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
-                    let response = JSON as! NSDictionary
+                    let response = JSON as! Json
                     
-                    if let error = response.object(forKey: "error") {
-                        let connError = PryvError.responseError(String(describing: error))
-                        reject(connError)
+                    if let error = response["error"] as? Json, let message = error["message"] as? String {
+                        reject(PryvError.responseError(message))
                         return
                     }
                     
-                    guard let results = response.object(forKey: "results"), let json = results as? [Json] else {
+                    guard let results = response["results"] as? [Json] else {
                         reject(PryvError.decodingError)
                         return
                     }
                     
-                    if let error = json[0]["error"] as? Json {
-                        let connError = PryvError.requestError(error["message"] as! String)
-                        reject(connError)
+                    if let error = results[0]["error"] as? Json {
+                        reject(PryvError.requestError(error["message"] as! String))
                         return
                     }
                     
                     if let callbacks = handleResults {
                         for (i, callback) in callbacks {
-                            if i >= json.count { print("problem encountered when applying the callback \(i): index out of bounds") }
-                            callback(json[i])
+                            if i >= results.count {
+                                print("problem encountered when applying the callback \(i): index out of bounds")
+                            }
+                            callback(results[i])
                         }
                     }
-                    fullfill(json)
+                    fullfill(results)
                 case .failure(let error):
                     reject(error)
                 }
             }
-        })
+        }
     }
     
     /// Add Data Points to HFEvent (flatJSON format) as described in the [reference API](https://api.pryv.com/reference/#add-hf-series-data-points)
@@ -119,15 +121,17 @@ public class Connection {
             "fields": fields,
             "points": points
         ]
-        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)/series" : apiEndpoint + "/events/\(eventId)/series"
         
-        return Promise<Json>(on: .global(qos: .background), { (fullfill, reject) in
-            var request = URLRequest(url: URL(string: string)!)
-            request.httpMethod = "POST"
-            request.addValue(self.token ?? "", forHTTPHeaderField: "Authorization")
-            request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-            request.httpBody = try! JSONSerialization.data(withJSONObject: parameters)
-            
+        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)/series" : apiEndpoint + "/events/\(eventId)/series"
+        var request = URLRequest(url: URL(string: string)!)
+        request.httpMethod = "POST"
+        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try! JSONSerialization.data(withJSONObject: parameters)
+        if let _ = token {
+            request.addValue(token!, forHTTPHeaderField: "Authorization")
+        }
+        
+        return Promise<Json>(on: .global(qos: .background)) { (fullfill, reject) in
             AF.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
@@ -138,11 +142,10 @@ public class Connection {
                     }
                     fullfill(response)
                 case .failure(let error):
-                    let connError = PryvError.requestError(error.localizedDescription)
-                    reject(connError)
+                    reject(PryvError.requestError(error.localizedDescription))
                 }
             }
-        })
+        }
     }
 
     /// Streamed [get event](https://api.pryv.com/reference/#get-events)
@@ -156,13 +159,15 @@ public class Connection {
             "params": queryParams!
         ]
         
+        var request = URLRequest(url: URL(string: self.endpoint)!)
+        request.httpMethod = "POST"
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
+        if let _ = token {
+            request.addValue(token!, forHTTPHeaderField: "Authorization")
+        }
+        
         return Promise<Json>(on: .global(qos: .background), { (fullfill, reject) in
-            var request = URLRequest(url: URL(string: self.endpoint)!)
-            request.httpMethod = "POST"
-            request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-            request.setValue(self.token ?? "", forHTTPHeaderField: "Authorization")
-            request.httpBody = try! JSONSerialization.data(withJSONObject: [parameters])
-            
             var partialChunk: String? = nil
             var eventsCount = 0
             var eventDeletionsCount = 0
@@ -171,7 +176,7 @@ public class Connection {
                 switch stream.event {
                 case let .stream(result):
                     switch result {
-                    case let .success(data):
+                    case let .success(data): // Library doc: there cannot be a failure when streaming
                         guard let string = String(data: data, encoding: .utf8) else { return }
                         let parsedResult = self.parseEventsChunked(string: (partialChunk ?? "") + string, forEachEvent: forEachEvent)
                         eventsCount += parsedResult.eventsCount
@@ -214,14 +219,15 @@ public class Connection {
     /// - Returns: promise containing the new created event with an optionnal attachment
     public func createEventWithFormData(event: Json, parameters: Parameters? = nil, files: [Media]? = nil) -> Promise<Event> {
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events" : apiEndpoint + "/events"
+        var request = URLRequest(url: URL(string: string)!)
+        request.httpMethod = "POST"
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try! JSONSerialization.data(withJSONObject: event)
+        if let _ = token {
+            request.addValue(token!, forHTTPHeaderField: "Authorization")
+        }
         
         let eventId = Promise<String>(on: .global(qos: .background), { (fullfill, reject) in
-            var request = URLRequest(url: URL(string: string)!)
-            request.httpMethod = "POST"
-            request.addValue(self.token ?? "", forHTTPHeaderField: "Authorization")
-            request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-            request.httpBody = try! JSONSerialization.data(withJSONObject: event)
-            
             AF.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
@@ -285,27 +291,26 @@ public class Connection {
     /// - Returns: a promise containing the event with id `eventId` with an attachement
     private func addFormDataToEvent(eventId: String, boundary: String, httpBody: Data) -> Promise<Event> {
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)" : apiEndpoint + "/events/\(eventId)"
+        var request = URLRequest(url: URL(string: string)!)
+        request.httpMethod = "POST"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.httpBody = httpBody
+        if let _ = token {
+            request.addValue(token!, forHTTPHeaderField: "Authorization")
+        }
         
         return Promise<Event>(on: .global(qos: .background), { (fullfill, reject) in
-            var request = URLRequest(url: URL(string: string)!)
-            request.httpMethod = "POST"
-            request.addValue(self.token ?? "", forHTTPHeaderField: "Authorization")
-            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-            request.httpBody = httpBody
-            
             AF.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
-                    let response = JSON as! NSDictionary
-                    guard let event = response.object(forKey: "event") as? Event else {
-                        let error = PryvError.decodingError
-                        reject(error)
+                    let response = JSON as! Json
+                    guard let event = response["event"] as? Event else {
+                        reject(PryvError.decodingError)
                         return
                     }
                     fullfill(event)
                 case .failure(let error):
-                    let connError = PryvError.requestError(error.localizedDescription)
-                    reject(connError)
+                    reject(PryvError.requestError(error.localizedDescription))
                 }
             }
         })
