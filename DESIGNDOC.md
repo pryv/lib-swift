@@ -4,9 +4,9 @@ Pryv's Swift library for iOS
 
 |         |                       |
 | ------- | --------------------- |
-| Authors | Pierre-Mikael Legris, Ilia Kebets |
-| Reviewers | Ilia Kebets |
-| Date    | June 2nd 2020 |
+| Authors | Sara Alemanno |
+| Reviewers | Pierre-Mikael Legris, Ilia Kebets |
+| Date    | July 7th 2020 |
 | Version | 1                  |
 
 ## Motivation
@@ -28,8 +28,7 @@ An example of app using this framework can be found on [app-swift-example](https
 
 ### API
 
-- Button to connect to the user's Pryv account
-- Generate the a token to grant the access to the user's data
+- Generate a token to grant the access to the user's data
 - Connection object to interact with the API
 - Call batches to create events 
 - Get events streamed 
