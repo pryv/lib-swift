@@ -8,38 +8,24 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PryvApiSwiftKit'
-  s.version          = '0.1.2'
+  s.version          = '2.1.0'
   s.summary          = 'Pryv Swift library for iOS'
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
   s.description      = <<-DESC
-  An SDK to connect and interact with the Pryv API from any iOS application.
+  An SDK to connect and interact with Pryv API from any iOS application.
                        DESC
 
   s.homepage         = 'https://github.com/pryv/lib-swift'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'alemannosara' => 'sara.alemanno@epfl.ch' }
   s.source           = { :git => 'https://github.com/pryv/lib-swift.git', :branch => "master" }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '10.0'
 
   s.source_files = 'PryvApiSwiftKit/Classes/**/*'
   
-  # s.resource_bundles = {
-  #   'PryvApiSwiftKit' => ['PryvApiSwiftKit/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-   s.dependency 'Mocker'
-   s.dependency 'Alamofire'
-   s.dependency 'Socket.IO-Client-Swift'
-   s.dependency 'PromisesSwift'
+  s.dependency 'Mocker'
+  s.dependency 'Alamofire'
+  s.dependency 'Socket.IO-Client-Swift'
+  s.dependency 'PromisesSwift'
 end

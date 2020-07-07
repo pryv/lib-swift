@@ -132,6 +132,10 @@ public class Connection {
                 switch response.result {
                 case .success(let JSON):
                     let response = JSON as! Json
+                    if let error = response["error"] as? Json, let message = error["message"] as? String {
+                        reject(PryvError.responseError(message))
+                        return 
+                    }
                     fullfill(response)
                 case .failure(let error):
                     let connError = PryvError.requestError(error.localizedDescription)
