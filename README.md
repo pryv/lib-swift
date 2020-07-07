@@ -28,7 +28,12 @@ iOS 10.0 is required to use this library.
   - [Example with Includes deletion:](#example-with-includes-deletion)
   - [result:](#result-1)
 - [Events with Attachments](#events-with-attachments)
+  - [Add attachment to existing event](#add-attachment-to-existing-event)
+  - [Get a preview of an attached image](#get-a-preview-of-an-attached-image)
 - [High Frequency Events](#high-frequency-events)
+- [Connection with websockets](#connection-with-websockets)
+  - [Connecting](#connecting)
+  - [Lib-swift](#lib-swift)
 - [Service Information](#service-information)
   - [Pryv.Service](#pryvservice)
     - [Initizalization with a service info URL](#initizalization-with-a-service-info-url)
@@ -413,7 +418,7 @@ let socket = manager.socket(forNamespace: "/{username}/{username}")
 
 #### Lib-swift
 
-This library offers a class that allows connection, subscribtion to changes and call to methods for your iOS applications. 
+This library offers connection, subscribtion to changes and call to methods using Socket.io for your iOS applications. 
 
 ```swift
 let url = "https://chuangzi.pryv.me/chuangzi?auth=ckc1s4rxj00037cpv3tt39ceb"
