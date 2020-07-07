@@ -260,3 +260,135 @@ connection.getEventsStreamed(queryParams: queryParams, forEachEvent: forEachEven
   ]
 ]
 ```
+
+### Events with Attachments
+
+This shortcut allows to create an event with an attachment in a single API call.
+
+```swift
+let payload: Event = ["streamId": "data", "type": "picture/attached"]
+let filePath = "./test/my_image.png"
+let mimeType = "image/png"
+
+connection?.createEventWithFile(event: payload, filePath: filePath, mimeType: "application/pdf").then { result in 
+    // handle the result
+}
+```
+
+### High Frequency Events 
+
+Reference: [https://api.pryv.com/reference/#hf-events](https://api.pryv.com/reference/#hf-events)
+
+```swift
+func generateSerie() -> [[Int, CGFloat]] {
+  var serie = [(Int, CGFloat)]()
+  for t in 0..< 100000 { // t will be the deltatime in seconds
+    serie.append([t, sin(Double(t)/1000.0)])
+  }
+  return serie
+}
+
+let pointsA = generateSerie()
+let pointsB = generateSerie()
+
+func postHFData(points: [(Int, CGFloat)]) { // must return a Promise
+    let internalFunction: (Event) -> () = { event in // will be called each time an HF event is created
+        let eventId = event["id"] as! String
+        connection.addPointsToHFEvent(eventId, ["deltaTime", "value"], points)
+    }
+    return internalFunction
+}
+
+let apiCalls: [APICall] = [
+  [
+    "method": "streams.create",
+    "params": [
+        "id": "signal1", 
+        "name": "Signal1"
+    ]
+  ],
+  [
+    "method": "streams.create",
+    "params": [
+        "id": "signal2", 
+        "name": "Signal2"
+    ]
+  ],
+  [
+    "method": "events.create",
+    "params": [
+        "streamId": "signal1", 
+        "type": "serie:frequency/bpm" 
+    ]
+  ],
+  [
+    "method": "events.create",
+    "params": [
+        "streamId": "signal2", 
+        "type": "serie:frequency/bpm"
+    ]
+  ]
+]
+
+let handleResults: [Int: (Event) -> ()] = [
+    2: postHFData(pointsA), 
+    3: postHFData(pointsB)
+]
+
+connection.api(APICalls: apiCalls, handleResults: handleResults).catch { error in 
+    // handle error
+}
+
+```
+
+### Service Information and assets
+
+A Pryv.io deployment is a unique "Service", as an example **Pryv Lab** is a service, deployed on the **pryv.me** domain name.
+
+It relies on the content of a **service information** configuration, See: [Service Information API reference](https://api.pryv.com/reference/#service-info)
+
+#### Pryv.Service 
+
+Exposes tools to interact with Pryv.io at a "Platform" level. 
+
+##### Initizalization with a service info URL
+
+```swift
+let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
+```
+
+##### Initialization with the content of a service info configuration
+
+Service information properties can be overriden with specific values. This might be useful to test new designs on production platforms.
+
+```swift
+let serviceInfoUrl = "https://reg.pryv.me/service/info"
+let serviceCustomizations: Json = [
+  "name": "Pryv Lab 2", 
+  "assets": [
+    "definitions": "https://pryv.github.io/assets-pryv.me/index.json"
+  ]
+]
+let service = Service(pryvServiceInfoUrl: serviceInfoUrl, serviceCustomization: serviceCustomizations)
+```
+
+##### Usage of Pryv.Service.
+
+See: [Pryv.Service](https://pryv.github.io/js-lib/docs/Pryv.Service.html) for more details
+
+- `service.info()` - returns the content of the serviceInfo in a Promise 
+
+  ```swift
+  // example: get the name of the platform
+  service.info().then { serviceInfo in 
+    let serviceName = serviceInfo.name
+  }
+  ```
+
+- `service.infoSync()`: returns the cached content of the serviceInfo, requires `service.info()` to be called first.
+
+- `service.apiEndpointFor(username, token)` Will return the corresponding API endpoint for the provided credentials, `token` can be omitted.
+
+# Change Log
+
+## 2.0.1 Initial Release 
