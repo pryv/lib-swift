@@ -297,6 +297,28 @@ connection?.createEventWithFile(event: payload, filePath: filePath, mimeType: "a
     // handle the result
 }
 ```
+
+#### Add attachment to existing event
+
+```swift
+let filePath = "./test/my_image.png"
+let mimeType = "image/png"
+if let eventId = event["id"] as? String {
+    connection?.addFileToEvent(eventId: eventId, filePath: filePath, mimeType: mimeType).then { result in
+        // handle the result
+    }
+}
+```
+
+#### Get a preview of an attached image
+
+This function allows to get raw data corresponding to a preview of the image attached to the event.
+
+```swift
+if let eventId = event["id"] as? String {
+    let data = connection.getImagePreview(eventId: eventId) 
+}
+```
   
 ### High Frequency Events 
 
