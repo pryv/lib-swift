@@ -28,17 +28,12 @@ public struct PryvServiceInfo: Codable, Equatable {
 @available(iOS 10.0, *)
 public class Service: Equatable {
     private let utils = Utils()
-    private let loginPath = "auth/login"
-    private let authPath = "access"
     private let timeout = 90.0 // timeout for auth request in seconds
     
     private var timer: Timer?
-    
     private var pryvServiceInfoUrl: String
     private var serviceCustomization: Json?
-    
     private var pryvServiceInfo: Promise<PryvServiceInfo>?
-    
     private var pollingInfo: (poll: String, poll_ms: Double, callback: (AuthResult) -> ())? {
         didSet {
             var currentState: AuthState? = nil
@@ -55,7 +50,7 @@ public class Service: Equatable {
                 if elapsedTime >= self.timeout {
                     currentState = .timeout
                     self.timer?.invalidate()
-                    self.pollingInfo!.callback(AuthResult(state: currentState!, endpoint: nil))
+                    self.pollingInfo!.callback(AuthResult(state: currentState!, apiEndpoint: nil))
                     print("The auth request exceeded timeout and was invalidated.")
                 } else {
                     currentState = self.poll(currentState: currentState, poll: self.pollingInfo!.poll, stateChangedCallback: self.pollingInfo!.callback)
@@ -69,7 +64,7 @@ public class Service: Equatable {
     /// Inits a service with the service info url and no custom element
     /// - Parameters:
     ///   - pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: [https://access.{domain}/service/info](https://access.{domain}/service/info)
-    ///   - serviceCustomization: a json formatted dictionary corresponding to the customizations of the service
+    ///   - serviceCustomization: a json formatted dictionary corresponding to the customizations of the service (optional)
     public init(pryvServiceInfoUrl: String, serviceCustomization: Json? = nil) {
         self.pryvServiceInfoUrl = pryvServiceInfoUrl
         self.serviceCustomization = serviceCustomization
@@ -116,7 +111,7 @@ public class Service: Equatable {
     /// - Parameters:
     ///   - serviceInfo
     ///   - username
-    ///   - token
+    ///   - token (optional)
     /// - Returns: the API endpoint
     public func buildApiEndpoint(serviceInfo: PryvServiceInfo, username: String, token: String? = nil) -> String {
         let endpoint = serviceInfo.api.replacingOccurrences(of: "{username}", with: username)
@@ -126,10 +121,11 @@ public class Service: Equatable {
     /// Construct the API endpoint from this service and the username and token
     /// - Parameters:
     ///   - username
-    ///   - token (optionnal)
+    ///   - token (optional)
     /// - Returns: API Endpoint from a username and token and the PryvServiceInfo
     public func apiEndpointFor(username: String, token: String? = nil) -> Promise<String> {
         let serviceInfoPromise = pryvServiceInfo ?? info()
+        
         return serviceInfoPromise.then { serviceInfo in
             return self.buildApiEndpoint(serviceInfo: serviceInfo, username: username, token: token)
         }
@@ -142,19 +138,19 @@ public class Service: Equatable {
     ///   - username
     ///   - password
     ///   - appId
-    ///   - domain: domain parameter for the `Origin` header, according to the [trusted apps verification](https://api.pryv.com/reference/#trusted-apps-verification/)
+    ///   - domain: domain parameter for the `Origin` header, according to the [trusted apps verification](https://api.pryv.com/reference/#trusted-apps-verification/) (optional)
     /// - Returns: the user's connection to the appId or nil if problem is encountered
     public func login(username: String, password: String, appId: String, domain: String? = nil) -> Promise<Connection> {
         let loginPayload: Json = ["username": username, "password": password, "appId": appId]
         
         return apiEndpointFor(username: username).then { apiEndpoint in
-            let endpoint = apiEndpoint.hasSuffix("/") ? apiEndpoint + self.loginPath : apiEndpoint + "/" + self.loginPath
+            let endpoint = apiEndpoint.hasSuffix("/") ? apiEndpoint + "auth/login" : apiEndpoint + "/auth/login"
             var origin: String? = nil
             if let _ = domain {
                 origin = "https://login.\(domain!)"
             }
             
-            return self.sendLoginRequest(endpoint: endpoint, payload: loginPayload, origin: origin).then { token in
+            return self.sendLoginRequest(apiEndpoint: endpoint, payload: loginPayload, origin: origin).then { token in
                 self.apiEndpointFor(username: username, token: token).then { apiEndpoint in
                    return Connection(apiEndpoint: apiEndpoint)
                 }
@@ -191,33 +187,29 @@ public class Service: Equatable {
     public func setUpAuth(authSettings: Json, stateChangedCallback: @escaping (AuthResult) -> ()) -> Promise<String> {
         let serviceInfoPromise = pryvServiceInfo ?? info()
         return serviceInfoPromise.then { serviceInfo in
-            let endpoint = serviceInfo.register.hasSuffix("/") ? serviceInfo.register + self.authPath : serviceInfo.register + "/" + self.authPath
+            let string = serviceInfo.register.hasSuffix("/") ? serviceInfo.register + "access" : serviceInfo.register + "/access"
+            var request = URLRequest(url: URL(string: string)!)
+            request.httpMethod = "POST"
+            request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+            request.httpBody = try? JSONSerialization.data(withJSONObject: authSettings)
             
             return Promise<String>(on: .global(qos: .background), { (fullfill, reject) in
-                var request = URLRequest(url: URL(string: endpoint)!)
-                request.httpMethod = "POST"
-                request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-                request.httpBody = try? JSONSerialization.data(withJSONObject: authSettings)
-                
                 AF.request(request).responseJSON { response in
                     switch response.result {
                     case .success(let JSON):
-                        let response = JSON as! NSDictionary
+                        let response = JSON as! Json
                         
-                        let authURL = response.object(forKey: "authUrl") as? String
-                        let poll = response.object(forKey: "poll") as? String
-                        let poll_rate_ms = response.object(forKey: "poll_rate_ms") as? Double
-                        
-                        if let authURL = authURL, let poll = poll, let poll_rate_ms = poll_rate_ms {
-                            self.pollingInfo = (poll: poll, poll_ms: poll_rate_ms, callback: stateChangedCallback)
-                            fullfill(authURL)
-                        } else {
-                            let servError = PryvError.decodingError
-                            reject(servError)
+                        guard let authURL = response["authUrl"] as? String,
+                            let poll = response["poll"] as? String,
+                            let poll_rate_ms = response["poll_rate_ms"] as? Double else {
+                                reject(PryvError.decodingError)
+                                return
                         }
+
+                        self.pollingInfo = (poll: poll, poll_ms: poll_rate_ms, callback: stateChangedCallback)
+                        fullfill(authURL)
                     case .failure(let error):
-                        let servError = PryvError.requestError(error.localizedDescription)
-                        reject(servError)
+                        reject(PryvError.requestError(error.localizedDescription))
                     }
                 }
             })
@@ -246,8 +238,8 @@ public class Service: Equatable {
     /// - Returns: the modified service info with the values of the given json
     private func customize(serviceInfo: PryvServiceInfo, with json: Json?) -> PryvServiceInfo {
         guard let modifications = json else { return serviceInfo }
-        var result = serviceInfo
         
+        var result = serviceInfo
         if let register = modifications["register"] as? String { result.register = register }
         if let access = modifications["access"] as? String { result.access = access }
         if let api = modifications["api"] as? String { result.api = api }
@@ -264,41 +256,36 @@ public class Service: Equatable {
     /// - Parameters:
     ///   - endpoint: the api endpoint given by the service info
     ///   - payload: the json formatted payload for the request: username, password and app id
-    ///   - origin: the field of the form `https://login.{domain}` to add to the `Origin` header
+    ///   - origin: the field of the form `https://login.{domain}` to add to the `Origin` header (optional)
     /// - Returns: promise containg the token received from the request
-    private func sendLoginRequest(endpoint: String, payload: Json, origin: String? = nil) -> Promise<String> {
+    private func sendLoginRequest(apiEndpoint: String, payload: Json, origin: String? = nil) -> Promise<String> {
+        var request = URLRequest(url: URL(string: apiEndpoint)!)
+        request.httpMethod = "POST"
+        request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+        if let _ = origin {
+            request.addValue(origin!, forHTTPHeaderField: "Origin")
+        }
+        
         return Promise<String>(on: .global(qos: .background), { (fullfill, reject) in
-            var request = URLRequest(url: URL(string: endpoint)!)
-            request.httpMethod = "POST"
-            request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-            request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
-            if let _ = origin {
-                request.addValue(origin!, forHTTPHeaderField: "Origin")
-            }
-            
             AF.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
-                    let response = JSON as! NSDictionary
+                    let response = JSON as! Json
                     
-                    if let problem = response.object(forKey: "error") as? Json {
-                        if let message = problem["message"] as? String {
-                            let servError = PryvError.responseError(message)
-                            reject(servError)
-                            return
-                        }
+                    if let problem = response["error"] as? Json, let message = problem["message"] as? String {
+                        reject(PryvError.responseError(message))
+                        return
                     }
                     
-                    guard let token = response.object(forKey: "token") as? String else {
-                        let servError = PryvError.decodingError
-                        reject(servError)
+                    guard let token = response["token"] as? String else {
+                        reject(PryvError.decodingError)
                         return
                     }
                     
                     fullfill(token)
                 case .failure(let error):
-                    let servError = PryvError.requestError(error.localizedDescription)
-                    reject(servError)
+                    reject(PryvError.requestError(error.localizedDescription))
                 }
             }
         })
@@ -313,9 +300,13 @@ public class Service: Equatable {
         AF.request(poll, method: .get).responseJSON { response in
             switch response.result {
             case .success(let JSON):
-                let response = JSON as! NSDictionary
-                guard let status = response.object(forKey: "status") as? String else { return completion(nil) }
-                let pryvApiEndpoint = response.object(forKey: "apiEndpoint") as? String
+                let response = JSON as! Json
+                
+                guard let status = response["status"] as? String else {
+                    return completion(nil)
+                }
+                
+                let pryvApiEndpoint = response["apiEndpoint"] as? String
                 completion((status, pryvApiEndpoint))
             case .failure(_):
                 completion(nil)
@@ -342,7 +333,7 @@ public class Service: Equatable {
                         
                         if newState != .refused {
                             newState = .refused
-                            let result = AuthResult(state: newState!, endpoint: nil)
+                            let result = AuthResult(state: newState!, apiEndpoint: nil)
                             DispatchQueue.main.async {
                                 stateChangedCallback(result)
                             }
@@ -351,7 +342,7 @@ public class Service: Equatable {
                     case "NEED_SIGNIN":
                         if newState != .need_signin {
                             newState = .need_signin
-                            let result = AuthResult(state: newState!, endpoint: nil)
+                            let result = AuthResult(state: newState!, apiEndpoint: nil)
                             DispatchQueue.main.async {
                                 stateChangedCallback(result)
                             }
@@ -363,7 +354,7 @@ public class Service: Equatable {
                         
                         if newState != .accepted {
                             newState = .accepted
-                            let result = AuthResult(state: newState!, endpoint: pryvApiEndpoint)
+                            let result = AuthResult(state: newState!, apiEndpoint: pryvApiEndpoint)
                             DispatchQueue.main.async {
                                 stateChangedCallback(result)
                             }

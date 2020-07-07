@@ -22,7 +22,7 @@ public class ConnectionWebSocket {
     
     /// Initialize the socket io connection with a URL
     /// - Parameters:
-    ///   - url
+    ///   - url: see [connecting](https://api.pryv.com/reference/#connecting) for the format
     ///   - log: whether to show the socket io connection logs (false, by default)
     public init(url: String, log: Bool = false) {
         let (endpoint, connectParams, namespace) = utils.parseSocketIOURL(url: url)
@@ -32,25 +32,13 @@ public class ConnectionWebSocket {
         socket = manager.socket(forNamespace: namespace)
     }
     
-    // MARK: - public library
-    
-    /// Emit API calls
-    /// See [API reference](https://api.pryv.com/reference/#call-methods) for more information
-    /// - Parameters:
-    ///   - methodId
-    ///   - params: object parameters
-    ///   - completion: callback
-    public func emit(methodId: String, params: Json, completion: (() -> ())? = nil) {
-        socket.emit(methodId, params, completion: completion)
-    }
-    
     /// Emit API calls
     /// See [API reference](https://api.pryv.com/reference/#call-methods) for more information
     /// - Parameters:
     ///   - methodId
     ///   - params: object parameters
     ///   - completion: callback handling received data
-    public func emitWithData(methodId: String, params: Json, callback: @escaping AckCallback) {
+    public func emit(methodId: String, params: Json, callback: @escaping ([Any]) -> ()) {
         socket.emitWithAck(methodId, params).timingOut(after: 0) { data in
             callback(data)
         }

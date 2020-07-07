@@ -13,17 +13,14 @@ import Alamofire
 @testable import Promises
 
 class ConnectionTests: XCTestCase {
-    private var a: Int?
-    private var connection: Connection?
-    private let connectionPromise = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
-            .login(username: "testuser", password: "testuser", appId: "lib-swift", domain: "pryv.me")
-
+    private let testuser = "testuser"
+    private let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
     private let callBatches: [APICall] = [
         [
             "method": "events.create",
             "params": [
                 "time": 1591274234.916,
-                "streamIds": ["weight"],
+                "streamId": "weight",
                 "type": "mass/kg",
                 "content": 90
             ]
@@ -31,27 +28,29 @@ class ConnectionTests: XCTestCase {
         [
             "method": "events.create",
             "params": [
-              "time": 1385046854.282,
-              "streamIds": ["weight"],
-              "type": "mass/kg",
-              "content": 120
+                "time": 1385046854.282,
+                "streamId": "weight",
+                "type": "mass/kg",
+                "content": 120
             ]
         ]
     ]
+    
+    private var connection: Connection!
 
     override func setUp() {
         super.setUp()
-        continueAfterFailure = false
         
         Mocker.ignore(URL(string: "https://testuser.pryv.me/service/info")!)
         Mocker.ignore(URL(string: "https://reg.pryv.me/service/info")!)
         Mocker.ignore(URL(string: "https://testuser.pryv.me/auth/login")!)
         
+        let promise = service.login(username: testuser, password: testuser, appId: testuser, domain: "pryv.me")
         XCTAssert(waitForPromises(timeout: 1))
-        XCTAssertNotNil(connectionPromise.value)
-        XCTAssertNil(connectionPromise.error)
+        XCTAssertNotNil(promise.value)
+        XCTAssertNil(promise.error)
         
-        connection = connectionPromise.value
+        connection = promise.value
     }
     
     func testService() {
@@ -63,13 +62,14 @@ class ConnectionTests: XCTestCase {
         let username = connection?.username()
         
         XCTAssert(waitForPromises(timeout: 1))
-        XCTAssertNil(connectionPromise.error)
+        XCTAssertNil(username?.error)
         XCTAssertEqual(username?.value, "testuser")
     }
 
-    func testCallBatchCreate() {
+    func testCallBatchCreateEvents() {
         var events = [Event]()
-        let results = connection?.api(APICalls: callBatches, handleResults: [0: { result in self.a = 2 }])
+        var a = 0
+        let results = connection?.api(APICalls: callBatches, handleResults: [0: { result in a = 2 }])
         
         XCTAssert(waitForPromises(timeout: 1))
         XCTAssertNil(results?.error)
@@ -115,7 +115,7 @@ class ConnectionTests: XCTestCase {
         XCTAssertEqual(a, 2)
     }
 
-    func testCallBatchGet() {
+    func testCallBatchGetEvents() {
         let apiCalls: [APICall] = [[
             "method": "events.get",
             "params": [
@@ -151,7 +151,17 @@ class ConnectionTests: XCTestCase {
         let fields = ["deltaTime", "latitude", "longitude", "altitude"]
         let points = [[0, 10.2, 11.2, 500], [1, 10.2, 11.2, 510], [2, 10.2, 11.2, 520]]
         
-        let result = connection?.addPointsToHFEvent(eventId: "cj3wro4aj80yrx0yqmtm5cfxc", fields: fields, points: points)
+        let hfEvent: Json = [
+            "streamIds": [
+              "position"
+            ],
+            "type": "series:position/wgs84"
+        ]
+        var result: Promise<Json>? = nil
+        let _ = connection.createEventWithFormData(event: hfEvent).then { event in
+            let eventId = event["id"] as! String
+            result = self.connection?.addPointsToHFEvent(eventId: eventId, fields: fields, points: points)
+        }
         
         XCTAssert(waitForPromises(timeout: 1))
         XCTAssertNil(result?.error)
@@ -169,8 +179,7 @@ class ConnectionTests: XCTestCase {
     }
 
     func testCreateEvent() {
-        let payload: Json = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
-        
+        let payload: Json = ["streamId": "weight", "type": "mass/kg", "content": 90]
         let result = connection?.createEventWithFormData(event: payload)
         
         XCTAssert(waitForPromises(timeout: 1))
@@ -197,7 +206,7 @@ class ConnectionTests: XCTestCase {
     }
 
     func testCreateEventWithFile() {
-        let payload: Event = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
+        let payload: Event = ["streamId": "weight", "type": "mass/kg", "content": 90]
         let file = Bundle(for: ConnectionTests.self).url(forResource: "sample", withExtension: "pdf")!
         
         let result = connection?.createEventWithFile(event: payload, filePath: file.absoluteString, mimeType: "application/pdf")
@@ -228,7 +237,6 @@ class ConnectionTests: XCTestCase {
     func testAddFileToEvent() {
         let payload: Event = ["streamIds": ["weight"], "type": "mass/kg", "content": 90]
         let file = Bundle(for: ConnectionTests.self).url(forResource: "sample", withExtension: "pdf")!
-        
         var result = connection?.createEventWithFormData(event: payload)
         
         XCTAssert(waitForPromises(timeout: 1))
@@ -236,12 +244,10 @@ class ConnectionTests: XCTestCase {
         XCTAssertNotNil(result?.value)
         
         var event = (result?.value)!
-
         let eventId = event["id"] as? String
         XCTAssertNotNil(eventId)
         
         result = connection?.addFileToEvent(eventId: eventId!, filePath: file.absoluteString, mimeType: "application/pdf")
-        
         XCTAssert(waitForPromises(timeout: 1))
         XCTAssertNil(result?.error)
         XCTAssertNotNil(result?.value)
@@ -264,13 +270,13 @@ class ConnectionTests: XCTestCase {
     }
 
     func testGetImagePreview() {
-        let apiEndpoint = "https://token@username.pryv.me/"
+        let token = "token"
+        let apiEndpoint = "https://\(token)@\(testuser).pryv.me/"
         let expectedData = Bundle(for: ConnectionTests.self).url(forResource: "corona", withExtension: "jpg")!.dataRepresentation
         let mockGet = Mock(url: URL(string: apiEndpoint + "previews/events/eventId?w=256&h=256&auth=token")!, dataType: .imagePNG, statusCode: 200, data: [.get: expectedData])
         mockGet.register()
 
-        let c = Connection(apiEndpoint: apiEndpoint)
-        let data = c.getImagePreview(eventId: "eventId")
+        let data = Connection(apiEndpoint: apiEndpoint).getImagePreview(eventId: "eventId")
         XCTAssertEqual(data, expectedData)
     }
 
@@ -309,6 +315,7 @@ class ConnectionTests: XCTestCase {
 
         XCTAssertFalse(error)
         XCTAssertEqual(meta?.count, 3)
+        
         if includeDeletions {
             XCTAssertGreaterThan(eventsCount, 0)
             XCTAssertGreaterThanOrEqual(eventDeletionsCount, 0)
@@ -317,6 +324,6 @@ class ConnectionTests: XCTestCase {
         }
     }
 
-    // Note: the part of connection using socket.io is tested in the [example application](https://github.com/pryv/app-swift-example)
+    // Note: the part of connection using socket.io (ConnectionWebSocket) is tested in the [example application](https://github.com/pryv/app-swift-example)
 
 }

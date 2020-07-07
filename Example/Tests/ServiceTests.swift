@@ -12,6 +12,8 @@ import Mocker
 @testable import PryvApiSwiftKit
 
 class ServiceTests: XCTestCase {
+    private let appId = "app-id"
+    private let testuser = "testuser"
     private let pryvServiceInfoUrl = "https://reg.pryv.me/service/info"
     private let serviceCustomization = [
         "register": "https://reg.pryv2.me",
@@ -24,32 +26,24 @@ class ServiceTests: XCTestCase {
         "eventTypes": "https://api.pryv2.com/event-types/flat.json"
     ]
 
-    private let username = "testuser"
-    private let password = "testuser"
-
-    private var service: Service?
-    private var customService: Service?
+    private var service: Service!
 
     override func setUp() {
         super.setUp()
-        continueAfterFailure = false
         
         Mocker.ignore(URL(string: "https://reg.pryv.me/access")!)
         Mocker.ignore(URL(string: "https://reg.pryv.me/service/info")!)
         Mocker.ignore(URL(string: "https://testuser.pryv.me/auth/login")!)
 
         service = Service(pryvServiceInfoUrl: pryvServiceInfoUrl)
-        customService = Service(pryvServiceInfoUrl: pryvServiceInfoUrl, serviceCustomization: serviceCustomization)
     }
 
     func testInfoNoCustomization() {
         let serviceInfoPromise = service?.info()
-        
         XCTAssert(waitForPromises(timeout: 1))
+        XCTAssertNil(serviceInfoPromise?.error)
         
         let serviceInfo = serviceInfoPromise?.value
-        XCTAssertNil(serviceInfoPromise?.error)
-
         XCTAssertEqual(serviceInfo?.register, "https://reg.pryv.me/")
         XCTAssertEqual(serviceInfo?.access, "https://access.pryv.me/access/")
         XCTAssertEqual(serviceInfo?.api, "https://{username}.pryv.me/")
@@ -61,13 +55,12 @@ class ServiceTests: XCTestCase {
     }
 
     func testInfoCustomized() {
-        let serviceInfoPromise = customService?.info()
-        
+        let customService = Service(pryvServiceInfoUrl: pryvServiceInfoUrl, serviceCustomization: serviceCustomization)
+        let serviceInfoPromise = customService.info()
         XCTAssert(waitForPromises(timeout: 1))
+        XCTAssertNil(serviceInfoPromise.error)
         
-        let serviceInfo = serviceInfoPromise?.value
-        XCTAssertNil(serviceInfoPromise?.error)
-
+        let serviceInfo = serviceInfoPromise.value
         XCTAssertEqual(serviceInfo?.register, serviceCustomization["register"])
         XCTAssertEqual(serviceInfo?.access, serviceCustomization["access"])
         XCTAssertEqual(serviceInfo?.api, serviceCustomization["api"])
@@ -79,8 +72,9 @@ class ServiceTests: XCTestCase {
     }
     
     func testApiEndpoint() {
-        let builtApiEndpoint = service?.apiEndpointFor(username: username, token: "token")
-        let apiEndpoint = "https://token@\(username).pryv.me/"
+        let token = "token"
+        let builtApiEndpoint = service?.apiEndpointFor(username: testuser, token: token)
+        let apiEndpoint = "https://\(token)@\(testuser).pryv.me/"
         
         XCTAssert(waitForPromises(timeout: 1))
         XCTAssertNil(builtApiEndpoint?.error)
@@ -88,23 +82,30 @@ class ServiceTests: XCTestCase {
     }
 
     func testLogin() {
-        let connection = service?.login(username: username, password: password, appId: "app-id", domain: "pryv.me")
+        let connection = service?.login(username: testuser, password: testuser, appId: appId, domain: "pryv.me")
         
         XCTAssert(waitForPromises(timeout: 1))
         XCTAssertNil(connection?.error)
         XCTAssertNotNil(connection?.value)
-        XCTAssert((connection?.value)!.getApiEndpoint().contains("@\(username).pryv.me/"))
+        XCTAssert((connection?.value)!.getApiEndpoint().contains("@\(testuser).pryv.me/"))
     }
 
     func testSetUpAuth() {
-        let requestingAppId = "test-app-id"
         let requestedPermissions = [
-                ["streamId": "diary", "level": "read", "defaultName": "Journal"],
-                ["streamId": "position", "level": "contribute", "defaultName": "Position"]
+            [
+                "streamId": "diary",
+                "level": "read",
+                "defaultName": "Journal"
+            ],
+            [
+                "streamId": "position",
+                "level": "contribute",
+                "defaultName": "Position"
+            ]
         ]
 
         let authPayload: Json = [
-            "requestingAppId": requestingAppId,
+            "requestingAppId": appId,
             "requestedPermissions": requestedPermissions,
             "languageCode": "fr"
        ]
