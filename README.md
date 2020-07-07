@@ -16,7 +16,30 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 iOS 10.0 is required to use this library.
 
 ## Usage
-
+  
+### Table of Contents
+  
+- [Import](#import)
+- [Obtaining a Connection](#obtaining-a-connection)
+  - [Using an API endpoint](#using-an-api-endpoint)
+  - [Using a Username & Token (knowing the service information URL)](#using-a-username--token-knowing-the-service-information-url)
+  - [Within a WebView](#within-a-webview)
+  - [Using Service.login() *(trusted apps only)*](#using-servicelogin-trusted-apps-only)
+- [API calls](#api-calls)
+- [Advanced usage of API calls with optional individual result](#advanced-usage-of-api-calls-with-optional-individual-result)
+- [Get Events Streamed](#get-events-streamed)
+  - [Example:](#example-1)
+  - [result:](#result)
+  - [Example with Includes deletion:](#example-with-includes-deletion)
+  - [result:](#result-1)
+- [Events with Attachments](#events-with-attachments)
+- [High Frequency Events](#high-frequency-events)
+- [Service Information](#service-information)
+  - [Pryv.Service](#pryvservice)
+    - [Initizalization with a service info URL](#initizalization-with-a-service-info-url)
+    - [Initialization with the content of a service info configuration](#initialization-with-the-content-of-a-service-info-configuration)
+    - [Usage of Pryv.Service.](#usage-of-pryvservice)
+  
 ### Import
 
 PryvApiSwiftKit is available through [CocoaPods](https://cocoapods.org). To install
@@ -91,7 +114,7 @@ func stateChangedCallback(authResult: AuthResult) {
     }
 }
 ```
-
+  
 #### Using Service.login() *(trusted apps only)*
 
 [auth.login reference](https://api.pryv.com/reference-full/#login-user)
@@ -223,7 +246,7 @@ connection.getEventsStreamed(queryParams: queryParams, forEachEvent: forEachEven
 [
   "eventsCount": 10000,
   "meta": [
-      "apiVersion": 1.4.26,
+      "apiVersion": "1.4.26",
       "serverTime": 1580728336.864,
       "serial": 2019061301
   ]
@@ -254,7 +277,7 @@ connection.getEventsStreamed(queryParams: queryParams, forEachEvent: forEachEven
   "eventDeletionsCount": 150,
   "eventsCount": 10000,
   meta: [
-      "apiVersion": 1.4.26,
+      "apiVersion": "1.4.26",
       "serverTime": 1580728336.864,
       "serial": 2019061301
   ]
@@ -274,7 +297,7 @@ connection?.createEventWithFile(event: payload, filePath: filePath, mimeType: "a
     // handle the result
 }
 ```
-
+  
 ### High Frequency Events 
 
 Reference: [https://api.pryv.com/reference/#hf-events](https://api.pryv.com/reference/#hf-events)
@@ -340,8 +363,8 @@ connection.api(APICalls: apiCalls, handleResults: handleResults).catch { error i
 }
 
 ```
-
-### Service Information and assets
+  
+### Service Information
 
 A Pryv.io deployment is a unique "Service", as an example **Pryv Lab** is a service, deployed on the **pryv.me** domain name.
 
@@ -364,10 +387,7 @@ Service information properties can be overriden with specific values. This might
 ```swift
 let serviceInfoUrl = "https://reg.pryv.me/service/info"
 let serviceCustomizations: Json = [
-  "name": "Pryv Lab 2", 
-  "assets": [
-    "definitions": "https://pryv.github.io/assets-pryv.me/index.json"
-  ]
+  "name": "Pryv Lab 2"
 ]
 let service = Service(pryvServiceInfoUrl: serviceInfoUrl, serviceCustomization: serviceCustomizations)
 ```
@@ -384,7 +404,7 @@ See: [Pryv.Service](https://pryv.github.io/js-lib/docs/Pryv.Service.html) for mo
     let serviceName = serviceInfo.name
   }
   ```
-
+  
 - `service.infoSync()`: returns the cached content of the serviceInfo, requires `service.info()` to be called first.
 
 - `service.apiEndpointFor(username, token)` Will return the corresponding API endpoint for the provided credentials, `token` can be omitted.
