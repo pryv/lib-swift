@@ -19,5 +19,5 @@ public enum AuthState {
 /// State of the authentication response with corresponding endpoint, if `.accepted`
 public struct AuthResult {
     public var state: AuthState
-    public var endpoint: String?
+    public var apiEndpoint: String?
 }

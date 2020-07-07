@@ -55,7 +55,7 @@ public class Service: Equatable {
                 if elapsedTime >= self.timeout {
                     currentState = .timeout
                     self.timer?.invalidate()
-                    self.pollingInfo!.callback(AuthResult(state: currentState!, endpoint: nil))
+                    self.pollingInfo!.callback(AuthResult(state: currentState!, apiEndpoint: nil))
                     print("The auth request exceeded timeout and was invalidated.")
                 } else {
                     currentState = self.poll(currentState: currentState, poll: self.pollingInfo!.poll, stateChangedCallback: self.pollingInfo!.callback)
@@ -342,7 +342,7 @@ public class Service: Equatable {
                         
                         if newState != .refused {
                             newState = .refused
-                            let result = AuthResult(state: newState!, endpoint: nil)
+                            let result = AuthResult(state: newState!, apiEndpoint: nil)
                             DispatchQueue.main.async {
                                 stateChangedCallback(result)
                             }
@@ -351,7 +351,7 @@ public class Service: Equatable {
                     case "NEED_SIGNIN":
                         if newState != .need_signin {
                             newState = .need_signin
-                            let result = AuthResult(state: newState!, endpoint: nil)
+                            let result = AuthResult(state: newState!, apiEndpoint: nil)
                             DispatchQueue.main.async {
                                 stateChangedCallback(result)
                             }
@@ -363,7 +363,7 @@ public class Service: Equatable {
                         
                         if newState != .accepted {
                             newState = .accepted
-                            let result = AuthResult(state: newState!, endpoint: pryvApiEndpoint)
+                            let result = AuthResult(state: newState!, apiEndpoint: pryvApiEndpoint)
                             DispatchQueue.main.async {
                                 stateChangedCallback(result)
                             }

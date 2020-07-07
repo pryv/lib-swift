@@ -28,9 +28,10 @@ public class Connection {
     /// - Parameters:
     ///   - apiEndpoint
     ///   - service: eventually initialize Connection with a Service
-    public init(apiEndpoint: String, service: PryvServiceInfo? = nil) {
+    public init(apiEndpoint: String, service: Service? = nil) {
         self.apiEndpoint = apiEndpoint
         (self.endpoint, self.token) = utils.extractTokenAndEndpoint(from: apiEndpoint) ?? ("", nil)
+        self.service = service
     }
     
     /// Getter for Service object relative to this connection
@@ -175,11 +176,13 @@ public class Connection {
                         meta = parsedResult.meta != nil ? parsedResult.meta! : meta
                     }
                 case .complete(_):
-                    let result: Json = [
+                    var result: Json = [
                         "meta": meta,
                         "eventsCount": eventsCount,
-                        "eventDeletionsCount": eventDeletionsCount
                     ]
+                    if let includeDeletions = queryParams?["includeDeletions"] as? Bool, includeDeletions {
+                        result["eventDeletionsCount"] = eventDeletionsCount
+                    }
                     fullfill(result)
                 }
             }
