@@ -1,15 +1,10 @@
-# Swift library for Pryv.io
+# Swift library for Pryv.io [![CI Status](https://img.shields.io/travis/alemannosara/PryvApiSwiftKit.svg?style=flat)](https://travis-ci.org/alemannosara/PryvApiSwiftKit) [![Version](https://img.shields.io/cocoapods/v/PryvApiSwiftKit.svg?style=flat)](https://cocoapods.org/pods/PryvApiSwiftKit)
 
 This Swift library is meant to facilitate writing iOS apps for a Pryv.io platform, it follows the [Pryv.io App Guidelines](https://api.pryv.com/guides/app-guidelines/).
 
-[![CI Status](https://img.shields.io/travis/alemannosara/PryvApiSwiftKit.svg?style=flat)](https://travis-ci.org/alemannosara/PryvApiSwiftKit)
-[![Version](https://img.shields.io/cocoapods/v/PryvApiSwiftKit.svg?style=flat)](https://cocoapods.org/pods/PryvApiSwiftKit)
-[![License](https://img.shields.io/cocoapods/l/PryvApiSwiftKit.svg?style=flat)](https://cocoapods.org/pods/PryvApiSwiftKit)
-[![Platform](https://img.shields.io/cocoapods/p/PryvApiSwiftKit.svg?style=flat)](https://cocoapods.org/pods/PryvApiSwiftKit)
-
 ## Example
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+You will find a sample iOS app at [https://github.com/pryv/app-swift-example](https://github.com/pryv/app-swift-example)
 
 ## Requirements
 
@@ -46,7 +41,7 @@ PryvApiSwiftKit is available through [CocoaPods](https://cocoapods.org). To inst
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'PryvApiSwiftKit'
+pod 'PryvApiSwiftKit', :git => 'https://github.com/pryv/lib-swift.git', :tag => '2.1.0'
 ```
 
 ### Obtaining a Connection
@@ -384,6 +379,53 @@ connection.api(APICalls: apiCalls, handleResults: handleResults).catch { error i
     // handle error
 }
 
+```
+
+### Connection with websockets
+
+Pryv.io API supports real-time interaction by accepting websocket connections via Socket.io 2.0. 
+
+#### Connecting
+
+Reference: [https://api.pryv.com/reference/#call-with-websockets](https://api.pryv.com/reference/#call-with-websockets)
+  
+**In an iOS app**
+
+To get an authenticated link to a Pryv.io account, supporting Socket.io, 
+* First, load and import a Swift Socket.IO client library, e.g. [socket.io-client-swift](https://github.com/socketio/socket.io-client-swift).  
+* Then initialize the connection with the URL (see [https://api.pryv.com/reference/#connecting](https://api.pryv.com/reference/#connecting) for more details):  
+  
+Pryv.me:  
+```swift
+let manager = SocketManager(socketURL: URL(string: "https://{username}.pryv.me/")!, config: [.log(true), .connectParams(["auth": "{accessToken}"])])
+let socket = manager.socket(forNamespace: "/{username}")
+```
+Own domain: 
+```swift
+let manager = SocketManager(socketURL: URL(string: "https://{username}.{domain}/")!, config: [.log(true), .connectParams(["auth": "{accessToken}"])])
+let socket = manager.socket(forNamespace: "/{username}")
+```
+DNS-less:
+```swift
+let manager = SocketManager(socketURL: URL(string: "https://host.your-domain.io/")!, config: [.log(true), .connectParams(["auth": "{accessToken}"])])
+let socket = manager.socket(forNamespace: "/{username}/{username}")
+```
+
+#### Lib-swift
+
+This library offers a class that allows connection, subscribtion to changes and call to methods for your iOS applications. 
+
+```swift
+let url = "https://chuangzi.pryv.me/chuangzi?auth=ckc1s4rxj00037cpv3tt39ceb"
+let connection = ConnectionWebSocket(url: url) // initialize the connection 
+connection.subscribe(message: .eventsChanged) { _, _ in // upon a notification that the events changed ...
+    connection.emit(methodId: "events.get", params: ["sortAscending": true]) { result in // get the events changed
+        let dataArray = result as NSArray
+        let dictionary = dataArray[1] as! Json
+        let events = (dictionary["events"] as! [Event])
+        // handle the events
+    }
+}
 ```
   
 ### Service Information

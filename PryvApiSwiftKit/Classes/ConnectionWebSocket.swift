@@ -39,18 +39,8 @@ public class ConnectionWebSocket {
     /// - Parameters:
     ///   - methodId
     ///   - params: object parameters
-    ///   - completion: callback
-    public func emit(methodId: String, params: Json, completion: (() -> ())? = nil) {
-        socket.emit(methodId, params, completion: completion)
-    }
-    
-    /// Emit API calls
-    /// See [API reference](https://api.pryv.com/reference/#call-methods) for more information
-    /// - Parameters:
-    ///   - methodId
-    ///   - params: object parameters
     ///   - completion: callback handling received data
-    public func emitWithData(methodId: String, params: Json, callback: @escaping AckCallback) {
+    public func emit(methodId: String, params: Json, callback: @escaping AckCallback) {
         socket.emitWithAck(methodId, params).timingOut(after: 0) { data in
             callback(data)
         }
