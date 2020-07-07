@@ -293,7 +293,7 @@ let payload: Event = ["streamId": "data", "type": "picture/attached"]
 let filePath = "./test/my_image.png"
 let mimeType = "image/png"
 
-connection.createEventWithFile(event: payload, filePath: filePath, mimeType: "application/pdf").then { result in 
+connection.createEventWithFile(event: payload, filePath: filePath, mimeType: mimeType).then { result in 
     // handle the result
 }
 ```
@@ -325,10 +325,10 @@ if let eventId = event["id"] as? String {
 Reference: [https://api.pryv.com/reference/#hf-events](https://api.pryv.com/reference/#hf-events)
 
 ```swift
-func generateSerie() -> [[Int, CGFloat]] {
-  var serie = [(Int, CGFloat)]()
-  for t in 0..< 100000 { // t will be the deltatime in seconds
-    serie.append([t, sin(Double(t)/1000.0)])
+func generateSerie() -> [[Double]] {
+  var serie = [[Double]]()
+  for t in 0..<100000 { // t will be the deltatime in seconds
+    serie.append([Double(t), sin(Double(t)/1000.0)])
   }
   return serie
 }
@@ -336,48 +336,53 @@ func generateSerie() -> [[Int, CGFloat]] {
 let pointsA = generateSerie()
 let pointsB = generateSerie()
 
-func postHFData(points: [(Int, CGFloat)]) { // must return a Promise
+let postHFData: ([[Double]]) -> ((Event) -> ()) = { points in
     let internalFunction: (Event) -> () = { event in // will be called each time an HF event is created
         let eventId = event["id"] as! String
-        connection.addPointsToHFEvent(eventId, ["deltaTime", "value"], points)
+        connection.addPointsToHFEvent(eventId: eventId, fields: ["deltaTime", "value"], points: points).catch { error in
+            print("add point to hf event error: \(error.localizedDescription)")
+        }
     }
     return internalFunction
 }
+
+let pointsA = generateSerie()
+let pointsB = generateSerie()
 
 let apiCalls: [APICall] = [
   [
     "method": "streams.create",
     "params": [
-        "id": "signal1", 
+        "id": "signal1",
         "name": "Signal1"
     ]
   ],
   [
     "method": "streams.create",
     "params": [
-        "id": "signal2", 
+        "id": "signal2",
         "name": "Signal2"
     ]
   ],
   [
-    "method": "events.create",
+    "method": "hfs.create",
     "params": [
-        "streamId": "signal1", 
-        "type": "serie:frequency/bpm" 
+        "streamId": "signal1",
+        "type": "serie:frequency/bpm"
     ]
   ],
   [
-    "method": "events.create",
+    "method": "hfs.create",
     "params": [
-        "streamId": "signal2", 
+        "streamId": "signal2",
         "type": "serie:frequency/bpm"
     ]
   ]
 ]
 
 let handleResults: [Int: (Event) -> ()] = [
-    2: postHFData(pointsA), 
-    3: postHFData(pointsB)
+    0: postHFData(pointsA),
+    1: postHFData(pointsB)
 ]
 
 connection.api(APICalls: apiCalls, handleResults: handleResults).catch { error in 
@@ -456,9 +461,7 @@ Service information properties can be overriden with specific values. This might
 
 ```swift
 let serviceInfoUrl = "https://reg.pryv.me/service/info"
-let serviceCustomizations: Json = [
-  "name": "Pryv Lab 2"
-]
+let serviceCustomizations: Json = ["name": "Pryv Lab 2"]
 let service = Service(pryvServiceInfoUrl: serviceInfoUrl, serviceCustomization: serviceCustomizations)
 ```
 

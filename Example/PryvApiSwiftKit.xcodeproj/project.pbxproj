@@ -11,7 +11,6 @@
 		B36DBA18248A7477001A37E4 /* UtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36DBA15248A7477001A37E4 /* UtilsTests.swift */; };
 		B38CD4E6249A37AB00A8A507 /* sample.pdf in Resources */ = {isa = PBXBuildFile; fileRef = B38CD4E5249A37AB00A8A507 /* sample.pdf */; };
 		B3C47C3524A1F997008BDF83 /* corona.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B3C47C3424A1F997008BDF83 /* corona.jpg */; };
-		B3E1348924B47EC5003637D6 /* Readmetests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E1348824B47EC5003637D6 /* Readmetests.swift */; };
 		B3EFB206248E4BD2008D6C52 /* ConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EFB205248E4BD2008D6C52 /* ConnectionTests.swift */; };
 		D917F93A36A362164FC4FA7B /* Pods_PryvApiSwiftKit_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9894CAA1F6E1130FAE0114FC /* Pods_PryvApiSwiftKit_Tests.framework */; };
 /* End PBXBuildFile section */
@@ -28,7 +27,6 @@
 		B36DBA15248A7477001A37E4 /* UtilsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilsTests.swift; sourceTree = "<group>"; };
 		B38CD4E5249A37AB00A8A507 /* sample.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = sample.pdf; sourceTree = "<group>"; };
 		B3C47C3424A1F997008BDF83 /* corona.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = corona.jpg; sourceTree = "<group>"; };
-		B3E1348824B47EC5003637D6 /* Readmetests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Readmetests.swift; sourceTree = "<group>"; };
 		B3EFB205248E4BD2008D6C52 /* ConnectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionTests.swift; sourceTree = "<group>"; };
 		E6660B53F8535456AB651CF0 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,7 +68,6 @@
 				B38CD4E5249A37AB00A8A507 /* sample.pdf */,
 				B3C47C3424A1F997008BDF83 /* corona.jpg */,
 				B36DBA14248A7477001A37E4 /* ServiceTests.swift */,
-				B3E1348824B47EC5003637D6 /* Readmetests.swift */,
 				B3EFB205248E4BD2008D6C52 /* ConnectionTests.swift */,
 				B36DBA15248A7477001A37E4 /* UtilsTests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
@@ -243,7 +240,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B36DBA17248A7477001A37E4 /* ServiceTests.swift in Sources */,
-				B3E1348924B47EC5003637D6 /* Readmetests.swift in Sources */,
 				B36DBA18248A7477001A37E4 /* UtilsTests.swift in Sources */,
 				B3EFB206248E4BD2008D6C52 /* ConnectionTests.swift in Sources */,
 			);
