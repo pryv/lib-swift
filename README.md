@@ -124,7 +124,7 @@ import Promises
 
 let pryvServiceInfoUrl = "https://reg.pryv.me/service/info"
 let appId = "lib-swift-sample"
-let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
+let service = Service(pryvServiceInfoUrl: pryvServiceInfoUrl)
 service.login(username: username, password: password, appId: appId).then { connection in 
     // handle connection object
 }
@@ -258,7 +258,7 @@ connection.getEventsStreamed(queryParams: queryParams, forEachEvent: forEachEven
 ``````  swift
 let now = Date().timeIntervalSince1970
 let queryParams: Json = ["fromTime": 0, "toTime": now, "includeDeletions": true, "modifiedSince": 0]
-const events = []
+let events = []
 var events = [Event]()
 let forEachEvent: (Event) -> () = { event in 
     events.append(event)
@@ -293,7 +293,7 @@ let payload: Event = ["streamId": "data", "type": "picture/attached"]
 let filePath = "./test/my_image.png"
 let mimeType = "image/png"
 
-connection?.createEventWithFile(event: payload, filePath: filePath, mimeType: "application/pdf").then { result in 
+connection.createEventWithFile(event: payload, filePath: filePath, mimeType: "application/pdf").then { result in 
     // handle the result
 }
 ```
@@ -304,7 +304,7 @@ connection?.createEventWithFile(event: payload, filePath: filePath, mimeType: "a
 let filePath = "./test/my_image.png"
 let mimeType = "image/png"
 if let eventId = event["id"] as? String {
-    connection?.addFileToEvent(eventId: eventId, filePath: filePath, mimeType: mimeType).then { result in
+    connection.addFileToEvent(eventId: eventId, filePath: filePath, mimeType: mimeType).then { result in
         // handle the result
     }
 }
