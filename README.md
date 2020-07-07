@@ -114,7 +114,7 @@ func stateChangedCallback(authResult: AuthResult) {
     }
 }
 ```
-  
+
 #### Using Service.login() *(trusted apps only)*
 
 [auth.login reference](https://api.pryv.com/reference-full/#login-user)
@@ -392,9 +392,8 @@ Pryv.io API supports real-time interaction by accepting websocket connections vi
 
 #### Connecting
 
-Reference: [https://api.pryv.com/reference/#call-with-websockets](https://api.pryv.com/reference/#call-with-websockets)
-  
-**In an iOS app**
+Reference: [https://api.pryv.com/reference/#call-with-websockets](https://api.pryv.com/reference/#call-with-websockets)  
+*In an iOS app*
 
 To get an authenticated link to a Pryv.io account, supporting Socket.io, 
 * First, load and import a Swift Socket.IO client library, e.g. [socket.io-client-swift](https://github.com/socketio/socket.io-client-swift).  
@@ -428,7 +427,9 @@ connection.subscribe(message: .eventsChanged) { _, _ in // upon a notification t
         let dataArray = result as NSArray
         let dictionary = dataArray[1] as! Json
         let events = (dictionary["events"] as! [Event])
-        // handle the events
+        events.forEach. { event in 
+          print(String(describing: event))
+        }
     }
 }
 ```
