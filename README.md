@@ -333,62 +333,63 @@ func generateSerie() -> [[Double]] {
   return serie
 }
 
-let pointsA = generateSerie()
-let pointsB = generateSerie()
+{
+    let pointsA = generateSerie()
+    let pointsB = generateSerie()
 
-let postHFData: ([[Double]]) -> ((Event) -> ()) = { points in
-    let internalFunction: (Event) -> () = { event in // will be called each time an HF event is created
-        let eventId = event["id"] as! String
-        connection.addPointsToHFEvent(eventId: eventId, fields: ["deltaTime", "value"], points: points).catch { error in
-            print("add point to hf event error: \(error.localizedDescription)")
+    let postHFData: ([[Double]]) -> ((Event) -> ()) = { points in
+        let internalFunction: (Event) -> () = { event in // will be called each time an HF event is created
+            let eventId = event["id"] as! String
+            connection.addPointsToHFEvent(eventId: eventId, fields: ["deltaTime", "value"], points: points).catch { error in
+                print("add point to hf event error: \(error.localizedDescription)")
+            }
         }
+        return internalFunction
     }
-    return internalFunction
+
+    let pointsA = generateSerie()
+    let pointsB = generateSerie()
+
+    let apiCalls: [APICall] = [
+      [
+        "method": "streams.create",
+        "params": [
+            "id": "signal1",
+            "name": "Signal1"
+        ]
+      ],
+      [
+        "method": "streams.create",
+        "params": [
+            "id": "signal2",
+            "name": "Signal2"
+        ]
+      ],
+      [
+        "method": "hfs.create",
+        "params": [
+            "streamId": "signal1",
+            "type": "serie:frequency/bpm"
+        ]
+      ],
+      [
+        "method": "hfs.create",
+        "params": [
+            "streamId": "signal2",
+            "type": "serie:frequency/bpm"
+        ]
+      ]
+    ]
+
+    let handleResults: [Int: (Event) -> ()] = [
+        0: postHFData(pointsA),
+        1: postHFData(pointsB)
+    ]
+
+    connection.api(APICalls: apiCalls, handleResults: handleResults).catch { error in 
+        // handle error
+    }
 }
-
-let pointsA = generateSerie()
-let pointsB = generateSerie()
-
-let apiCalls: [APICall] = [
-  [
-    "method": "streams.create",
-    "params": [
-        "id": "signal1",
-        "name": "Signal1"
-    ]
-  ],
-  [
-    "method": "streams.create",
-    "params": [
-        "id": "signal2",
-        "name": "Signal2"
-    ]
-  ],
-  [
-    "method": "hfs.create",
-    "params": [
-        "streamId": "signal1",
-        "type": "serie:frequency/bpm"
-    ]
-  ],
-  [
-    "method": "hfs.create",
-    "params": [
-        "streamId": "signal2",
-        "type": "serie:frequency/bpm"
-    ]
-  ]
-]
-
-let handleResults: [Int: (Event) -> ()] = [
-    0: postHFData(pointsA),
-    1: postHFData(pointsB)
-]
-
-connection.api(APICalls: apiCalls, handleResults: handleResults).catch { error in 
-    // handle error
-}
-
 ```
 
 ### Connection with websockets
