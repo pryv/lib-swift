@@ -1,6 +1,0 @@
-framework module PryvApiSwiftKit {
-  umbrella header "PryvApiSwiftKit-umbrella.h"
-
-  export *
-  module * { export * }
-}
