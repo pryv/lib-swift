@@ -9,3 +9,4 @@ Example/*.xcodeproj/project.pbxproj
 Example/*.xcworkspace/contents.xcworkspacedata
 Example/*.xcworkspace/xcuserdata/*.xcuserdatad/*
 Example/*/xcuserdata/*.xcuserdatad/xcdebugger/*
+Example/Pods/
