@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '10.0'
 
-  s.source_files = 'PryvApiSwiftKit/Classes/**/*'
+  s.source_files = 'PryvSwiftKit/**/*'
   
   s.dependency 'Mocker'
   s.dependency 'Alamofire'
