@@ -83,7 +83,7 @@ class ServiceTests: XCTestCase {
     }
 
     func testLogin() {
-        let connection = service?.login(username: testuser, password: testuser, appId: appId, domain: "pryv.me")
+        let connection = service?.login(username: testuser, password: testuser, appId: appId, origin: "https://login.pryv.me")
         
         XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(connection?.error)

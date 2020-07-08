@@ -47,7 +47,7 @@ class ConnectionTests: XCTestCase {
         Mocker.ignore(URL(string: "https://reg.pryv.me/service/info")!)
         Mocker.ignore(URL(string: "https://testuser.pryv.me/auth/login")!)
         
-        let promise = service.login(username: testuser, password: testuser, appId: testuser, domain: "pryv.me")
+        let promise = service.login(username: testuser, password: testuser, appId: testuser, origin: "https://login.pryv.me")
         XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNotNil(promise.value)
         XCTAssertNil(promise.error)

@@ -138,17 +138,13 @@ public class Service: Equatable {
     ///   - username
     ///   - password
     ///   - appId
-    ///   - domain: domain parameter for the `Origin` header, according to the [trusted apps verification](https://api.pryv.com/reference/#trusted-apps-verification/) (optional)
+    ///   - origin: parameter for the `Origin` header, according to the [trusted apps verification](https://api.pryv.com/reference/#trusted-apps-verification/) (optional)
     /// - Returns: the user's connection to the appId or nil if problem is encountered
-    public func login(username: String, password: String, appId: String, domain: String? = nil) -> Promise<Connection> {
+    public func login(username: String, password: String, appId: String, origin: String? = nil) -> Promise<Connection> {
         let loginPayload: Json = ["username": username, "password": password, "appId": appId]
         
         return apiEndpointFor(username: username).then { apiEndpoint in
             let endpoint = apiEndpoint.hasSuffix("/") ? apiEndpoint + "auth/login" : apiEndpoint + "/auth/login"
-            var origin: String? = nil
-            if let _ = domain {
-                origin = "https://login.\(domain!)"
-            }
             
             return self.sendLoginRequest(apiEndpoint: endpoint, payload: loginPayload, origin: origin).then { token in
                 self.apiEndpointFor(username: username, token: token).then { apiEndpoint in
