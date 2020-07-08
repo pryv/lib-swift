@@ -13,6 +13,8 @@ import Alamofire
 @testable import Promises
 
 class ConnectionTests: XCTestCase {
+    private let timeout = 5.0
+    private let streamingTimeout = 15.0
     private let testuser = "testuser"
     private let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
     private let callBatches: [APICall] = [
@@ -46,7 +48,7 @@ class ConnectionTests: XCTestCase {
         Mocker.ignore(URL(string: "https://testuser.pryv.me/auth/login")!)
         
         let promise = service.login(username: testuser, password: testuser, appId: testuser, domain: "pryv.me")
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNotNil(promise.value)
         XCTAssertNil(promise.error)
         
@@ -61,7 +63,7 @@ class ConnectionTests: XCTestCase {
     func testUsername() {
         let username = connection?.username()
         
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(username?.error)
         XCTAssertEqual(username?.value, "testuser")
     }
@@ -71,7 +73,7 @@ class ConnectionTests: XCTestCase {
         var a = 0
         let results = connection?.api(APICalls: callBatches, handleResults: [0: { result in a = 2 }])
         
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(results?.error)
         XCTAssertNotNil(results?.value)
         
@@ -127,7 +129,7 @@ class ConnectionTests: XCTestCase {
         var events = [Event]()
         let results = connection?.api(APICalls: apiCalls)
         
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(results?.error)
         XCTAssertNotNil(results?.value)
 
@@ -163,7 +165,7 @@ class ConnectionTests: XCTestCase {
             result = self.connection?.addPointsToHFEvent(eventId: eventId, fields: fields, points: points)
         }
         
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(result?.error)
         XCTAssertNotNil(result?.value)
     }
@@ -182,7 +184,7 @@ class ConnectionTests: XCTestCase {
         let payload: Json = ["streamId": "weight", "type": "mass/kg", "content": 90]
         let result = connection?.createEventWithFormData(event: payload)
         
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(result?.error)
         XCTAssertNotNil(result?.value)
         
@@ -211,7 +213,7 @@ class ConnectionTests: XCTestCase {
         
         let result = connection?.createEventWithFile(event: payload, filePath: file.absoluteString, mimeType: "application/pdf")
         
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(result?.error)
         XCTAssertNotNil(result?.value)
         
@@ -239,7 +241,7 @@ class ConnectionTests: XCTestCase {
         let file = Bundle(for: ConnectionTests.self).url(forResource: "sample", withExtension: "pdf")!
         var result = connection?.createEventWithFormData(event: payload)
         
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(result?.error)
         XCTAssertNotNil(result?.value)
         
@@ -248,7 +250,7 @@ class ConnectionTests: XCTestCase {
         XCTAssertNotNil(eventId)
         
         result = connection?.addFileToEvent(eventId: eventId!, filePath: file.absoluteString, mimeType: "application/pdf")
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(result?.error)
         XCTAssertNotNil(result?.value)
         
@@ -280,7 +282,7 @@ class ConnectionTests: XCTestCase {
         XCTAssertEqual(data, expectedData)
     }
 
-    private func testStreamedGetEvents(includeDeletions: Bool = false, limit: Int = 20, timeout: Double = 15.0) {
+    private func testStreamedGetEvents(includeDeletions: Bool = false, limit: Int = 20) {
         var error = false
         var eventsCount = 0
         var eventDeletionsCount = 0
@@ -292,7 +294,7 @@ class ConnectionTests: XCTestCase {
 
         let result = connection?.getEventsStreamed(queryParams: params, forEachEvent: { event in print(event) ; return })
     
-        XCTAssert(waitForPromises(timeout: 10))
+        XCTAssert(waitForPromises(timeout: streamingTimeout))
         XCTAssertNil(result?.error)
         XCTAssertNotNil(result?.value)
         

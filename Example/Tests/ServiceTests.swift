@@ -12,6 +12,7 @@ import Mocker
 @testable import PryvApiSwiftKit
 
 class ServiceTests: XCTestCase {
+    private let timeout = 5.0
     private let appId = "app-id"
     private let testuser = "testuser"
     private let pryvServiceInfoUrl = "https://reg.pryv.me/service/info"
@@ -40,7 +41,7 @@ class ServiceTests: XCTestCase {
 
     func testInfoNoCustomization() {
         let serviceInfoPromise = service?.info()
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(serviceInfoPromise?.error)
         
         let serviceInfo = serviceInfoPromise?.value
@@ -57,7 +58,7 @@ class ServiceTests: XCTestCase {
     func testInfoCustomized() {
         let customService = Service(pryvServiceInfoUrl: pryvServiceInfoUrl, serviceCustomization: serviceCustomization)
         let serviceInfoPromise = customService.info()
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(serviceInfoPromise.error)
         
         let serviceInfo = serviceInfoPromise.value
@@ -76,7 +77,7 @@ class ServiceTests: XCTestCase {
         let builtApiEndpoint = service?.apiEndpointFor(username: testuser, token: token)
         let apiEndpoint = "https://\(token)@\(testuser).pryv.me/"
         
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(builtApiEndpoint?.error)
         XCTAssertEqual(builtApiEndpoint?.value, apiEndpoint)
     }
@@ -84,7 +85,7 @@ class ServiceTests: XCTestCase {
     func testLogin() {
         let connection = service?.login(username: testuser, password: testuser, appId: appId, domain: "pryv.me")
         
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(connection?.error)
         XCTAssertNotNil(connection?.value)
         XCTAssert((connection?.value)!.getApiEndpoint().contains("@\(testuser).pryv.me/"))
@@ -112,7 +113,7 @@ class ServiceTests: XCTestCase {
 
         let authUrl = service?.setUpAuth(authSettings: authPayload, stateChangedCallback: { _ in return })
         
-        XCTAssert(waitForPromises(timeout: 1))
+        XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(authUrl?.error)
         XCTAssertNotNil(authUrl?.value)
         XCTAssert((authUrl?.value)!.contains("https://sw.pryv.me/access/access.html?&pollUrl="))
