@@ -43,6 +43,7 @@ class ServiceTests: XCTestCase {
         let serviceInfoPromise = service?.info()
         XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(serviceInfoPromise?.error)
+        XCTAssertNotNil(serviceInfoPromise?.value)
         
         let serviceInfo = serviceInfoPromise?.value
         XCTAssertEqual(serviceInfo?.register, "https://reg.pryv.me/")
