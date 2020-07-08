@@ -12,7 +12,7 @@ Pryv's Swift library for iOS
 ## Motivation
 
 Create a SDK that developers could use to connect and interact with the Pryv API.  
-Currently, there is a [library](https://github.com/pryv/lib-cocoa), which is implemented in Objective-C. Therefore, the developer could either use this library, which is heavy as it uses caching to store the structures, or implement by himself the requests to the API as described on [https://api.pryv.com/](https://api.pryv.com/), which is tedious. 
+Currently, the iOS developers should implement by themselves the requests to the API as described on [https://api.pryv.com/](https://api.pryv.com/). This SDK is meant to facilitate writing iOS apps for a Pryv.io platform.
 
 ## Proposition
 
