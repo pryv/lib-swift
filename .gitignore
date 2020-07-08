@@ -9,4 +9,5 @@ build
 *.xcworkspace/contents.xcworkspacedata
 *.xcworkspace/xcuserdata/*.xcuserdatad/*
 */xcuserdata/*.xcuserdatad/xcdebugger/*
+*.xcworkspace/xcshareddata/*
 Pods/
