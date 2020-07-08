@@ -76,22 +76,22 @@ class ConnectionWebSocketTests: XCTestCase {
     
     private func testNotificationWithoutTimeout(message: Message, triggerNotification: () -> ()) {
         let expectation = XCTestExpectation(description: "Receive notification")
-//        var events = [Event]()
+        var events = [Event]()
 
         connectionWebSocket?.subscribe(message: message) { _, _ in
-//            self.connectionWebSocket?.emit(methodId: "events.get", params: ["sortAscending": true]) { result in
-//                let dataArray = result as NSArray
-//                let dictionary = dataArray[1] as! Json
-//                let newEvents = (dictionary["events"] as! [Event])
-//                events.append(contentsOf: newEvents)
-//            }
-            expectation.fulfill()
+            self.connectionWebSocket?.emit(methodId: "events.get", params: ["sortAscending": true]) { result in
+                let dataArray = result as NSArray
+                let dictionary = dataArray[1] as! Json
+                let newEvents = (dictionary["events"] as! [Event])
+                events.append(contentsOf: newEvents)
+                expectation.fulfill()
+            }
         }
         connectionWebSocket.connect()
         sleep(5)
         triggerNotification()
         wait(for: [expectation], timeout: 15.0)
-//        XCTAssertFalse(events.isEmpty)
+        XCTAssertFalse(events.isEmpty)
     }
     
     override func tearDown() {
