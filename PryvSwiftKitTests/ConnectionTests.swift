@@ -1,6 +1,6 @@
 //
 //  ConnectionTests.swift
-//  PryvApiSwiftKit_Tests
+//  PryvSwiftKitTests
 //
 //  Created by Sara Alemanno on 08.06.20.
 //  Copyright © 2020 CocoaPods. All rights reserved.
@@ -9,7 +9,7 @@
 import XCTest
 import Mocker
 import Alamofire
-@testable import PryvApiSwiftKit
+@testable import PryvSwiftKit
 @testable import Promises
 
 class ConnectionTests: XCTestCase {

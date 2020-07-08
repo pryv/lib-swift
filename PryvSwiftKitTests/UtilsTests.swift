@@ -1,13 +1,13 @@
 //
 //  UtilsTests.swift
-//  PryvApiSwiftKitTests
+//  PryvSwiftKitTests
 //
 //  Created by Sara Alemanno on 03.06.20.
 //  Copyright © 2020 Pryv. All rights reserved.
 //
 
 import XCTest
-@testable import PryvApiSwiftKit
+@testable import PryvSwiftKit
 
 class UtilsTests: XCTestCase {
     private var utils: Utils!

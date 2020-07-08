@@ -1,6 +1,6 @@
 //
 //  ServiceTests.swift
-//  PryvApiSwiftKitTests
+//  PryvSwiftKitTests
 //
 //  Created by Sara Alemanno on 03.06.20.
 //  Copyright © 2020 Pryv. All rights reserved.
@@ -9,7 +9,7 @@
 import XCTest
 import Mocker
 @testable import Promises
-@testable import PryvApiSwiftKit
+@testable import PryvSwiftKit
 
 class ServiceTests: XCTestCase {
     private let timeout = 5.0

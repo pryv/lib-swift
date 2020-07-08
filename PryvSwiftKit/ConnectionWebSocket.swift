@@ -1,6 +1,6 @@
 //
 //  ConnectionWebSocket.swift
-//  PryvApiSwiftKit
+//  PryvSwiftKit
 //
 //  Created by Sara Alemanno on 23.06.20.
 //

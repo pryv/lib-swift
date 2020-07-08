@@ -1,6 +1,6 @@
 //
 //  ConnectionWebSocketTests.swift
-//  PryvApiSwiftKit_Tests
+//  PryvSwiftKitTests
 //
 //  Created by Sara Alemanno on 08.07.20.
 //  Copyright © 2020 CocoaPods. All rights reserved.
@@ -9,7 +9,7 @@
 import Foundation
 import XCTest
 @testable import Promises
-@testable import PryvApiSwiftKit
+@testable import PryvSwiftKit
 
 class ConnectionWebSocketTests: XCTestCase {
     private let url = "https://testuser.pryv.me/testuser?auth=ckcbrod5o07441vd3q69hisi3"

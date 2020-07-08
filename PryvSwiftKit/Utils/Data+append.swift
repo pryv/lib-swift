@@ -1,6 +1,6 @@
 //
 //  Data+append.swift
-//  PryvApiSwiftKit
+//  PryvSwiftKit
 //
 //  Created by Sara Alemanno on 09.06.20.
 //

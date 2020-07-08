@@ -4,9 +4,9 @@
 
 ### Xcode ###
 build
-Example/*.xcodeproj/*
-Example/*.xcodeproj/project.pbxproj
-Example/*.xcworkspace/contents.xcworkspacedata
-Example/*.xcworkspace/xcuserdata/*.xcuserdatad/*
-Example/*/xcuserdata/*.xcuserdatad/xcdebugger/*
-Example/Pods/
+*.xcodeproj/*
+*.xcodeproj/project.pbxproj
+*.xcworkspace/contents.xcworkspacedata
+*.xcworkspace/xcuserdata/*.xcuserdatad/*
+*/xcuserdata/*.xcuserdatad/xcdebugger/*
+Pods/
