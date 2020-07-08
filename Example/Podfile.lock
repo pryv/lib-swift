@@ -4,7 +4,7 @@ PODS:
   - PromisesObjC (1.2.9)
   - PromisesSwift (1.2.9):
     - PromisesObjC (= 1.2.9)
-  - PryvApiSwiftKit (0.1.2):
+  - PryvApiSwiftKit (2.1.0):
     - Alamofire
     - Mocker
     - PromisesSwift
@@ -38,7 +38,7 @@ SPEC CHECKSUMS:
   Mocker: d0ceb340eddd5c28539a691ce67d068674cef9a0
   PromisesObjC: b48e0338dbbac2207e611750777895f7a5811b75
   PromisesSwift: 991ad88e9851c45410d6697d1fe5df88fd3deb08
-  PryvApiSwiftKit: 929f7121a957d68d9aa38453c40c7bbfe2f42923
+  PryvApiSwiftKit: dd15084ee69a35280673aa083e10ebf7084041a3
   Socket.IO-Client-Swift: 1e3e3a1f09f3312a167f0d781eb2f383d477357c
   Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
 

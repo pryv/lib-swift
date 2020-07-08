@@ -12,12 +12,12 @@ Pod::Spec.new do |s|
   s.summary          = 'Pryv Swift library for iOS'
 
   s.description      = <<-DESC
-  An SDK to connect and interact with Pryv API from any iOS application.
+  An SDK to connect and interact with Pryv.io from any iOS application.
                        DESC
 
   s.homepage         = 'https://github.com/pryv/lib-swift'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'alemannosara' => 'sara.alemanno@epfl.ch' }
+  s.license      = { :type => 'Revised BSD license', :file => 'LICENSE' }
+  s.authors      = { 'Pryv SA (Switzerland)' => 'http://pryv.com' }
   s.source           = { :git => 'https://github.com/pryv/lib-swift.git', :branch => "master" }
 
   s.ios.deployment_target = '10.0'

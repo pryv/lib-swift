@@ -46,7 +46,9 @@ PryvApiSwiftKit is available through [CocoaPods](https://cocoapods.org). To inst
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'PryvApiSwiftKit', :git => 'https://github.com/pryv/lib-swift.git', :tag => '2.1.0'
+source 'https://github.com/pryv/lib-swift.git'
+source 'https://github.com/CocoaPods/Specs.git'
+pod 'PryvApiSwiftKit', :git => 'https://github.com/pryv/lib-swift.git', :branch => 'master'
 ```
 
 ### Obtaining a Connection
@@ -483,7 +485,3 @@ See: [Pryv.Service](https://pryv.github.io/js-lib/docs/Pryv.Service.html) for mo
 - `service.infoSync()`: returns the cached content of the serviceInfo, requires `service.info()` to be called first.
 
 - `service.apiEndpointFor(username, token)` Will return the corresponding API endpoint for the provided credentials, `token` can be omitted.
-
-# Change Log
-
-## 2.0.1 Initial Release 
