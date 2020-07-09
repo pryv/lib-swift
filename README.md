@@ -1,4 +1,4 @@
-# Swift library for Pryv.io [![CI Status](https://img.shields.io/travis/alemannosara/PryvApiSwiftKit.svg?style=flat)](https://travis-ci.org/alemannosara/PryvApiSwiftKit) [![Version](https://img.shields.io/cocoapods/v/PryvApiSwiftKit.svg?style=flat)](https://cocoapods.org/pods/PryvApiSwiftKit)
+# Swift library for Pryv.io 
 
 This Swift library is meant to facilitate writing iOS apps for a Pryv.io platform, it follows the [Pryv.io App Guidelines](https://api.pryv.com/guides/app-guidelines/).
 
@@ -42,13 +42,13 @@ iOS 10.0 is required to use this library.
   
 ### Import
 
-PryvApiSwiftKit is available through [CocoaPods](https://cocoapods.org). To install
+PryvSwiftKit is available through [CocoaPods](https://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
 source 'https://github.com/pryv/lib-swift.git'
 source 'https://github.com/CocoaPods/Specs.git'
-pod 'PryvApiSwiftKit', :git => 'https://github.com/pryv/lib-swift.git', :branch => 'master'
+pod 'PryvSwiftKit', :git => 'https://github.com/pryv/lib-swift.git', :branch => 'master'
 ```
 
 ### Obtaining a Connection
