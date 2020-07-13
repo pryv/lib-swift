@@ -88,7 +88,7 @@ public class Connection {
                         return
                     }
                     
-                    if let error = results[0]["error"] as? Json {
+                    if let error = results.first?["error"] as? Json {
                         reject(PryvError.requestError(error["message"] as! String))
                         return
                     }
