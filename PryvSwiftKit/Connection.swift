@@ -281,15 +281,13 @@ public class Connection {
         return nsData as Data?
     }
     
-    // MARK: - private helpers functions for the library
-    
     /// Send a request to add an attachment to an existing event with id `eventId`
     /// - Parameters:
     ///   - eventId
     ///   - boundary: the boundary corresponding to the attachement to add
     ///   - httpBody: the data corresponding to the attachement to add, or on the error
     /// - Returns: a promise containing the event with id `eventId` with an attachement
-    private func addFormDataToEvent(eventId: String, boundary: String, httpBody: Data) -> Promise<Event> {
+    public func addFormDataToEvent(eventId: String, boundary: String, httpBody: Data) -> Promise<Event> {
         let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)" : apiEndpoint + "/events/\(eventId)"
         var request = URLRequest(url: URL(string: string)!)
         request.httpMethod = "POST"
@@ -322,7 +320,7 @@ public class Connection {
     ///   - parameters: the string parameters
     ///   - files: the attachement(s)
     /// - Returns: the data as `Data` corresponding with `boundary`, `parameters` and `files`
-    private func createData(with boundary: String, from parameters: Parameters?, and files: [Media]?) -> Data {
+    public func createData(with boundary: String, from parameters: Parameters?, and files: [Media]?) -> Data {
         var body = Data()
         
         if let parameters = parameters {
@@ -347,6 +345,8 @@ public class Connection {
         
         return body
     }
+    
+    // MARK: - private helpers functions for the library
     
     /// Parse a string containing a chunk of the `events.get` response
     /// - Parameters:
