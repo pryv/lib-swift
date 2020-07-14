@@ -172,7 +172,7 @@ public class Connection {
             var eventsCount = 0
             var eventDeletionsCount = 0
             var meta = Json()
-            TakTlsSessionManager.sharedInstance.streamRequest(request).responseStream { stream in
+            AF.streamRequest(request).responseStream { stream in // stream requests might not work using T.A.K. secure channel
                 switch stream.event {
                 case let .stream(result):
                     switch result {
