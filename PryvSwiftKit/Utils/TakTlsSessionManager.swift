@@ -18,7 +18,7 @@ class TakTlsSessionManager: Session {
 
     init() {
         // Set up T.A.K
-        let tak = try! TAK(licenseFileName: "license_key")
+        let tak = try! TAK(licenseFileName: "license")
         TakUrlProtocolImpl.takTlsSocketFactory = DefaultTakTlsSocketFactory(tak: tak)
         // Use this in case connections to the backend time out
         TakUrlProtocolImpl.allowSetConnectionCloseHeader = true
