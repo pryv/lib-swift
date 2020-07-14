@@ -1,0 +1,12 @@
+framework module TAK {
+  umbrella header "TAK.h"
+
+  export *
+  module * { export * }
+}
+
+module TAK.Swift {
+    header "TAK-Swift.h"
+    requires objc
+}
+module TAKCore {}

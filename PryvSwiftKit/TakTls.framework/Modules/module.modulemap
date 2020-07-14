@@ -1,0 +1,11 @@
+framework module TakTls {
+  umbrella header "TakTls.h"
+
+  export *
+  module * { export * }
+}
+
+module TakTls.Swift {
+    header "TakTls-Swift.h"
+    requires objc
+}

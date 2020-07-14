@@ -1,0 +1,120 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.1.2 (swiftlang-1100.0.278 clang-1100.0.33.9)
+// swift-module-flags: -target i386-apple-ios9.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name TAK
+import Foundation
+import Swift
+@_exported import TAK
+import TAKCore
+import TakTls
+import UIKit
+public class FileProtector {
+  public func encrypt(plainData: Foundation.Data) throws -> Foundation.Data
+  public func decrypt(encryptedData: Foundation.Data) throws -> Foundation.Data
+  public func decrypt(fromFileNamed fileName: Swift.String) throws -> Foundation.Data
+  @objc deinit
+}
+public class DefaultTakTlsSocket : TakTls.TakTlsSocket {
+  public func read() throws -> Foundation.Data
+  public func write(_ data: Foundation.Data) throws
+  public func isOpen() -> Swift.Bool
+  public func close() throws
+  @objc deinit
+}
+public class TlsConnection {
+  final public let peerCertificate: Swift.String
+  public func write(data: Foundation.Data) throws
+  public func read() throws -> Foundation.Data
+  public func close() throws
+  public func isOpen() -> Swift.Bool
+  @objc deinit
+}
+@objc public class RegisterResponse : ObjectiveC.NSObject {
+  final public let takIdentifier: Swift.String
+  final public let isLicenseAboutToExpire: Swift.Bool
+  @objc override dynamic public init()
+  @objc deinit
+}
+public class TAK {
+  public init(licenseFileName: Swift.String) throws
+  public func getTakVersion() throws -> Swift.String
+  public func getTakBuildNumber() throws -> Swift.String
+  public func isInitialized() -> Swift.Bool
+  public func release()
+  public func register(userHash: Swift.String?) throws -> RegisterResponse
+  public func checkIntegrity() throws -> CheckIntegrityResponse
+  public func generateSignature(input: Foundation.Data, signatureAlgorithm: SignatureAlgorithm) throws -> Foundation.Data
+  public func getTakIdentifier() throws -> Swift.String
+  public func getClientCertificate() throws -> Swift.String
+  public func isRegistered() throws -> Swift.Bool
+  public func reset() throws
+  public func isJailbroken() -> Swift.Bool
+  public func getSecureStorage(storageName: Swift.String) throws -> SecureStorage
+  public func openTlsConnection(host: Swift.String, port: Swift.Int, timeout: Swift.Int = 30000) throws -> TlsConnection
+  public func getFileProtector() throws -> FileProtector
+  @objc deinit
+}
+public class DefaultTakTlsSocketFactory : TakTls.TakTlsSocketFactory {
+  public init(tak: TAK)
+  public func connect(host: Swift.String, port: Swift.Int, timeout: Swift.Int) throws -> TakTls.TakTlsSocket
+  @objc deinit
+}
+public enum TakError : Swift.Error {
+  case invalidParameter
+  case notInitialized
+  case alreadyRegistered
+  case licenseExpired
+  case networkTimeout
+  case networkError
+  case deviceMismatch
+  case certificateExpired
+  case notRegistered
+  case general
+  case invalidServerResponse
+  case notAvailable
+  case validationFailed
+  case updateFailed
+  case noFingerprint
+  case certificateError
+  case wbcError
+  case storageNotFound
+  case storageKeyNotFound
+  case storageAlreadyExists
+  public static func == (a: TakError, b: TakError) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public enum SignatureAlgorithm {
+  case rsa1024
+  case rsa2048
+  public static func == (a: SignatureAlgorithm, b: SignatureAlgorithm) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+@objc public class CheckIntegrityResponse : ObjectiveC.NSObject {
+  final public let takIdentifier: Swift.String
+  final public let didReregister: Swift.Bool
+  final public let isLicenseAboutToExpire: Swift.Bool
+  @objc override dynamic public init()
+  @objc deinit
+}
+public class SecureStorage {
+  public func write(key: Swift.String, value: Foundation.Data) throws
+  public func write(key: Swift.String, value: Swift.String) throws
+  public func write(key: Swift.String, value: Swift.Int) throws
+  public func write(key: Swift.String, value: Swift.Bool) throws
+  public func read(key: Swift.String) throws -> Foundation.Data
+  public func read(key: Swift.String) throws -> Swift.String
+  public func read(key: Swift.String) throws -> Swift.Int
+  public func read(key: Swift.String) throws -> Swift.Bool
+  public func deleteEntry(key: Swift.String) throws
+  public func delete() throws
+  @objc deinit
+}
+extension TakError : Swift.Equatable {}
+extension TakError : Swift.Hashable {}
+extension SignatureAlgorithm : Swift.Equatable {}
+extension SignatureAlgorithm : Swift.Hashable {}

@@ -1,0 +1,32 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.1.2 (swiftlang-1100.0.278 clang-1100.0.33.9)
+// swift-module-flags: -target arm64-apple-ios9.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name TakTls
+import Compression
+import Foundation
+import Swift
+@_exported import TakTls
+public protocol TakTlsSocketFactory {
+  func connect(host: Swift.String, port: Swift.Int, timeout: Swift.Int) throws -> TakTls.TakTlsSocket
+}
+@objc public class TakUrlProtocolImpl : Foundation.URLProtocol, Foundation.URLAuthenticationChallengeSender {
+  public static var takTlsSocketFactory: TakTls.TakTlsSocketFactory?
+  public static var timeout: Swift.Int
+  public static var allowSetConnectionCloseHeader: Swift.Bool
+  @objc override dynamic public class func canInit(with request: Foundation.URLRequest) -> Swift.Bool
+  @objc override dynamic public class func canonicalRequest(for request: Foundation.URLRequest) -> Foundation.URLRequest
+  @objc override dynamic public func startLoading()
+  @objc override dynamic public func stopLoading()
+  @objc public func use(_ credential: Foundation.URLCredential, for challenge: Foundation.URLAuthenticationChallenge)
+  @objc public func continueWithoutCredential(for challenge: Foundation.URLAuthenticationChallenge)
+  @objc public func cancel(_ challenge: Foundation.URLAuthenticationChallenge)
+  @objc public func rejectProtectionSpaceAndContinue(with challenge: Foundation.URLAuthenticationChallenge)
+  @objc public func performDefaultHandling(for challenge: Foundation.URLAuthenticationChallenge)
+  @objc override dynamic public init(request: Foundation.URLRequest, cachedResponse: Foundation.CachedURLResponse?, client: Foundation.URLProtocolClient?)
+  @objc deinit
+}
+public protocol TakTlsSocket {
+  func read() throws -> Foundation.Data
+  func write(_ writeData: Foundation.Data) throws
+  func isOpen() -> Swift.Bool
+  func close() throws
+}
