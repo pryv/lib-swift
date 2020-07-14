@@ -73,7 +73,7 @@ public class Connection {
         }
         
         return Promise<[Json]>(on: .global(qos: .background)) { (fullfill, reject) in
-            AF.request(request).responseJSON { response in
+            TakTlsSessionManager.sharedInstance.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
                     let response = JSON as! Json
@@ -132,7 +132,7 @@ public class Connection {
         }
         
         return Promise<Json>(on: .global(qos: .background)) { (fullfill, reject) in
-            AF.request(request).responseJSON { response in
+            TakTlsSessionManager.sharedInstance.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
                     let response = JSON as! Json
@@ -172,7 +172,7 @@ public class Connection {
             var eventsCount = 0
             var eventDeletionsCount = 0
             var meta = Json()
-            AF.streamRequest(request).responseStream { stream in
+            TakTlsSessionManager.sharedInstance.streamRequest(request).responseStream { stream in
                 switch stream.event {
                 case let .stream(result):
                     switch result {
@@ -228,7 +228,7 @@ public class Connection {
         }
         
         let eventId = Promise<String>(on: .global(qos: .background), { (fullfill, reject) in
-            AF.request(request).responseJSON { response in
+            TakTlsSessionManager.sharedInstance.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
                     let response = JSON as! NSDictionary
@@ -298,7 +298,7 @@ public class Connection {
         }
         
         return Promise<Event>(on: .global(qos: .background), { (fullfill, reject) in
-            AF.request(request).responseJSON { response in
+            TakTlsSessionManager.sharedInstance.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
                     let response = JSON as! Json

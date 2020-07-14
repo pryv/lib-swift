@@ -79,7 +79,7 @@ public class Service: Equatable {
     public func info(forceFetch: Bool = false) -> Promise<PryvServiceInfo> {
         if forceFetch || pryvServiceInfo == nil {
             pryvServiceInfo = Promise<PryvServiceInfo>(on: .global(qos: .background), { (fullfill, reject) in
-                AF.request(URL(string: self.pryvServiceInfoUrl)!).responseDecodable(of: PryvServiceInfo.self) { response in
+                TakTlsSessionManager.sharedInstance.request(URL(string: self.pryvServiceInfoUrl)!).responseDecodable(of: PryvServiceInfo.self) { response in
                     switch response.result {
                     case .success(var serviceInfo):
                         serviceInfo = self.customize(serviceInfo: serviceInfo, with: self.serviceCustomization)
@@ -190,7 +190,7 @@ public class Service: Equatable {
             request.httpBody = try? JSONSerialization.data(withJSONObject: authSettings)
             
             return Promise<String>(on: .global(qos: .background), { (fullfill, reject) in
-                AF.request(request).responseJSON { response in
+                TakTlsSessionManager.sharedInstance.request(request).responseJSON { response in
                     switch response.result {
                     case .success(let JSON):
                         let response = JSON as! Json
@@ -264,7 +264,7 @@ public class Service: Equatable {
         }
         
         return Promise<String>(on: .global(qos: .background), { (fullfill, reject) in
-            AF.request(request).responseJSON { response in
+            TakTlsSessionManager.sharedInstance.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
                     let response = JSON as! Json
@@ -293,7 +293,7 @@ public class Service: Equatable {
     ///   - completion: closure containing the parsed data, if any, from the response of the request
     /// - Returns: the closure `completion` is called after the function returns to access the fields `status` and `apiEndpoint`
     private func sendPollingRequest(poll: String, completion: @escaping ((String, String?)?) -> ()) {
-        AF.request(poll, method: .get).responseJSON { response in
+        TakTlsSessionManager.sharedInstance.request(poll, method: .get).responseJSON { response in
             switch response.result {
             case .success(let JSON):
                 let response = JSON as! Json
