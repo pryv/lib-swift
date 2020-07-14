@@ -13,4 +13,5 @@ build
 Pods/
 
 ### Build38 ### 
-*/TAK.framework/TAK
+*/TAK.framework/**/*
+*/TakTls.framework/**/*
