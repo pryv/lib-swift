@@ -274,8 +274,10 @@ class ConnectionTests: XCTestCase {
     func testGetImagePreview() {
         let token = "token"
         let apiEndpoint = "https://\(token)@\(testuser).pryv.me/"
+        let endpoint = "https://\(testuser).pryv.me/"
+        
         let expectedData = Bundle(for: ConnectionTests.self).url(forResource: "corona", withExtension: "jpg")!.dataRepresentation
-        let mockGet = Mock(url: URL(string: apiEndpoint + "previews/events/eventId?w=256&h=256&auth=token")!, dataType: .imagePNG, statusCode: 200, data: [.get: expectedData])
+        let mockGet = Mock(url: URL(string: endpoint + "previews/events/eventId?w=256&h=256&auth=token")!, dataType: .imagePNG, statusCode: 200, data: [.get: expectedData])
         mockGet.register()
 
         let data = Connection(apiEndpoint: apiEndpoint).getImagePreview(eventId: "eventId")

@@ -122,7 +122,7 @@ public class Connection {
             "points": points
         ]
         
-        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)/series" : apiEndpoint + "/events/\(eventId)/series"
+        let string = endpoint.hasSuffix("/") ? endpoint + "events/\(eventId)/series" : endpoint + "/events/\(eventId)/series"
         var request = URLRequest(url: URL(string: string)!)
         request.httpMethod = "POST"
         request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
@@ -218,7 +218,7 @@ public class Connection {
     ///   - files: the attachement(s) to add (optional)
     /// - Returns: promise containing the new created event with an optionnal attachment
     public func createEventWithFormData(event: Json, parameters: Parameters? = nil, files: [Media]? = nil) -> Promise<Event> {
-        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events" : apiEndpoint + "/events"
+        let string = endpoint.hasSuffix("/") ? endpoint + "events" : endpoint + "/events"
         var request = URLRequest(url: URL(string: string)!)
         request.httpMethod = "POST"
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
@@ -275,7 +275,7 @@ public class Connection {
     ///     This function is only applicable for events that contain image. In case the event does not have any image attached, its behavior is undefined.
     public func getImagePreview(eventId: String) -> Data? {
         let previewPath = "\(eventId)?w=256&h=256&auth=\(token ?? "")"
-        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "previews/events/\(previewPath)" : apiEndpoint + "/previews/events/\(previewPath)"
+        let string = endpoint.hasSuffix("/") ? endpoint + "previews/events/\(previewPath)" : endpoint + "/previews/events/\(previewPath)"
         guard let url = URL(string: string) else { print("problem encountered: cannot access register url \(string)") ; return nil }
         let nsData = NSData(contentsOf: url)
         return nsData as Data?
@@ -288,7 +288,7 @@ public class Connection {
     ///   - httpBody: the data corresponding to the attachement to add, or on the error
     /// - Returns: a promise containing the event with id `eventId` with an attachement
     public func addFormDataToEvent(eventId: String, boundary: String, httpBody: Data) -> Promise<Event> {
-        let string = apiEndpoint.hasSuffix("/") ? apiEndpoint + "events/\(eventId)" : apiEndpoint + "/events/\(eventId)"
+        let string = endpoint.hasSuffix("/") ? endpoint + "events/\(eventId)" : endpoint + "/events/\(eventId)"
         var request = URLRequest(url: URL(string: string)!)
         request.httpMethod = "POST"
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
