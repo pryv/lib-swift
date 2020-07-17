@@ -31,6 +31,7 @@ public class Service: Equatable {
     private let timeout = 90.0 // timeout for auth request in seconds
     
     private var timer: Timer?
+    private var session: Session!
     private var pryvServiceInfoUrl: String
     private var serviceCustomization: Json?
     private var pryvServiceInfo: Promise<PryvServiceInfo>?
@@ -65,9 +66,11 @@ public class Service: Equatable {
     /// - Parameters:
     ///   - pryvServiceInfoUrl: url point to /service/info of a Pryv platform as: [https://access.{domain}/service/info](https://access.{domain}/service/info)
     ///   - serviceCustomization: a json formatted dictionary corresponding to the customizations of the service (optional)
-    public init(pryvServiceInfoUrl: String, serviceCustomization: Json? = nil) {
+    ///   - session: Alamofire session for the HTTP requests (`AF` by default). Change it to `TakTlsSessionManager.sharedInstance` to use Build38's frameworks   
+    public init(pryvServiceInfoUrl: String, serviceCustomization: Json? = nil, session: Session? = AF) {
         self.pryvServiceInfoUrl = pryvServiceInfoUrl
         self.serviceCustomization = serviceCustomization
+        self.session = session
     }
     
     /// Returns service info parameters
@@ -79,7 +82,7 @@ public class Service: Equatable {
     public func info(forceFetch: Bool = false) -> Promise<PryvServiceInfo> {
         if forceFetch || pryvServiceInfo == nil {
             pryvServiceInfo = Promise<PryvServiceInfo>(on: .global(qos: .background), { (fullfill, reject) in
-                TakTlsSessionManager.sharedInstance.request(URL(string: self.pryvServiceInfoUrl)!).responseDecodable(of: PryvServiceInfo.self) { response in
+                self.session.request(URL(string: self.pryvServiceInfoUrl)!).responseDecodable(of: PryvServiceInfo.self) { response in
                     switch response.result {
                     case .success(var serviceInfo):
                         serviceInfo = self.customize(serviceInfo: serviceInfo, with: self.serviceCustomization)
@@ -190,7 +193,7 @@ public class Service: Equatable {
             request.httpBody = try? JSONSerialization.data(withJSONObject: authSettings)
             
             return Promise<String>(on: .global(qos: .background), { (fullfill, reject) in
-                TakTlsSessionManager.sharedInstance.request(request).responseJSON { response in
+                self.session.request(request).responseJSON { response in
                     switch response.result {
                     case .success(let JSON):
                         let response = JSON as! Json
@@ -264,7 +267,7 @@ public class Service: Equatable {
         }
         
         return Promise<String>(on: .global(qos: .background), { (fullfill, reject) in
-            TakTlsSessionManager.sharedInstance.request(request).responseJSON { response in
+            self.session.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
                     let response = JSON as! Json
@@ -293,7 +296,7 @@ public class Service: Equatable {
     ///   - completion: closure containing the parsed data, if any, from the response of the request
     /// - Returns: the closure `completion` is called after the function returns to access the fields `status` and `apiEndpoint`
     private func sendPollingRequest(poll: String, completion: @escaping ((String, String?)?) -> ()) {
-        TakTlsSessionManager.sharedInstance.request(poll, method: .get).responseJSON { response in
+        self.session.request(poll, method: .get).responseJSON { response in
             switch response.result {
             case .success(let JSON):
                 let response = JSON as! Json
