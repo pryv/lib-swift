@@ -21,6 +21,7 @@ public class Connection {
     private var endpoint: String
     private var token: String?
     private var service: Service?
+    private var session: Session!
     
     // MARK: - public library
     
@@ -28,10 +29,12 @@ public class Connection {
     /// - Parameters:
     ///   - apiEndpoint
     ///   - service: eventually initialize Connection with a Service
-    public init(apiEndpoint: String, service: Service? = nil) {
+    ///   - session: Alamofire session for the HTTP requests (`AF` by default). Change it to `TakTlsSessionManager.sharedInstance` to use Build38's frameworks
+    public init(apiEndpoint: String, service: Service? = nil, session: Session? = AF) {
         self.apiEndpoint = apiEndpoint
         (self.endpoint, self.token) = utils.extractTokenAndEndpoint(from: apiEndpoint) ?? ("", nil)
         self.service = service
+        self.session = session
     }
     
     /// Getter for Service object relative to this connection
@@ -73,7 +76,7 @@ public class Connection {
         }
         
         return Promise<[Json]>(on: .global(qos: .background)) { (fullfill, reject) in
-            AF.request(request).responseJSON { response in
+            self.session.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
                     let response = JSON as! Json
@@ -132,7 +135,7 @@ public class Connection {
         }
         
         return Promise<Json>(on: .global(qos: .background)) { (fullfill, reject) in
-            AF.request(request).responseJSON { response in
+            self.session.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
                     let response = JSON as! Json
@@ -172,7 +175,7 @@ public class Connection {
             var eventsCount = 0
             var eventDeletionsCount = 0
             var meta = Json()
-            AF.streamRequest(request).responseStream { stream in
+            AF.streamRequest(request).responseStream { stream in // stream requests might not work using T.A.K. secure channel
                 switch stream.event {
                 case let .stream(result):
                     switch result {
@@ -228,7 +231,7 @@ public class Connection {
         }
         
         let eventId = Promise<String>(on: .global(qos: .background), { (fullfill, reject) in
-            AF.request(request).responseJSON { response in
+            self.session.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
                     let response = JSON as! NSDictionary
@@ -298,7 +301,7 @@ public class Connection {
         }
         
         return Promise<Event>(on: .global(qos: .background), { (fullfill, reject) in
-            AF.request(request).responseJSON { response in
+            self.session.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
                     let response = JSON as! Json

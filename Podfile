@@ -7,6 +7,7 @@ target 'PryvSwiftKit' do
 end
 
 target 'PryvSwiftKitTests' do
+    inherit! :search_paths
     pod 'Mocker'
     pod 'PromisesSwift'
 end
