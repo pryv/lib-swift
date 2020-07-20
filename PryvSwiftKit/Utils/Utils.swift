@@ -13,6 +13,8 @@ public class Utils {
     private let regexSchemaAndPath = "(?i)https?:\\/\\/(.+)"
     private let regexTokenUsername = "(?i)https?:\\/\\/(.+)@(.+)\\.(.+)\\.(.+)"
     private let regexUsername = "(?i)https?:\\/\\/(.+)\\.(.+)\\.(.+)"
+    private let regexTokenUsernameDNSLess = "(?i)https?:\\/\\/(.+)@(.+)\\.(.+)\\.(.+)\\/(.+)\\/"
+    private let regexUsernameDNSLess = "(?i)https?:\\/\\/(.+)\\.(.+)\\.(.+)\\/(.+)\\/"
     private let regexSocketIO = "(?i)https?:\\/\\/([^\\/]+)\\/(.+)\\?(.+)=(.+)"
     
     public init() { }
@@ -49,18 +51,28 @@ public class Utils {
             apiEp += "/" // add a trailing '/' to end point if missing
         }
         
+        let res3 = regexExec(pattern: regexTokenUsernameDNSLess, string: apiEp)
+        if !res3.isEmpty {
+            return res3[4]
+        }
+        
+        let res4 = regexExec(pattern: regexUsernameDNSLess, string: apiEp)
+        if !res4.isEmpty {
+            return res4[3]
+        }
+        
         let res = regexExec(pattern: regexTokenUsername, string: apiEp)
         if !res.isEmpty { // has token
             return res[1]
         }
         
         let res2 = regexExec(pattern: regexUsername, string: apiEp)
-        if res2.isEmpty {
-            print("Problem occurred when extracting the username: invalid URL format")
-            return nil
+        if !res2.isEmpty {
+            return res2[0]
         }
         
-        return res2[0]
+        print("Problem when extracting the username")
+        return nil
     }
     
     /// Parses the socket io URL and extracts the endpoint, the connection parameters, such as token, and the namespace
@@ -89,7 +101,7 @@ public class Utils {
     /// - Returns: API Endpoint
     public func buildPryvApiEndpoint(endpoint: String, token: String?) -> String {
         var ep = endpoint
-        if !ep.hasSuffix("/") { 
+        if !ep.hasSuffix("/") {
           ep += "/" // add a trailing '/' to end point if missing
         }
         

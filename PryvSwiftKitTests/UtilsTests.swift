@@ -67,7 +67,7 @@ class UtilsTests: XCTestCase {
     }
     
     func testExtractUsernameWithToken() {
-        let apiEndpoint = "https://token@username.pryv.me"
+        let apiEndpoint = "https://token@username.pryv.me/"
         
         let username = utils.extractUsername(from: apiEndpoint)
         XCTAssertEqual(username, "username")
@@ -75,6 +75,13 @@ class UtilsTests: XCTestCase {
     
     func testExtractUsernameWithoutToken() {
         let apiEndpoint = "https://username.pryv.me/"
+        
+        let username = utils.extractUsername(from: apiEndpoint)
+        XCTAssertEqual(username, "username")
+    }
+    
+    func testExtractUsernameDNSLess() {
+        let apiEndpoint = "https://token@open.pryv.io/username/"
         
         let username = utils.extractUsername(from: apiEndpoint)
         XCTAssertEqual(username, "username")
