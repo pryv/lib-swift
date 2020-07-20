@@ -30,7 +30,7 @@ jobs:
         
     - name: Build and test
       run: |
-        xcodebuild clean test -workspace 'MyWorkspace.xcworkspace' -scheme 'MyScheme' -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max,OS=latest'
+        xcodebuild clean test -workspace 'PryvSwiftKit.xcworkspace' -scheme 'PryvSwiftKit' -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max,OS=latest'
         bash <(curl -s https://codecov.io/bash)
       env:
        destination: ${{ matrix.destination }}
