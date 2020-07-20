@@ -15,7 +15,6 @@ jobs:
     
     strategy:
       matrix:
-        destination: ['platform=iOS Simulator,name=iPhone 11,OS=13.5']
         xcode: ['/Applications/Xcode_11.1.app/Contents/Developer']
 
     steps:
@@ -31,7 +30,7 @@ jobs:
         
     - name: Build and test
       run: |
-        xcodebuild clean test -project PryvSwiftKit.xcodeproj -scheme PryvSwiftKit -destination "${destination}" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO ONLY_ACTIVE_ARCH=NO
+        xcodebuild clean test -workspace 'MyWorkspace.xcworkspace' -scheme 'MyScheme' -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max,OS=latest'
         bash <(curl -s https://codecov.io/bash)
       env:
        destination: ${{ matrix.destination }}
