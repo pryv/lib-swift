@@ -66,7 +66,7 @@ public class Connection {
     ///   - APICalls: array of method calls in json formatted string
     ///   - handleResults: callbacks indexed by the api calls indexes, i.e. `[0: func]` means "apply function `func` to result of api call 0"
     /// - Returns: promise to array of results matching each method call in order
-    public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil) -> Promise<[Json]> {
+    public func api(APICalls: [APICall], handleResults: [Int: (Event) -> ()]? = nil) -> Promise<Json> {
         var request = URLRequest(url: URL(string: endpoint)!)
         request.httpMethod = "POST"
         request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
@@ -75,7 +75,7 @@ public class Connection {
             request.addValue(token!, forHTTPHeaderField: "Authorization")
         }
         
-        return Promise<[Json]>(on: .global(qos: .background)) { (fullfill, reject) in
+        return Promise<Json>(on: .global(qos: .background)) { (fullfill, reject) in
             self.session.request(request).responseJSON { response in
                 switch response.result {
                 case .success(let JSON):
@@ -104,7 +104,7 @@ public class Connection {
                             callback(results[i])
                         }
                     }
-                    fullfill(results)
+                    fullfill(response)
                 case .failure(let error):
                     reject(error)
                 }

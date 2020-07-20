@@ -77,7 +77,10 @@ class ConnectionTests: XCTestCase {
         XCTAssertNil(results?.error)
         XCTAssertNotNil(results?.value)
         
-        for result in (results?.value)! {
+        let values = results!.value!["results"] as? [Json]
+        XCTAssertNotNil(values)
+        
+        for result in values! {
             if let json = result as? [String: Event] {
                 if let event = json["event"] {
                     events.append(event)
@@ -132,8 +135,11 @@ class ConnectionTests: XCTestCase {
         XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(results?.error)
         XCTAssertNotNil(results?.value)
+        
+        let values = results!.value!["results"] as? [Json]
+        XCTAssertNotNil(values)
 
-        for result in (results?.value)! {
+        for result in values! {
             if let json = result as? [String: [Event]] {
                 let error = json["error"]
                 XCTAssertNil(error)
@@ -143,7 +149,7 @@ class ConnectionTests: XCTestCase {
             }
         }
         
-        XCTAssertEqual((results?.value)!.count, 1)
+        XCTAssertEqual(values!.count, 1)
 
         XCTAssertNotNil(events)
         XCTAssertGreaterThanOrEqual(events.count, 20) // limit + deletions
