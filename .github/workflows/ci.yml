@@ -15,7 +15,7 @@ jobs:
     
     strategy:
       matrix:
-        destination: ['platform=iOS Simulator,name=iPhone 11,OS=10.0']
+        destination: ['platform=iOS Simulator,name=iPhone 11,OS=13.5']
         xcode: ['/Applications/Xcode_11.1.app/Contents/Developer']
 
     steps:
