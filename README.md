@@ -1,4 +1,5 @@
-# Swift library for Pryv.io 
+# Swift library for Pryv.io
+![Pryv lib swift](https://github.com/pryv/lib-swift/workflows/Pryv%20lib%20swift/badge.svg)
 
 This Swift library is meant to facilitate writing iOS apps for a Pryv.io platform, it follows the [Pryv.io App Guidelines](https://api.pryv.com/guides/app-guidelines/).
 
