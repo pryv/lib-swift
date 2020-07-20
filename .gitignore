@@ -4,8 +4,8 @@
 
 ### Xcode ###
 build
-*.xcodeproj/*
-*.xcodeproj/project.pbxproj
+*.xcodeproj/xcuserdata/**/*
+*.xcodeproj/project.xcworkspace/xcuserdata/**/*
 *.xcworkspace/contents.xcworkspacedata
 *.xcworkspace/xcuserdata/*.xcuserdatad/*
 */xcuserdata/*.xcuserdatad/xcdebugger/*
