@@ -14,7 +14,7 @@ import Alamofire
 
 class ConnectionTests: XCTestCase {
     private let timeout = 5.0
-    private let streamingTimeout = 15.0
+    private let streamingTimeout = 25.0
     private let testuser = "testuser"
     private let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
     private let callBatches: [APICall] = [
