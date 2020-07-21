@@ -42,3 +42,4 @@ An example of app using this framework can be found on [app-swift-example](https
   - callBatch
   - events.get
   - hfs.create
+  
