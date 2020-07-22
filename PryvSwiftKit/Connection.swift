@@ -141,7 +141,7 @@ public class Connection {
                     let response = JSON as! Json
                     if let error = response["error"] as? Json, let message = error["message"] as? String {
                         reject(PryvError.responseError(message))
-                        return 
+                        return
                     }
                     fullfill(response)
                 case .failure(let error):
@@ -252,7 +252,13 @@ public class Connection {
         return eventId.then { eventId in
             let boundary = "Boundary-\(UUID().uuidString)"
             let httpBody = self.createData(with: boundary, from: parameters, and: files)
-            return self.addFormDataToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody)
+            let result = self.addFormDataToEvent(eventId: eventId, boundary: boundary, httpBody: httpBody)
+            return result.catch { _ in
+                self.api(APICalls: [[
+                    "method": "events.delete",
+                    "params": ["id": eventId]
+                ]]).then { _ in return result }
+            }
         }
     }
     

@@ -37,6 +37,14 @@
                BlueprintName = "PryvSwiftKitTests"
                ReferencedContainer = "container:PryvSwiftKit.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "ConnectionTests/testStreamedGetEvents()">
+               </Test>
+               <Test
+                  Identifier = "ConnectionTests/testStreamedGetEventsWithDeletions()">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
