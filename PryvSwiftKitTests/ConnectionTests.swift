@@ -325,12 +325,10 @@ class ConnectionTests: XCTestCase {
 
         XCTAssertFalse(error)
         XCTAssertEqual(meta?.count, 3)
-        
+
+        XCTAssertGreaterThan(eventsCount, 0)
         if includeDeletions {
-            XCTAssertGreaterThan(eventsCount, 0)
             XCTAssertGreaterThanOrEqual(eventDeletionsCount, 0)
-        } else {
-            XCTAssertEqual(eventsCount, limit)
         }
     }
 
