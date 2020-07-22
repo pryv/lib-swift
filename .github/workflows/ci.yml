@@ -30,7 +30,9 @@ jobs:
         
     - name: Build and test
       run: |
+        gem install slather
         xcodebuild clean test -workspace 'PryvSwiftKit.xcworkspace' -scheme 'PryvSwiftKit' -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max,OS=latest'
-        bash <(curl -s https://codecov.io/bash) -J 'PryvSwiftKit'
+        slather coverage -s --scheme 'PryvSwiftKit' --workspace 'PryvSwiftKit.xcworkspace' 'PryvSwiftKit.xcodeproj'
+        bash <(curl -s https://codecov.io/bash) -f ./cobertura.xml
       env:
        destination: ${{ matrix.destination }}
