@@ -5,7 +5,7 @@ This Swift library is meant to facilitate writing iOS apps for a Pryv.io platfor
 
 ## Example
 
-You will find a sample iOS app at [https://github.com/pryv/app-swift-example](https://github.com/pryv/app-swift-example)
+You will find a sample iOS app at [https://github.com/pryv/app-swift-example](https://github.com/pryv/app-swift-example). This [video tutorial](https://www.youtube.com/watch?v=poWC__m8ZFU) explains you how to start the app and how to use its basic features.
 
 ## Requirements
 
