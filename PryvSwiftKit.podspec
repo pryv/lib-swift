@@ -17,7 +17,6 @@ Pod::Spec.new do |s|
   s.source_files = 'PryvSwiftKit/**/*'
   s.exclude_files = "PryvSwiftKit/*.plist"
   
-  s.dependency 'Mocker'
   s.dependency 'Alamofire'
   s.dependency 'Socket.IO-Client-Swift'
   s.dependency 'PromisesSwift'
