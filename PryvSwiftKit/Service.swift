@@ -34,7 +34,7 @@ public class Service: Equatable {
     private var session: Session!
     private var pryvServiceInfoUrl: String
     private var serviceCustomization: Json?
-    private var pryvServiceInfo: Promise<PryvServiceInfo>?
+    private var pryvServiceInfo: PryvServiceInfo?
     private var pollingInfo: (poll: String, poll_ms: Double, callback: (AuthResult) -> ())? {
         didSet {
             var currentState: AuthState? = nil
@@ -81,21 +81,25 @@ public class Service: Equatable {
     /// - Returns: promise to service info object, customized if needed
     public func info(forceFetch: Bool = false) -> Promise<PryvServiceInfo> {
         if forceFetch || pryvServiceInfo == nil {
-            pryvServiceInfo = Promise<PryvServiceInfo>(on: .global(qos: .background), { (fullfill, reject) in
+            var pryvServiceInfoPromise = Promise<PryvServiceInfo>(on: .global(qos: .background), { (fullfill, reject) in
                 self.session.request(URL(string: self.pryvServiceInfoUrl)!).responseDecodable(of: PryvServiceInfo.self) { response in
                     switch response.result {
                     case .success(var serviceInfo):
-                        serviceInfo = self.customize(serviceInfo: serviceInfo, with: self.serviceCustomization)
-                        fullfill(serviceInfo)
+                        self.pryvServiceInfo = self.customize(serviceInfo: serviceInfo, with: self.serviceCustomization)
+                
+                        fullfill(self.pryvServiceInfo!)
                     case .failure(let error):
                         let servError = PryvError.requestError(error.localizedDescription)
                         reject(servError)
                     }
                 }
             })
+            return pryvServiceInfoPromise
         }
         
-        return pryvServiceInfo!
+        return Promise<PryvServiceInfo>(on: .global(qos: .background), { (fullfill, reject) in
+            fullfill(self.pryvServiceInfo!)
+        })
     }
     
     /// Return service info parameters
@@ -106,7 +110,7 @@ public class Service: Equatable {
         if pryvServiceInfo == nil {
             return nil
         }
-        return try? await(pryvServiceInfo!)
+        return self.pryvServiceInfo!
     }
     
     /// Return an API Endpoint from a username and token and a PryvServiceInfo
@@ -127,7 +131,7 @@ public class Service: Equatable {
     ///   - token (optional)
     /// - Returns: API Endpoint from a username and token and the PryvServiceInfo
     public func apiEndpointFor(username: String, token: String? = nil) -> Promise<String> {
-        let serviceInfoPromise = pryvServiceInfo ?? info()
+        let serviceInfoPromise = info()
         
         return serviceInfoPromise.then { serviceInfo in
             return self.buildApiEndpoint(serviceInfo: serviceInfo, username: username, token: token)
@@ -184,7 +188,7 @@ public class Service: Equatable {
     ///    }
     ///    ```
     public func setUpAuth(authSettings: Json, stateChangedCallback: @escaping (AuthResult) -> ()) -> Promise<String> {
-        let serviceInfoPromise = pryvServiceInfo ?? info()
+        let serviceInfoPromise = info()
         return serviceInfoPromise.then { serviceInfo in
             let string = serviceInfo.register.hasSuffix("/") ? serviceInfo.register + "access" : serviceInfo.register + "/access"
             var request = URLRequest(url: URL(string: string)!)

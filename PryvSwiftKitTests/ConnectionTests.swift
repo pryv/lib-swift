@@ -19,6 +19,13 @@ class ConnectionTests: XCTestCase {
     private let service = Service(pryvServiceInfoUrl: "https://reg.pryv.me/service/info")
     private let callBatches: [APICall] = [
         [
+            "method": "streams.create",
+            "params": [
+                "id": "position",
+                "name": "Position"
+            ]
+        ],
+        [
             "method": "events.create",
             "params": [
                 "time": 1591274234.916,
@@ -72,7 +79,6 @@ class ConnectionTests: XCTestCase {
         var events = [Event]()
         var a = 0
         let results = connection?.api(APICalls: callBatches, handleResults: [0: { result in a = 2 }])
-        
         XCTAssert(waitForPromises(timeout: timeout))
         XCTAssertNil(results?.error)
         XCTAssertNotNil(results?.value)

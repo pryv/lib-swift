@@ -12,8 +12,8 @@ import XCTest
 @testable import PryvSwiftKit
 
 class ConnectionWebSocketTests: XCTestCase {
-    private let url = "https://testuser.pryv.me/testuser?auth=ckclwj7m504fo1od3fkt6ptqb"
-    private let apiEndpoint = "https://ckclwj7m504fo1od3fkt6ptqb@testuser.pryv.me/"
+    private let url = "https://testuser.pryv.me/testuser?auth=cm5wjb0fp003o1vpce4bc7rxj"
+    private let apiEndpoint = "https://cm5wjb0fp003o1vpce4bc7rxj@testuser.pryv.me/"
     private let streamId = "lib-swift-test"
     
     private var connectionWebSocket: ConnectionWebSocket!

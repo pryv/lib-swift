@@ -1,9 +1,9 @@
 PODS:
-  - Alamofire (5.2.1)
-  - Mocker (2.2.0)
-  - PromisesObjC (1.2.9)
-  - PromisesSwift (1.2.9):
-    - PromisesObjC (= 1.2.9)
+  - Alamofire (5.10.2)
+  - Mocker (2.5.5)
+  - PromisesObjC (2.4.0)
+  - PromisesSwift (2.4.0):
+    - PromisesObjC (= 2.4.0)
   - Socket.IO-Client-Swift (15.2.0):
     - Starscream (~> 3.1)
   - Starscream (3.1.1)
@@ -24,13 +24,13 @@ SPEC REPOS:
     - Starscream
 
 SPEC CHECKSUMS:
-  Alamofire: e911732990610fe89af59ac0077f923d72dc3dfd
-  Mocker: d0ceb340eddd5c28539a691ce67d068674cef9a0
-  PromisesObjC: b48e0338dbbac2207e611750777895f7a5811b75
-  PromisesSwift: 991ad88e9851c45410d6697d1fe5df88fd3deb08
+  Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
+  Mocker: 8c731a8104962f246cadf2b02556218e9edc1390
+  PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
+  PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
   Socket.IO-Client-Swift: 1e3e3a1f09f3312a167f0d781eb2f383d477357c
   Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
 
 PODFILE CHECKSUM: d6dc12204b40b69e26fe720e542ae7850f7739af
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.16.2

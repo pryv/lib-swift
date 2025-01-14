@@ -51,9 +51,7 @@ class ServiceTests: XCTestCase {
         XCTAssertEqual(serviceInfo?.api, "https://{username}.pryv.me/")
         XCTAssertEqual(serviceInfo?.name, "Pryv Lab")
         XCTAssertEqual(serviceInfo?.home, "https://sw.pryv.me")
-        XCTAssertEqual(serviceInfo?.support, "https://pryv.com/helpdesk")
-        XCTAssertEqual(serviceInfo?.terms, "https://pryv.com/terms-of-use/")
-        XCTAssertEqual(serviceInfo?.eventTypes, "https://api.pryv.com/event-types/flat.json")
+        XCTAssertEqual(serviceInfo?.eventTypes, "https://pryv.github.io/event-types/flat.json")
     }
 
     func testInfoCustomized() {
